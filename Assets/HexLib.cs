@@ -5,6 +5,12 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
+// For pointy
+public enum HexDirection
+{
+    NONE = -1, E, SE, SW, W, NW, NE
+}
+
 public struct Point
 {
     public Point(double x, double y)
@@ -120,6 +126,11 @@ public struct Hex
     public static string ToKey(float q, float r)
     {
         return Key(Mathf.RoundToInt(q), Mathf.RoundToInt(r));
+    }
+
+    public static string ToKey(Point pt)
+    {
+        return Key(Convert.ToInt32(pt.x), Convert.ToInt32(pt.y));
     }
 
     private static string Key(int q, int r)

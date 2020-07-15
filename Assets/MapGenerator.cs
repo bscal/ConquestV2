@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using Conquest;
+using SimplexNoise;
+using System;
 using System.Collections.Generic;
-using System.Runtime.ExceptionServices;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using UnityEngine.U2D;
 using UnityEngine.UIElements;
 
 public class MapGenerator : MonoBehaviour
@@ -34,6 +32,7 @@ public class MapGenerator : MonoBehaviour
         pixelW = (int)(w * (Mathf.Sqrt(3) * 8));
         pixelH = (int)(h * (16.0f * .75f));
 
+        SimplexNoise.Noise.Seed = 209323094;
 
         for (int r = 0; r <= h; r++) // height
         {
@@ -54,11 +53,13 @@ public class MapGenerator : MonoBehaviour
 
                     int n = UnityEngine.Random.Range(0, 2);
 
-                    double d = Perlin.perlin(pixel.x, pixel.y, 0);
-                    if (d > .5)
+                    float d = Noise.CalcPixel2D(q, r, .10f);
+                    if (d > 0)
                         n = 2;
-                    else
+                    if (d > 100)
                         n = 0;
+                    if (d > 200)
+                        n = 1;
 
                     render.sprite = tiles[n];
 
@@ -66,6 +67,8 @@ public class MapGenerator : MonoBehaviour
                     tObj.gameobject = gameobject;
                     tObj.n = n;
                     tObj.render = render;
+
+                    tObj.height = d;
                 }
             }
         }
@@ -77,38 +80,35 @@ public class MapGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown((int)MouseButton.RightMouse))
+
+        if (Input.GetMouseButtonDown((int)MouseButton.LeftMouse))
         {
             var p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
             Hex hex = m_layout.PixelToHex(new Point(p.x, p.y)).HexRound();
-            print(string.Format("PixelToHex: {0}, {1}, ", hex.q, hex.r));
-
             foreach (Hex h in hex.Ring(3))
             {
                 m_tileData[h.GetKey()].render.sprite = tiles[3];
             }
+        }
+        if (Input.GetMouseButtonDown((int)MouseButton.RightMouse))
+        {
+            var p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Hex hex = m_layout.PixelToHex(new Point(p.x, p.y)).HexRound();
+            print(string.Format("PixelToHex: {0}, {1}, ", hex.q, hex.r));
+            print(m_tileData[hex.GetKey()].height);
+        }
 
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            GameManager.Singleton.ChangeFilter();
+            foreach (var obj in m_tileData.Values) {
+                obj.SetFilter(GameManager.Singleton.currentFilter);
+            }
         }
     }
 
     private void Generate()
     {
-
-        int plates = 5;
-
-        Color[] colors = new Color[] {
-            Color.red,
-            Color.green,
-            Color.blue,
-            Color.cyan,
-            Color.grey
-        };
-
-        Color color = new Color();
-
-        var points = new List<Hex>(plates);
-
         GameObject test = new GameObject();
         var l1 = test.AddComponent<LineRenderer>();
         l1.SetPosition(0, new Vector3(0, 0, -1));
@@ -139,7 +139,7 @@ public class MapGenerator : MonoBehaviour
 
         uint seed = 123;
         Unity.Mathematics.Random rand = new Unity.Mathematics.Random(seed);
-        for (int i = 0; i < plates; i++)
+        for (int i = 0; i < WorldSettings.Singleton.plates; i++)
         {
             int x = rand.NextInt(0, pixelW);
             int y = rand.NextInt(0, pixelH);
@@ -149,7 +149,8 @@ public class MapGenerator : MonoBehaviour
 
             Instantiate(dot, new Vector3((float)pt.x, (float)pt.y, 0), Quaternion.identity);
 
-            points.Add(hex);
+            Plate p = new Plate(hex, UnityEngine.Random.ColorHSV());
+            GameManager.Singleton.Plates.Add(p);
         }
 
         for (int r = 0; r <= h; r++) // height
@@ -161,17 +162,20 @@ public class MapGenerator : MonoBehaviour
                 string mapKey = Hex.ToKey(q, r);
                 Point pixel = m_layout.HexToPixel(hex);
 
+                int closestId = 0;
                 int closest = int.MaxValue;
-                for (int i = 0; i < points.Count; i++)
+                for (int i = 0; i < WorldSettings.Singleton.plates; i++)
                 {
-                    int dist = hex.Distance(points[i]);
+                    int dist = hex.Distance(GameManager.Singleton.Plates[i].center);
 
                     if (closest > dist)
                     {
                         closest = dist;
-                        m_tileData[mapKey].render.color = colors[i];
+                        closestId = i;
                     }
                 }
+                m_tileData[mapKey].plateId = closestId;
+                GameManager.Singleton.Plates[closestId].AddHex(hex);
 
             }
         }

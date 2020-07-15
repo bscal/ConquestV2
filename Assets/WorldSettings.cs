@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
-public struct WorldSettings
+public class WorldSettings : MonoBehaviour
 {
+
+    public static WorldSettings Singleton { get; private set; }
 
     public int plates;
 
@@ -19,4 +22,8 @@ public struct WorldSettings
     public float poleTemp;
     public float equatorTemp;
 
+    private void Start()
+    {
+        Singleton = this;
+    }
 }
