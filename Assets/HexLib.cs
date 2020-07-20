@@ -11,6 +11,8 @@ public enum HexDirection
     NONE = -1, E, SE, SW, W, NW, NE
 }
 
+
+
 public struct Point
 {
     public Point(double x, double y)
@@ -24,6 +26,8 @@ public struct Point
 
 public struct Hex
 {
+    public static int DIRECTION_COUNT = 6;
+
     public Hex(int q, int r, int s)
     {
         this.q = q;
@@ -118,6 +122,7 @@ public struct Hex
     {
         return Key(q, r);
     }
+
     public static string ToKey(int q, int r)
     {
         return Key(q, r);
@@ -138,9 +143,18 @@ public struct Hex
         return q + "_" + r;
     }
 
+    public static HexDirection ReverseDirection(HexDirection dir)
+    {
+        int e = (int)dir;
+        e += 3;
+        if (e >= DIRECTION_COUNT)
+            e -= DIRECTION_COUNT;
+        return (HexDirection)e;
+    }
+
 }
 
-struct FractionalHex
+public struct FractionalHex
 {
     public FractionalHex(double q, double r, double s)
     {
@@ -308,7 +322,7 @@ struct DoubledCoord
 
 }
 
-struct Orientation
+public struct Orientation
 {
     public Orientation(double f0, double f1, double f2, double f3, double b0, double b1, double b2, double b3, double start_angle)
     {
@@ -333,7 +347,7 @@ struct Orientation
     public readonly double start_angle;
 }
 
-struct Layout
+public struct Layout
 {
     public Layout(Orientation orientation, Point size, Point origin)
     {
