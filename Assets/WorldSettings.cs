@@ -10,11 +10,24 @@ public class WorldSettings : MonoBehaviour
 
     public static WorldSettings Singleton { get; private set; }
 
-    public int plates;
+    [Header("World Settings")]
+    public uint seed;
 
+    [Header("Size")]
+    public int width;
+    public int height;
+
+    [NonSerialized]
+    public int pixelW;
+    [NonSerialized]
+    public int pixelH;
+
+    [Header("Generation")]
+    public int plates;
     public int worldType;
     public int worldAge;
 
+    [Header("Environmental")]
     public float waterFactor;
     public float mountainFactor;
     public float heatFactor;
@@ -25,5 +38,8 @@ public class WorldSettings : MonoBehaviour
     private void Start()
     {
         Singleton = this;
+
+        pixelW = (int)(width * (Mathf.Sqrt(3) * 8));
+        pixelH = (int)(height * (16.0f * .75f));
     }
 }

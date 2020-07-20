@@ -5,16 +5,14 @@ using UnityEngine;
 
 public class World
 {
+    public readonly Layout layout;
+    public readonly Dictionary<string, TileObject> tileData;
 
-    public WorldSettings settings;
+    public readonly List<Plate> plates;
 
-    public Dictionary<string, TileObject> tileData;
-
-    public List<Plate> plates;
-
-    public World(WorldSettings settings)
+    public World()
     {
-        this.settings = settings;
+        layout = new Layout(Layout.pointy, new Point(8, 8), new Point(0, 0));
         tileData = new Dictionary<string, TileObject>();
         plates = new List<Plate>(WorldSettings.Singleton.plates);
     }

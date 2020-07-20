@@ -9,20 +9,22 @@ namespace Conquest
 
         public Hex center;
         public Color color;
-        public HashSet<string> hexes;
+        public List<string> hexes;
 
         public int age;
         public float elevation;
-        public HexDirection movement;
+        public HexDirection direction;
+        public float movementSpeed;
 
         public Plate(Hex center, Color color)
         {
             this.center = center;
             this.color = color;
-            this.hexes = new HashSet<string>();
+            this.hexes = new List<string>();
             this.age = 0;
             this.elevation = 0f;
-            this.movement = HexDirection.NONE;
+            this.direction = HexDirection.NONE;
+            this.movementSpeed = 1.0f;
         }
 
         public bool ContainsHex(Hex h)

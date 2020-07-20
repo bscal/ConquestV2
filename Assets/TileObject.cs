@@ -16,11 +16,13 @@ public class TileObject : TileBase {
     public Hex hex;
 
     public int plateId = 0;
+    public int tileId = 0;
 
-    public int n = -2;
     public float height = 0;
     public float temp = 0;
     public float wetness = 0;
+
+    public bool isPlateEdge = false;
 
     public void SetFilter(HexFilter filter)
     {
@@ -31,7 +33,7 @@ public class TileObject : TileBase {
         }
         else if (filter == HexFilter.PLATE)
         {
-            render.color = GameManager.Singleton.Plates[plateId].color;
+            render.color = GameManager.Singleton.World.plates[plateId].color;
         }
     }
 }
