@@ -286,7 +286,7 @@ MonoBehaviour:
   seed: 0
   width: 48
   height: 32
-  plates: 5
+  plates: 9
   worldType: 0
   worldAge: 0
   waterFactor: 0

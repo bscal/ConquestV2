@@ -51,7 +51,8 @@ public class MapGenerator : MonoBehaviour
 
                     int n = UnityEngine.Random.Range(0, 2);
 
-                    float d = Noise.CalcPixel2D(q, r, .10f);
+                    //float d = Noise.CalcPixel2D(q, r, .10f);
+                    float d = 150;
                     if (d > 0)
                         n = 2;
                     if (d > 100)
@@ -190,21 +191,19 @@ public class MapGenerator : MonoBehaviour
         const int iterations = 100;
         for (int i = 0; i < iterations; i++)
         {
+            if (i % 10 == 0)
+            {
+                m_world.plates.ForEach((plate) => plate.direction = (HexDirection)Random.Range(0, Hex.DIRECTION_COUNT - 1));
+            }
+
             for (int r = 0; r <= m_height; r++) // height
             {
                 int r_offset = Mathf.FloorToInt(r / 2);
                 for (int q = -r_offset; q <= m_width - r_offset; q++) // width with offset
                 {
-                    // Current hex values
                     Hex hex = new Hex(q, r, -q - r);
                     string mapKey = Hex.ToKey(q, r);
                     TileObject hData = m_world.tileData[mapKey];
-                    Plate plate = m_world.plates[hData.plateId];
-
-                    TileObject data = tempData[mapKey];
-                    float height = data.height;
-                    bool isEdge = data.isPlateEdge;
-
                     /*
                      * Moves hexes values in direction of its plate.
                      * Hexes do not actually move but there values influences the direction
@@ -215,40 +214,95 @@ public class MapGenerator : MonoBehaviour
                      * If moving to hex is an edge tile it will gain height increase.
                      */
 
-                    // Other hex values
+                    // Current hex values
+                    Plate plate = m_world.plates[hData.plateId];
                     HexDirection dir = plate.direction;
+                    HexDirection rev = Hex.ReverseDirection(dir);
+                    // Temp current hex data
+                    TileObject data = tempData[mapKey];
+                    float height = data.height;
+                    bool isEdge = data.isPlateEdge;
+
+                    // Move to hex data
                     Hex dirHex = hex.Neighbor((int)plate.direction);
-
                     if (!tempData.ContainsKey(dirHex.GetKey())) continue;
-                    TileObject dirData = m_world.tileData[dirHex.GetKey()];
+                    TileObject dirData = tempData[dirHex.GetKey()];
 
-                    Hex revHex = hex.Neighbor((int)Hex.ReverseDirection(dir));
-                    TileObject reverseData = null;
-                    if (tempData.ContainsKey(revHex.GetKey()))
-                        reverseData = m_world.tileData[revHex.GetKey()];
+                    bool plateCollision = dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
 
-
-
-                    float dirHeight = dirData.height;
-                    bool dirEdge = dirData.isPlateEdge;
-                    bool awayFromEdge = reverseData == null || reverseData.isPlateEdge && reverseData.plateId != hData.plateId;
-
-                    const float MOVE_AMP = 1.25f;
-                    const float AWAY_AMP = 0.2f;
-                    const float BASE_REDUCTION = 0.2f;
-
-                    if (dirEdge)
+                    if (isEdge && !HexUtils.ArrayCountContains(m_world.tileData, hex.Front(dir), data.plateId))
                     {
-                        dirHeight *= MOVE_AMP;
-                        height /= BASE_REDUCTION;
+                        foreach (Hex h in hex.Ring(1))
+                        {
+                            if (!tempData.ContainsKey(h.GetKey())) continue;
+                            var obj = tempData[h.GetKey()].height += 1.0f;
+                        }
+                        height += 1.5f;
                     }
-                    else if (awayFromEdge)
+                    else if (isEdge && !HexUtils.ArrayCountContains(m_world.tileData, hex.Front(rev), data.plateId))
                     {
-                        height *= AWAY_AMP;
+                        foreach (Hex h in hex.Ring(1))
+                        {
+                            if (!tempData.ContainsKey(h.GetKey())) continue;
+                            var obj = tempData[h.GetKey()].height -= 1.0f;
+                        }
+                        height -= 1.5f;
                     }
-                    height *= BASE_REDUCTION;
-                    dirData.height = dirHeight;
-                    data.height = height;
+                    else
+                    {
+                        height += .5f;
+                    }
+
+
+
+
+
+
+
+
+
+
+                    //                     Hex revHex = hex.Neighbor((int)Hex.ReverseDirection(dir));
+                    //                     TileObject reverseData = null;
+                    //                     if (tempData.ContainsKey(revHex.GetKey()))
+                    //                         reverseData = tempData[revHex.GetKey()];
+                    // 
+                    // 
+                    // 
+                    //                     float dirHeight = dirData.height;
+                    //                     bool dirEdge = dirData.isPlateEdge;
+                    // 
+                    //                     const float MOVE_AMP = 3f;
+                    //                     const float AWAY_AMP = -3f;
+                    //                     const float BASE_REDUCTION = -1f;
+                    //                     const float BASE_INCREASE = 1f;
+                    // 
+                    //                     // Same plate
+                    //                     if (dirEdge && dirData.plateId == data.plateId)
+                    //                     {
+                    //                         height += BASE_INCREASE;
+                    //                     }
+                    // 
+                    //                     if (dirEdge && plateCollision)
+                    //                     {
+                    //                         dirHeight += MOVE_AMP;
+                    //                         height += MOVE_AMP;
+                    //                     }
+                    // 
+                    //                     if (reverseData != null)
+                    //                     {
+                    //                         bool awayFromEdge = reverseData.plateId != hData.plateId;
+                    //                         bool plateAway = dir == m_world.plates[reverseData.plateId].direction;
+                    // 
+                    //                         if (awayFromEdge && plateAway)
+                    //                         {
+                    //                             height += AWAY_AMP;
+                    //                             reverseData.height += AWAY_AMP;
+                    //                         }
+                    //                     }
+                    // 
+                    //                     dirData.height = dirHeight;
+                    //                     data.height = height;
                 }
             }
         }
@@ -257,7 +311,7 @@ public class MapGenerator : MonoBehaviour
             float h = pair.Value.height;
             m_world.tileData[pair.Key].height = h;
             int n = 0;
-            if (h > -1)
+            if (h < 100)
                 n = 2;
             if (h > 100)
                 n = 0;

@@ -152,6 +152,24 @@ public struct Hex
         return (HexDirection)e;
     }
 
+    public Hex[] Front(HexDirection dir)
+    {
+        int dirFront = (int)dir;
+        int dirUp = ((int)dir + 1 > 5) ? 0 : (int)dir + 1;
+        int dirDown = ((int)dir - 1 < 0) ? 5 : (int)dir - 1;
+
+        return new Hex[] { Add(Neighbor(dirFront)), Add(Neighbor(dirUp)), Add(Neighbor(dirDown)) };
+    }
+
+    public Hex[] Behind( HexDirection dir)
+    {
+        int dirBack = (int)ReverseDirection(dir);
+        int dirUp = (dirBack + 1 > 5) ? 0 : dirBack + 1;
+        int dirDown = (dirBack - 1 < 0) ? 5 : dirBack - 1;
+
+        return new Hex[] { Add(Neighbor(dirBack)), Add(Neighbor(dirUp)), Add(Neighbor(dirDown)) };
+    }
+
 }
 
 public struct FractionalHex
