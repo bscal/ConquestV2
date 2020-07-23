@@ -27,5 +27,16 @@ namespace Conquest {
             return hexes.Length == contains;
         }
 
+        public static Hex WrapOffset(Hex h, int gridWidth)
+        {
+            int newQ;
+            if (h.s < -gridWidth)
+                newQ = gridWidth + 1 + h.s;
+            else
+                newQ = gridWidth - 1 + h.s;
+
+            return new Hex(newQ, h.r, -newQ - h.r);
+        }
+
     }
 }

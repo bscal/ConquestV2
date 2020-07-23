@@ -23,11 +23,11 @@ public class MapGenerator : MonoBehaviour
 
     public World CreateWorld()
     {
-        m_world = new World();
         m_width = WorldSettings.Singleton.width;
         m_height = WorldSettings.Singleton.height;
         m_pixelW = WorldSettings.Singleton.pixelW;
         m_pixelH = WorldSettings.Singleton.pixelH;
+        m_world = new World(m_width, m_height);
         m_layout = m_world.layout;
 
         SimplexNoise.Noise.Seed = 209323094;
@@ -43,10 +43,9 @@ public class MapGenerator : MonoBehaviour
 
                 if (!m_world.tileData.ContainsKey(mapKey))
                 {
-                    TileObject tObj = ScriptableObject.CreateInstance<TileObject>();
-                    m_world.tileData.Add(mapKey, tObj);
-
                     GameObject gameobject = Instantiate(prefab, new Vector3((float)pixel.x, (float)pixel.y, 0), Quaternion.identity);
+                    TileObject tObj = gameobject.AddComponent<TileObject>();
+                    m_world.tileData.Add(mapKey, tObj);
                     SpriteRenderer render = gameobject.GetComponent<SpriteRenderer>();
 
                     int n = UnityEngine.Random.Range(0, 2);
@@ -119,7 +118,7 @@ public class MapGenerator : MonoBehaviour
             Instantiate(dot, new Vector3((float)pt.x, (float)pt.y, -1), Quaternion.identity);
 
             Plate p = new Plate(hex, UnityEngine.Random.ColorHSV());
-            p.elevation = Random.Range(0, 4);
+            p.elevation = Random.Range(0f, 255f);
             p.direction = (HexDirection)Random.Range(0, Hex.DIRECTION_COUNT - 1);
             m_world.plates.Add(p);
         }
@@ -188,12 +187,13 @@ public class MapGenerator : MonoBehaviour
          *  ------------------------------------------------------
          */
         Dictionary<string, TileObject> tempData = m_world.tileData.ToDictionary(entry => entry.Key, entry => entry.Value);
-        const int iterations = 100;
+        const int iterations = 0;
         for (int i = 0; i < iterations; i++)
         {
-            if (i % 10 == 0)
+            if (i % 100 == 0)
             {
                 m_world.plates.ForEach((plate) => plate.direction = (HexDirection)Random.Range(0, Hex.DIRECTION_COUNT - 1));
+                print("changing directions");
             }
 
             for (int r = 0; r <= m_height; r++) // height
@@ -220,8 +220,8 @@ public class MapGenerator : MonoBehaviour
                     HexDirection rev = Hex.ReverseDirection(dir);
                     // Temp current hex data
                     TileObject data = tempData[mapKey];
-                    float height = data.height;
-                    bool isEdge = data.isPlateEdge;
+                    float height = hData.height;
+                    bool isEdge = hData.isPlateEdge;
 
                     // Move to hex data
                     Hex dirHex = hex.Neighbor((int)plate.direction);
@@ -229,29 +229,54 @@ public class MapGenerator : MonoBehaviour
                     TileObject dirData = tempData[dirHex.GetKey()];
 
                     bool plateCollision = dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
+                    bool isDifferentPlate = dirData.plateId != data.plateId;
+                    bool isDifferentPlateMovingIntoCur = dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
+                    bool isCurPlateSmaller = m_world.plates[dirData.plateId].elevation < m_world.plates[dirData.plateId].elevation;
 
-                    if (isEdge && !HexUtils.ArrayCountContains(m_world.tileData, hex.Front(dir), data.plateId))
+                    float val = height * .025f;
+
+
+                    if (isDifferentPlate && isDifferentPlateMovingIntoCur)
                     {
-                        foreach (Hex h in hex.Ring(1))
+                        if (isCurPlateSmaller)
                         {
-                            if (!tempData.ContainsKey(h.GetKey())) continue;
-                            var obj = tempData[h.GetKey()].height += 1.0f;
+                            data.height -= val;
                         }
-                        height += 1.5f;
-                    }
-                    else if (isEdge && !HexUtils.ArrayCountContains(m_world.tileData, hex.Front(rev), data.plateId))
-                    {
-                        foreach (Hex h in hex.Ring(1))
+                        else
                         {
-                            if (!tempData.ContainsKey(h.GetKey())) continue;
-                            var obj = tempData[h.GetKey()].height -= 1.0f;
+                            data.height += val;
                         }
-                        height -= 1.5f;
                     }
-                    else
+                    else if (!isDifferentPlate)
                     {
-                        height += .5f;
+                        data.height -= val;
+                        dirData.height += val;
                     }
+
+
+
+                    //                     if (isEdge && !HexUtils.ArrayCountContains(m_world.tileData, hex.Front(dir), data.plateId))
+                    //                     {
+                    //                         foreach (Hex h in hex.Ring(1))
+                    //                         {
+                    //                             if (!tempData.ContainsKey(h.GetKey())) continue;
+                    //                             var obj = tempData[h.GetKey()].height += 1.0f;
+                    //                         }
+                    //                         height += 1.5f;
+                    //                     }
+                    //                     else if (isEdge && !HexUtils.ArrayCountContains(m_world.tileData, hex.Front(rev), data.plateId))
+                    //                     {
+                    //                         foreach (Hex h in hex.Ring(1))
+                    //                         {
+                    //                             if (!tempData.ContainsKey(h.GetKey())) continue;
+                    //                             var obj = tempData[h.GetKey()].height -= 1.0f;
+                    //                         }
+                    //                         height -= 1.5f;
+                    //                     }
+                    //                     else
+                    //                     {
+                    //                         height += .5f;
+                    //                     }
 
 
 
@@ -303,6 +328,96 @@ public class MapGenerator : MonoBehaviour
                     // 
                     //                     dirData.height = dirHeight;
                     //                     data.height = height;
+                }
+            }
+        }
+        foreach (var pair in tempData)
+        {
+            float h = pair.Value.height;
+            m_world.tileData[pair.Key].height = h;
+            int n = 0;
+            if (h < 100)
+                n = 2;
+            if (h > 100)
+                n = 0;
+            if (h > 200)
+                n = 1;
+            m_world.tileData[pair.Key].tileId = n;
+            m_world.tileData[pair.Key].render.sprite = tiles[n];
+        }
+    }
+
+    const int numOfIters = 200;
+    float timer = 0f;
+    int iters = 0;
+    void Update()
+    {
+        timer += Time.deltaTime;
+        if (timer < 555.5f) return;
+        timer = 0;
+        iters++;
+        if (iters > numOfIters)
+        {
+            print("done"); 
+            return;
+        }
+        print("itering");
+
+        if (iters % 50 == 0)
+        {
+            m_world.plates.ForEach((plate) => plate.direction = (HexDirection)Random.Range(0, Hex.DIRECTION_COUNT - 1));
+            print("changing directions");
+        }
+
+        Dictionary<string, TileObject> tempData = m_world.tileData.ToDictionary(entry => entry.Key, entry => entry.Value);
+
+        for (int r = 0; r <= m_height; r++) // height
+        {
+            int r_offset = Mathf.FloorToInt(r / 2);
+            for (int q = -r_offset; q <= m_width - r_offset; q++) // width with offset
+            {
+                Hex hex = new Hex(q, r, -q - r);
+                string mapKey = Hex.ToKey(q, r);
+
+                if (!m_world.tileData.ContainsKey(mapKey) && WorldSettings.Singleton.wrapWorld) 
+                {
+
+                }
+
+                TileObject hData = m_world.tileData[mapKey];
+                Plate plate = m_world.plates[hData.plateId];
+                HexDirection dir = plate.direction;
+                HexDirection rev = Hex.ReverseDirection(dir);
+                TileObject data = tempData[mapKey];
+                float height = hData.height;
+                bool isEdge = hData.isPlateEdge;
+                Hex dirHex = hex.Neighbor((int)plate.direction);
+                if (!tempData.ContainsKey(dirHex.GetKey())) continue;
+                TileObject dirData = tempData[dirHex.GetKey()];
+
+                bool plateCollision = dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
+                bool isDifferentPlate = dirData.plateId != data.plateId;
+                bool isDifferentPlateMovingIntoCur = dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
+                bool isCurPlateSmaller = m_world.plates[dirData.plateId].elevation < m_world.plates[dirData.plateId].elevation;
+
+                float val = height * .025f;
+
+
+                if (isDifferentPlate && isDifferentPlateMovingIntoCur)
+                {
+                    data.height += val;
+                }
+                else if (!isDifferentPlate)
+                {
+                    if (data.height < dirData.height / 2)
+                    {
+                        data.height += dirData.height * 0.1f;
+                    }
+                    else
+                    {
+                        data.height -= val;
+                    }
+                    dirData.height += val;
                 }
             }
         }

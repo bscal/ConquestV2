@@ -12,6 +12,7 @@ public class WorldSettings : MonoBehaviour
 
     [Header("World Settings")]
     public uint seed;
+    public bool wrapWorld;
 
     [Header("Size")]
     public int width;

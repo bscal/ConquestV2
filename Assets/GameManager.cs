@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
         {
             var p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Hex hex = World.layout.PixelToHex(new Point(p.x, p.y)).HexRound();
-            foreach (Hex h in hex.Ring(3))
+            foreach (Hex h in hex.Ring(2))
             {
                 World.tileData[h.GetKey()].render.sprite = generator.tiles[3];
             }
@@ -38,7 +38,9 @@ public class GameManager : MonoBehaviour
         {
             var p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Hex hex = World.layout.PixelToHex(new Point(p.x, p.y)).HexRound();
-            print(string.Format("PixelToHex: {0}, {1}, ", hex.q, hex.r));
+            Hex wrap = HexUtils.WrapOffset(hex, World.size.x);
+            print(string.Format("PixelToHex: {0}, {1}, {2} ", hex.q, hex.r, hex.s));
+            print(string.Format("PixelToHex: {0}, {1}, ", wrap.q, wrap.r));
             print(World.tileData[hex.GetKey()].height);
             print(World.tileData[hex.GetKey()].plateId);
             print(World.tileData[hex.GetKey()].isPlateEdge);
@@ -52,6 +54,7 @@ public class GameManager : MonoBehaviour
                 obj.SetFilter(GameManager.Singleton.currentFilter);
             }
         }
+
     }
 
     public void ChangeFilter()
