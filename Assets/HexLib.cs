@@ -118,6 +118,41 @@ public struct Hex
         return results;
     }
 
+    public List<Hex> Spiral(int radius)
+    {
+        //var results = [center]
+        //for each 1 ≤ k ≤ radius:
+            //results = results + cube_ring(center, k)
+        //return results
+
+        List<Hex> results = new List<Hex>();
+
+        for (int i = 1; i < radius + 1; i++)
+        {
+            results.AddRange(Ring(i));
+        }
+
+        return results;
+    }
+
+    public Hex[] Front(HexDirection dir)
+    {
+        int dirFront = (int)dir;
+        int dirUp = ((int)dir + 1 > 5) ? 0 : (int)dir + 1;
+        int dirDown = ((int)dir - 1 < 0) ? 5 : (int)dir - 1;
+
+        return new Hex[] { Add(Neighbor(dirFront)), Add(Neighbor(dirUp)), Add(Neighbor(dirDown)) };
+    }
+
+    public Hex[] Behind( HexDirection dir)
+    {
+        int dirBack = (int)ReverseDirection(dir);
+        int dirUp = (dirBack + 1 > 5) ? 0 : dirBack + 1;
+        int dirDown = (dirBack - 1 < 0) ? 5 : dirBack - 1;
+
+        return new Hex[] { Add(Neighbor(dirBack)), Add(Neighbor(dirUp)), Add(Neighbor(dirDown)) };
+    }
+
     public string GetKey()
     {
         return Key(q, r);
@@ -152,24 +187,24 @@ public struct Hex
         return (HexDirection)e;
     }
 
-    public Hex[] Front(HexDirection dir)
+    public override bool Equals(object obj)
     {
-        int dirFront = (int)dir;
-        int dirUp = ((int)dir + 1 > 5) ? 0 : (int)dir + 1;
-        int dirDown = ((int)dir - 1 < 0) ? 5 : (int)dir - 1;
+        if (this == null || obj == null) return false;
+        if (obj.GetType() != typeof(Hex)) return false;
 
-        return new Hex[] { Add(Neighbor(dirFront)), Add(Neighbor(dirUp)), Add(Neighbor(dirDown)) };
+        Hex other = (Hex)obj;
+        return q == other.q && r == other.r && s == other.s;
     }
 
-    public Hex[] Behind( HexDirection dir)
+    public static bool operator ==(Hex left, Hex right)
     {
-        int dirBack = (int)ReverseDirection(dir);
-        int dirUp = (dirBack + 1 > 5) ? 0 : dirBack + 1;
-        int dirDown = (dirBack - 1 < 0) ? 5 : dirBack - 1;
-
-        return new Hex[] { Add(Neighbor(dirBack)), Add(Neighbor(dirUp)), Add(Neighbor(dirDown)) };
+        return left.Equals(right);
     }
 
+    public static bool operator !=(Hex left, Hex right)
+    {
+        return !(left == right);
+    }
 }
 
 public struct FractionalHex
