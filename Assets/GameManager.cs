@@ -29,9 +29,10 @@ public class GameManager : MonoBehaviour
         {
             var p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Hex hex = World.layout.PixelToHex(new Point(p.x, p.y)).HexRound();
+            if (!World.ContainsHex(hex)) hex = HexUtils.WrapOffset(hex, World.size.x);
             foreach (Hex h in hex.Ring(2))
             {
-                World.tileData[h.GetKey()].render.sprite = generator.tiles[3];
+                World.GetHexData(h, true).render.sprite = generator.tiles[3];
             }
         }
         if (Input.GetMouseButtonDown((int)MouseButton.RightMouse))
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviour
             print(World.tileData[hex.GetKey()].height);
             print(World.tileData[hex.GetKey()].plateId);
             print(World.tileData[hex.GetKey()].isPlateEdge);
+            print(World.plates[World.tileData[hex.GetKey()].plateId].direction);
         }
 
         if (Input.GetKeyDown(KeyCode.R))

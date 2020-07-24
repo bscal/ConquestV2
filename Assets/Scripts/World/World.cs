@@ -20,5 +20,41 @@ namespace Conquest {
             plates = new List<Plate>(WorldSettings.Singleton.plates);
         }
 
+        public bool ContainsHex(Hex hex)
+        {
+            return tileData.ContainsKey(hex.GetKey());
+        }
+
+        public TileObject GetHexData(Hex hex, bool wrapIfNull)
+        {
+            string key = hex.GetKey();
+
+            if (!tileData.ContainsKey(key))
+            {
+                if (wrapIfNull && !HexUtils.HexYBounds(size.y, hex.r))
+                {
+                    key = HexUtils.WrapOffset(hex, size.x).GetKey();
+                    return tileData[key];
+                }
+                return null;
+            }
+            return tileData[key];
+        }
+
+        public bool TryGetHexData(Hex hex, bool wrapIfNull, out TileObject data)
+        {
+            string key = hex.GetKey();
+
+            if (wrapIfNull && !tileData.ContainsKey(key) && !HexUtils.HexYBounds(size.y, hex.r))
+                key = HexUtils.WrapOffset(hex, size.x).GetKey();
+
+            return tileData.TryGetValue(key, out data);
+        }
+
+        public TileObject GetWrappedHex(Hex hex)
+        {
+            return tileData[HexUtils.WrapOffset(hex, size.x).GetKey()];
+        }
+
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Conquest
 {
-    public struct Plate
+    public class Plate
     {
 
         public Hex center;

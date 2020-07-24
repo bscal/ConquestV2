@@ -3,94 +3,99 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public enum HexFilter
+namespace Conquest
 {
-    NONE,
-    PLATE
-}
 
-public class TileObject : MonoBehaviour {
-
-    Renderer m_Renderer;
-    Camera m_cam;
-
-    public GameObject gameobject;
-    public SpriteRenderer render;
-    public Hex hex;
-
-    public int plateId = 0;
-    public int tileId = 0;
-
-    public float height = 0;
-    public float temp = 0;
-    public float wetness = 0;
-
-    public bool isPlateEdge = false;
-
-    public void SetFilter(HexFilter filter)
+    public enum HexFilter
     {
-
-        if (filter == HexFilter.NONE)
-        {
-            render.color = Color.white;
-        }
-        else if (filter == HexFilter.PLATE)
-        {
-            render.color = GameManager.Singleton.World.plates[plateId].color;
-        }
-    }
-    void Start()
-    {
-        m_Renderer = GetComponent<Renderer>();
-        m_cam = Camera.main;
+        NONE,
+        PLATE
     }
 
-    private void Update()
+    public class TileObject : MonoBehaviour
     {
-        if (m_Renderer.isVisible)
+
+        Renderer m_Renderer;
+        Camera m_cam;
+
+        public GameObject gameobject;
+        public SpriteRenderer render;
+        public Hex hex;
+
+        public int plateId = 0;
+        public int tileId = 0;
+
+        public float height = 0;
+        public float temp = 0;
+        public float wetness = 0;
+
+        public bool isPlateEdge = false;
+
+        public void SetFilter(HexFilter filter)
         {
 
+            if (filter == HexFilter.NONE)
+            {
+                render.color = Color.white;
+            }
+            else if (filter == HexFilter.PLATE)
+            {
+                render.color = GameManager.Singleton.World.plates[plateId].color;
+            }
         }
-        else
+        void Start()
         {
-        }
-    }
-
-    private void OnBecameVisible()
-    {
-        Point op = GameManager.Singleton.World.layout.HexToPixel(hex);
-        Vector3 opos = new Vector3((float)op.x, (float)op.y);
-        if (Camera.main != null && new Rect(0, 0, 1, 1).Contains(Camera.main.WorldToViewportPoint(opos)))
-        {
-            var curPos = GameManager.Singleton.World.layout.HexToPixel(hex);
-            transform.position = new Vector3((float)curPos.x, (float)curPos.y);
-            return;
-        }
-    }
-
-    private void OnBecameInvisible()
-    {
-        if (Camera.main == null) return;
-        Point op = GameManager.Singleton.World.layout.HexToPixel(hex);
-        Vector3 opos = new Vector3((float)op.x, (float)op.y);
-        if (new Rect(0, 0, 1, 1).Contains(Camera.main.WorldToViewportPoint(opos)))
-        {
-            transform.position = new Vector3((float)opos.x, (float)opos.y);
-            return;
+            m_Renderer = GetComponent<Renderer>();
+            m_cam = Camera.main;
         }
 
-        OffsetCoord coord = OffsetCoord.RoffsetFromCube(OffsetCoord.EVEN, hex);
-        int newQ;
-        if (coord.col > GameManager.Singleton.World.size.x/2)
-            newQ = hex.q - GameManager.Singleton.World.size.x - 1;
-        else
-            newQ = hex.q + GameManager.Singleton.World.size.x + 1;
-        Hex h = new Hex(newQ, hex.r, -newQ - hex.r);
-        Point p = GameManager.Singleton.World.layout.HexToPixel(h);
-        Vector3 pos = new Vector3((float)p.x, (float)p.y);
-        if (new Rect(0, 0, 1, 1).Contains(Camera.main.WorldToViewportPoint(pos)))
+        private void Update()
         {
-            transform.position = pos;
+            if (m_Renderer.isVisible)
+            {
+
+            }
+            else
+            {
+            }
+        }
+
+        private void OnBecameVisible()
+        {
+            Point op = GameManager.Singleton.World.layout.HexToPixel(hex);
+            Vector3 opos = new Vector3((float)op.x, (float)op.y);
+            if (Camera.main != null && new Rect(0, 0, 1, 1).Contains(Camera.main.WorldToViewportPoint(opos)))
+            {
+                var curPos = GameManager.Singleton.World.layout.HexToPixel(hex);
+                transform.position = new Vector3((float)curPos.x, (float)curPos.y);
+                return;
+            }
+        }
+
+        private void OnBecameInvisible()
+        {
+            if (Camera.main == null) return;
+            Point op = GameManager.Singleton.World.layout.HexToPixel(hex);
+            Vector3 opos = new Vector3((float)op.x, (float)op.y);
+            if (new Rect(0, 0, 1, 1).Contains(Camera.main.WorldToViewportPoint(opos)))
+            {
+                transform.position = new Vector3((float)opos.x, (float)opos.y);
+                return;
+            }
+
+            OffsetCoord coord = OffsetCoord.RoffsetFromCube(OffsetCoord.EVEN, hex);
+            int newQ;
+            if (coord.col > GameManager.Singleton.World.size.x / 2)
+                newQ = hex.q - GameManager.Singleton.World.size.x - 1;
+            else
+                newQ = hex.q + GameManager.Singleton.World.size.x + 1;
+            Hex h = new Hex(newQ, hex.r, -newQ - hex.r);
+            Point p = GameManager.Singleton.World.layout.HexToPixel(h);
+            Vector3 pos = new Vector3((float)p.x, (float)p.y);
+            if (new Rect(0, 0, 1, 1).Contains(Camera.main.WorldToViewportPoint(pos)))
+            {
+                transform.position = pos;
+            }
         }
     }
 }
