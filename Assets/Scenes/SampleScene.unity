@@ -194,10 +194,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 519420031}
-  moveSpeed: 128
+  moveSpeed: 32
   scrollSpeed: 16
   minZoom: 5
-  maxZoom: 500
+  maxZoom: 800
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -287,8 +287,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: 0
   wrapWorld: 1
-  width: 80
-  height: 64
+  width: 64
+  height: 32
   plates: 7
   worldType: 0
   worldAge: 0

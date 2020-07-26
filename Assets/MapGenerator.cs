@@ -66,7 +66,7 @@ namespace Conquest
 
                         int n = UnityEngine.Random.Range(0, 2);
 
-                        float d = Noise.CalcPixel2D(q, r, .10f);
+                        float d = Noise.CalcPixel2D(q, r, .05f);
                         //float d = 150;
                         if (d > 0)
                             n = 2;
@@ -134,9 +134,10 @@ namespace Conquest
 
                 Instantiate(dot, new Vector3((float)pt.x, (float)pt.y, -1), Quaternion.identity);
 
-                Plate p = new Plate(hex, UnityEngine.Random.ColorHSV());
-                p.elevation = Random.Range(0f, 255f);
-                p.direction = (HexDirection)Random.Range(0, Hex.DIRECTION_COUNT - 1);
+                Plate p = new Plate(hex, UnityEngine.Random.ColorHSV()) {
+                    elevation = Random.Range(0f, 255f),
+                    direction = (HexDirection)Random.Range(0, Hex.DIRECTION_COUNT - 1)
+                };
                 m_world.plates.Add(p);
             }
 
@@ -217,6 +218,7 @@ namespace Conquest
             const int iterations = 0;
             for (int i = 0; i < iterations; i++)
             {
+                
                 if (i % 100 == 0)
                 {
                     m_world.plates.ForEach((plate) => plate.direction = (HexDirection)Random.Range(0, Hex.DIRECTION_COUNT - 1));
@@ -381,9 +383,8 @@ namespace Conquest
         {
             if (m_state == GenState.DONE) return;
             if (m_state != GenState.ITERATING) m_state = GenState.ITERATING;
-
             timer += Time.deltaTime;
-            if (timer < .01f) return;
+            if (timer < 5.0f) return;
             timer = 0;
             iters++;
             if (iters > numOfIters)
@@ -394,17 +395,19 @@ namespace Conquest
                 Smooth();
             }
 
+
             if (iters != 0 && iters % 200 == 0)
             {
                 for (int i = 0; i < m_world.plates.Count; i++)
                 {
                     Plate p = m_world.plates[i];
                     p.direction = (HexDirection)Random.Range(0, Hex.DIRECTION_COUNT - 1);
+                    SetCollisions(false);
                 }
                 
                 print("changing directions");
             }
-
+            CalcCollisions();
             Dictionary<string, TileObject> tempData = m_world.tileData.ToDictionary(entry => entry.Key, entry => entry.Value);
 
             for (int r = 0; r <= m_height; r++) // height
@@ -418,81 +421,83 @@ namespace Conquest
                     TileObject hData = m_world.tileData[mapKey];
                     Plate plate = m_world.plates[hData.plateId];
                     HexDirection dir = plate.direction;
-                    HexDirection rev = Hex.ReverseDirection(dir);
                     TileObject data = tempData[mapKey];
                     float height = hData.height;
                     bool isEdge = hData.isPlateEdge;
 
-
-                    Hex dirHex = hex.Neighbor((int)plate.direction);
-                    Hex revHex = hex.Neighbor((int)Hex.ReverseDirection(plate.direction));
+                    Hex dirHex = hex.Neighbor((int)dir);
+                    Hex revHex = hex.Neighbor((int)Hex.ReverseDirection(dir));
 
                     bool dirNotNull = m_world.TryGetHexData(dirHex, WorldSettings.Singleton.wrapWorld, out TileObject dirData);
                     bool revNotNull = m_world.TryGetHexData(revHex, WorldSettings.Singleton.wrapWorld, out TileObject revData);
 
-                    if (!dirNotNull) continue;
 
+                    Plate dirPlate = dirNotNull ? m_world.plates[dirData.plateId] : null;
                     bool dirDiffPlate = dirNotNull && hData.plateId != dirData.plateId;
                     bool revDiffPlate = revNotNull && hData.plateId != revData.plateId;
 
                     bool dirInto = dirNotNull && dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
-                    bool revInto = revNotNull && dir == Hex.ReverseDirection(m_world.plates[revData.plateId].direction);
-                    bool dirAway = dirNotNull && dir == m_world.plates[dirData.plateId].direction;
-                    bool revAway = revNotNull && dir == m_world.plates[revData.plateId].direction;
+                    bool revAway = revNotNull && dir == Hex.ReverseDirection(m_world.plates[revData.plateId].direction);
+                    //bool dirAway = dirNotNull && dir == m_world.plates[dirData.plateId].direction;
+                    bool revInto = revNotNull && dir == m_world.plates[revData.plateId].direction;
 
-                    bool dirHigher = plate.elevation < m_world.plates[dirData.plateId].elevation;
+                    bool dirHigher = dirNotNull && plate.elevation < dirPlate.elevation;
 
                     //old
                     //bool plateCollision = dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
                     //bool isDifferentPlate = dirData.plateId != data.plateId;
-                    bool isDifferentPlateMovingIntoCur = dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
+                    //bool isDifferentPlateMovingIntoCur = dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
                     //bool isCurPlateSmaller = m_world.plates[dirData.plateId].elevation < m_world.plates[dirData.plateId].elevation;
-                    bool isFrontCollision = dirNotNull && HexUtils.ArrayContainsPlate(m_world.tileData, hex.Front(dir), dirData.plateId, WorldSettings.Singleton.wrapWorld);
+                    //bool isFrontCollision = dirNotNull && HexUtils.ArrayContainsPlate(m_world.tileData, hex.Front(dir), dirData.plateId, WorldSettings.Singleton.wrapWorld);
 
+
+                    //                     float baseVal = height * .015f;
+                    // 
+                    //                     data.height -= baseVal;
+                    //                     if (dirHigher)
+                    //                         dirData.height += baseVal;
 
                     //values
-                    float val = height * .01f;
-                    float baseVal = height * .015f;
+                    //                     float val = height * .015f;
+                    //                     float baseVal = height * .005f;
+                    // 
+                    //                     data.height -= baseVal;
+                    //                     if (dirHigher)
+                    //                         dirData.height += val;
+                    //                     else
+                    //                         dirData.height += baseVal;
 
-                    data.height -= baseVal;
-                    dirData.height += baseVal;
+                    float val = height;
+                    float increase = height * .1f;
+                    float start = height * .1f;
 
+                    //                     if (isEdge)
+                    //                     {
+                    //                         if (dirDiffPlate && dirInto)
+                    //                         {
+                    //                             data.height += height * .25f;
+                    //                         }
+                    //                     }
+                    
+                    if (!dirNotNull) continue;
+                    if (HexUtils.HexYOutOfBounds(m_world.size.y, dirData.hex.r) )
+                    {
+                        //data.height += revData.height * .025f;
+                        //tempData[revData.hex.GetKey()].height = 10 + revData.height * .5f;
+                        continue;
+                    }
 
-                    //if (isFrontCollision && isDifferentPlateMovingIntoCur)
-                    //{
-                    //    data.height += baseVal;
-                    //}
-                    //else if (!dirDiffPlate)
-                    //{
-                    //    if (data.height < dirData.height / 2)
-                    //    {
-                    //        data.height += baseVal;
-                    //    }
-                    //    else
-                    //    {
-                    //        data.height -= baseVal;
-                    //    }
-                    //    dirData.height += baseVal;
-                    //}
+                    var tmpData = tempData[dirData.hex.GetKey()];
+
+                    tmpData.height = data.height;
+                    //tmpData.plateId = data.plateId;
+                    //tmpData.empty = false;
+
+                    //data.height = revData.height;
+
                 }
             }
-
-
-            foreach (var pair in tempData)
-            {
-                float h = pair.Value.height;
-                m_world.tileData[pair.Key].height = h;
-                int n = 0;
-                if (h < 100)
-                    n = 2;
-                if (h > 100)
-                    n = 0;
-                if (h > 200)
-                    n = 1;
-                m_world.tileData[pair.Key].tileId = n;
-                m_world.tileData[pair.Key].render.sprite = tiles[n];
-            }
-
+            ApplyTiles(tempData);
         }
 
         private IEnumerator GenerateRoutine()
@@ -504,6 +509,27 @@ namespace Conquest
                     print("State_Generate");
                 else if (m_state == GenState.ITERATING)
                     print("State_Iterating");
+            }
+        }
+
+        private void ApplyTiles(in Dictionary<string, TileObject> tempData)
+        {
+            foreach (var pair in tempData)
+            {
+                float h = pair.Value.height;
+
+                TileObject toTile = m_world.tileData[pair.Key];
+                toTile.height = h;
+                int n = 0;
+                if (h < 100)
+                    n = 2;
+                if (h > 100)
+                    n = 0;
+                if (h > 200)
+                    n = 1;
+                toTile.tileId = n;
+                toTile.render.sprite = tiles[n];
+                toTile.collision = pair.Value.collision;
             }
         }
 
@@ -526,19 +552,34 @@ namespace Conquest
                 }
                 tempData[key].height += (avg / count) * .1f;
             }
-            foreach (var pair in tempData)
+            ApplyTiles(tempData);
+        }
+
+        private void SetCollisions(bool val)
+        {
+            foreach (var pair in m_world.tileData)
             {
-                float h = pair.Value.height;
-                m_world.tileData[pair.Key].height = h;
-                int n = 0;
-                if (h < 100)
-                    n = 2;
-                if (h > 100)
-                    n = 0;
-                if (h > 200)
-                    n = 1;
-                m_world.tileData[pair.Key].tileId = n;
-                m_world.tileData[pair.Key].render.sprite = tiles[n];
+                pair.Value.collision = val;
+            }
+        }
+
+        private void CalcCollisions()
+        {
+            foreach (var pair in m_world.tileData)
+            {
+                Hex h = pair.Value.hex.Neighbor((int)m_world.plates[pair.Value.plateId].direction);
+                if (!m_world.TryGetHexData(h, WorldSettings.Singleton.wrapWorld, out TileObject dirData))
+                    continue;
+                bool dirDiffPlate = pair.Value.plateId != dirData.plateId;
+
+                pair.Value.empty = true;
+
+                if (HexUtils.HexYOutOfBounds(m_world.size.y, dirData.hex.r) || dirData.collision)
+                {
+                    pair.Value.collision = true;
+
+                }
+                    
             }
         }
     }

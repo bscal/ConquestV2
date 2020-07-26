@@ -13,7 +13,7 @@ namespace Conquest {
             {
                 if (!hexdata.ContainsKey(h.GetKey()))
                 {
-                    if (wrap && !HexUtils.HexYBounds(WorldSettings.Singleton.height, h.r))
+                    if (wrap && !HexUtils.HexYOutOfBounds(WorldSettings.Singleton.height, h.r))
                     {
                         string key = HexUtils.WrapOffset(h, WorldSettings.Singleton.width).GetKey();
                         if (hexdata.ContainsKey(key) && hexdata[key].plateId == plateId)
@@ -51,9 +51,9 @@ namespace Conquest {
             return new Hex(newQ, h.r, -newQ - h.r);
         }
 
-        public static bool HexYBounds(int height, int y)
+        public static bool HexYOutOfBounds(int height, int y)
         {
-            return y < 0 || y > height - 1;
+            return y < 0 || y > height;
         }
 
     }

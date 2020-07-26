@@ -31,7 +31,7 @@ namespace Conquest {
 
             if (!tileData.ContainsKey(key))
             {
-                if (wrapIfNull && !HexUtils.HexYBounds(size.y, hex.r))
+                if (wrapIfNull && !HexUtils.HexYOutOfBounds(size.y, hex.r))
                 {
                     key = HexUtils.WrapOffset(hex, size.x).GetKey();
                     return tileData[key];
@@ -45,7 +45,7 @@ namespace Conquest {
         {
             string key = hex.GetKey();
 
-            if (wrapIfNull && !tileData.ContainsKey(key) && !HexUtils.HexYBounds(size.y, hex.r))
+            if (wrapIfNull && !tileData.ContainsKey(key) && !HexUtils.HexYOutOfBounds(size.y, hex.r))
                 key = HexUtils.WrapOffset(hex, size.x).GetKey();
 
             return tileData.TryGetValue(key, out data);

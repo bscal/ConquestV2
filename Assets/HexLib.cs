@@ -24,7 +24,7 @@ public struct Point
     public readonly double y;
 }
 
-public struct Hex
+public class Hex
 {
     public static int DIRECTION_COUNT = 6;
 

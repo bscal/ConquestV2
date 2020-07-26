@@ -15,9 +15,6 @@ namespace Conquest
     public class TileObject : MonoBehaviour
     {
 
-        Renderer m_Renderer;
-        Camera m_cam;
-
         public GameObject gameobject;
         public SpriteRenderer render;
         public Hex hex;
@@ -30,35 +27,8 @@ namespace Conquest
         public float wetness = 0;
 
         public bool isPlateEdge = false;
-
-        public void SetFilter(HexFilter filter)
-        {
-
-            if (filter == HexFilter.NONE)
-            {
-                render.color = Color.white;
-            }
-            else if (filter == HexFilter.PLATE)
-            {
-                render.color = GameManager.Singleton.World.plates[plateId].color;
-            }
-        }
-        void Start()
-        {
-            m_Renderer = GetComponent<Renderer>();
-            m_cam = Camera.main;
-        }
-
-        private void Update()
-        {
-            if (m_Renderer.isVisible)
-            {
-
-            }
-            else
-            {
-            }
-        }
+        public bool collision = false;
+        public bool empty = false;
 
         private void OnBecameVisible()
         {
@@ -95,6 +65,18 @@ namespace Conquest
             if (new Rect(0, 0, 1, 1).Contains(Camera.main.WorldToViewportPoint(pos)))
             {
                 transform.position = pos;
+            }
+        }
+        public void SetFilter(HexFilter filter)
+        {
+
+            if (filter == HexFilter.NONE)
+            {
+                render.color = Color.white;
+            }
+            else if (filter == HexFilter.PLATE)
+            {
+                render.color = GameManager.Singleton.World.plates[plateId].color;
             }
         }
     }
