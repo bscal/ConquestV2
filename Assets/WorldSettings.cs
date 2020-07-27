@@ -11,6 +11,8 @@ namespace Conquest
     {
         public static WorldSettings Singleton { get; private set; }
 
+        public readonly int offset = OffsetCoord.EVEN;
+
         [Header("World Settings")]
         public uint seed;
         public bool wrapWorld;

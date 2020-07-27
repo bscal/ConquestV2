@@ -384,7 +384,7 @@ namespace Conquest
             if (m_state == GenState.DONE) return;
             if (m_state != GenState.ITERATING) m_state = GenState.ITERATING;
             timer += Time.deltaTime;
-            if (timer < 5.0f) return;
+            if (timer < 1.0f) return;
             timer = 0;
             iters++;
             if (iters > numOfIters)
@@ -480,16 +480,21 @@ namespace Conquest
                     //                     }
                     
                     if (!dirNotNull) continue;
-                    if (HexUtils.HexYOutOfBounds(m_world.size.y, dirData.hex.r) )
+                    if (HexUtils.HexOutOfBounds(m_world.size, dirData.hex) )
                     {
                         //data.height += revData.height * .025f;
                         //tempData[revData.hex.GetKey()].height = 10 + revData.height * .5f;
                         continue;
                     }
-
                     var tmpData = tempData[dirData.hex.GetKey()];
+                    if (data.height < 100.0f && dirData.height > 99.0f)
+                    {
+                        continue;
+                    }
 
                     tmpData.height = data.height;
+                    tmpData.empty = false;
+                    //data.height = 10f;
                     //tmpData.plateId = data.plateId;
                     //tmpData.empty = false;
 
@@ -517,6 +522,9 @@ namespace Conquest
             foreach (var pair in tempData)
             {
                 float h = pair.Value.height;
+
+                if (pair.Value.empty)
+                    h = 10f;
 
                 TileObject toTile = m_world.tileData[pair.Key];
                 toTile.height = h;
@@ -574,7 +582,7 @@ namespace Conquest
 
                 pair.Value.empty = true;
 
-                if (HexUtils.HexYOutOfBounds(m_world.size.y, dirData.hex.r) || dirData.collision)
+                if (HexUtils.HexOutOfBounds(m_world.size, dirData.hex) || dirData.collision)
                 {
                     pair.Value.collision = true;
 
