@@ -54,7 +54,8 @@ namespace Conquest {
         public static bool HexOutOfBounds(Vector2Int size, Hex hex)
         {
             OffsetCoord coord = OffsetCoord.RoffsetFromCube(WorldSettings.Singleton.offset, hex);
-            return (coord.row < 0 || coord.row > size.y) || (!WorldSettings.Singleton.wrapWorld && coord.col < 0 || coord.col > size.x);
+            int offset = (hex.r % 2 == 0) ? 1 : 0;
+            return (coord.row < 0 || coord.row > size.y ) || !WorldSettings.Singleton.wrapWorld && coord.col < 0 || !WorldSettings.Singleton.wrapWorld && coord.col > size.x;
         }
 
     }

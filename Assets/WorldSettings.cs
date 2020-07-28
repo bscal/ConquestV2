@@ -11,6 +11,7 @@ namespace Conquest
     {
         public static WorldSettings Singleton { get; private set; }
 
+        public Vector2Int size;
         public readonly int offset = OffsetCoord.EVEN;
 
         [Header("World Settings")]
@@ -43,6 +44,7 @@ namespace Conquest
         {
             Singleton = this;
 
+            size = new Vector2Int(width, height);
             pixelW = (int)(width * (Mathf.Sqrt(3) * 8));
             pixelH = (int)(height * (16.0f * .75f));
         }

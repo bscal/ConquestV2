@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -37,6 +38,10 @@ namespace Conquest
             hexes.Add(h.GetKey());
         }
 
+        public void RemoveHex(Hex hex)
+        {
+            hexes.Remove(hex.GetKey());
+        }
     }
 }
 

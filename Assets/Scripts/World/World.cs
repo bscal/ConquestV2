@@ -31,7 +31,7 @@ namespace Conquest {
 
             if (!tileData.ContainsKey(key))
             {
-                if (wrapIfNull && !HexUtils.HexOutOfBounds(GameManager.Singleton.World.size, hex))
+                if (wrapIfNull && !HexUtils.HexOutOfBounds(size, hex))
                 {
                     key = HexUtils.WrapOffset(hex, size.x).GetKey();
                     return tileData[key];
@@ -45,7 +45,7 @@ namespace Conquest {
         {
             string key = hex.GetKey();
 
-            if (wrapIfNull && !tileData.ContainsKey(key) && !HexUtils.HexOutOfBounds(GameManager.Singleton.World.size, hex))
+            if (wrapIfNull && !tileData.ContainsKey(key) && !HexUtils.HexOutOfBounds(size, hex))
                 key = HexUtils.WrapOffset(hex, size.x).GetKey();
 
             return tileData.TryGetValue(key, out data);
