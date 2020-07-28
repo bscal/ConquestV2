@@ -182,8 +182,60 @@ namespace Conquest
                 }
             }
 
+            for (int r = 0; r <= m_height; r++) // height
+            {
+                int r_offset = Mathf.FloorToInt(r / 2);
+                for (int q = -r_offset; q <= m_width - r_offset; q++) // width with offset
+                {
+                    Hex hex = new Hex(q, r, -q - r);
+                    string mapKey = Hex.ToKey(q, r);
 
-            /*  
+                    TileObject hData = m_world.GetHexData(hex, false);
+                    if (hData.height < 100) continue;
+
+                    int closestId = -1;
+                    int closestDist = int.MaxValue;
+
+                    foreach (Hex h in hex.Ring(1))
+                    {
+                        if (!m_world.TryGetHexData(h, WorldSettings.Singleton.wrapWorld, out TileObject rData))
+                            continue;
+
+                        if (rData.height < 100) continue;
+
+                        for (int i = 0; i < WorldSettings.Singleton.plates; i++)
+                        {
+                            int dist = hex.Distance(m_world.plates[i].center);
+
+                            if (closestDist > dist)
+                            {
+                                closestDist = dist;
+                                closestId = i;
+                            }
+                        }
+                        for (int i = 0; i < WorldSettings.Singleton.plates; i++)
+                        {
+                            int dist = hex.Distance(HexUtils.WrapOffset(m_world.plates[i].center, m_world.size.x));
+
+                            if (closestDist > dist)
+                            {
+                                closestDist = dist;
+                                closestId = i;
+                            }
+                        }
+                    }
+
+                    if (closestId != -1)
+                    {
+                        m_world.tileData[mapKey].plateId = closestId;
+                        m_world.plates[closestId].RemoveHex(hex);
+                        m_world.plates[closestId].AddHex(hex);
+                    }
+                }
+            }
+
+
+             /*  
              *  ------------------------------------------------------
              *      Checking if hexes are on edge of plate
              *  ------------------------------------------------------
@@ -396,7 +448,7 @@ namespace Conquest
             }
 
 
-            if (iters != 0 && iters % 200 == 0)
+            if (iters != 0 && iters % 50 == 0)
             {
                 for (int i = 0; i < m_world.plates.Count; i++)
                 {
@@ -405,7 +457,7 @@ namespace Conquest
                     SetCollisions(false);
                 }
                 
-                print("changing directions");
+                Debug.LogWarning("changing directions");
             }
             CalcCollisions();
             Dictionary<string, TileObject> tempData = m_world.tileData.ToDictionary(entry => entry.Key, entry => entry.Value);
@@ -487,15 +539,18 @@ namespace Conquest
                         continue;
                     }
                     var tmpData = tempData[dirData.hex.GetKey()];
-                    if (data.height < 100.0f && dirData.height > 99.0f)
+                    if (hData.height < 100.0f && dirData.height > 99.0f)
                     {
                         continue;
                     }
 
-                    tmpData.height = data.height;
+                    if (hData.height > 100.0f && dirData.height > 100.0f)
+                        continue;
+
+                    tmpData.height = hData.height;
                     tmpData.empty = false;
-                    //data.height = 10f;
-                    //tmpData.plateId = data.plateId;
+                    data.height = 10f;
+                    tmpData.plateId = hData.plateId;
                     //tmpData.empty = false;
 
                     //data.height = revData.height;
@@ -522,9 +577,6 @@ namespace Conquest
             foreach (var pair in tempData)
             {
                 float h = pair.Value.height;
-
-                if (pair.Value.empty)
-                    h = 10f;
 
                 TileObject toTile = m_world.tileData[pair.Key];
                 toTile.height = h;
