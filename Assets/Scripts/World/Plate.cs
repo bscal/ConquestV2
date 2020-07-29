@@ -16,6 +16,7 @@ namespace Conquest
         public float elevation;
         public HexDirection direction;
         public float movementSpeed;
+        public GameObject obj;
 
         public Plate(Hex center, Color color)
         {

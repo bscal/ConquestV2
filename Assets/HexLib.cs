@@ -78,6 +78,7 @@ public class Hex
 
     public Hex Neighbor(int direction)
     {
+        if (direction == -1) return new Hex(0, 0, 0);
         return Add(Hex.Direction(direction));
     }
 

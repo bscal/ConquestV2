@@ -285,11 +285,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98df2980fc565ad41836276222a866be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  size: {x: 0, y: 0}
   seed: 0
   wrapWorld: 1
   width: 64
   height: 32
-  plates: 7
+  plates: 5
   worldType: 0
   worldAge: 0
   waterFactor: 0

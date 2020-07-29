@@ -29,6 +29,7 @@ namespace Conquest
         public bool isPlateEdge = false;
         public bool collision = false;
         public bool empty = false;
+        public bool moved = false;
 
         private void OnBecameVisible()
         {
