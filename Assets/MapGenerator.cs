@@ -33,6 +33,9 @@ namespace Conquest
         private int m_pixelH;
         private Layout m_layout;
 
+        public bool paused = false;
+        public int iterations = 0;
+
         private GenState m_state;
 
         public World CreateWorld()
@@ -392,15 +395,17 @@ namespace Conquest
             }
         }
 
-        const int numOfIters = 1000;
+        public const int numOfIters = 500;
         float timer = 0f;
         int iters = 0;
         void Update()
         {
+            if (paused) return;
+            iterations = iters;
             if (m_state == GenState.DONE) return;
             if (m_state != GenState.ITERATING) m_state = GenState.ITERATING;
             timer += Time.deltaTime;
-            if (timer < 0.5f) return;
+            if (timer < 0.25f) return;
             timer = 0;
             iters++;
             if (iters > numOfIters)
@@ -489,9 +494,10 @@ namespace Conquest
                     float increase = height * .1f;
                     float start = height * .1f;
                     
-                    if (!dirNotNull) continue;
-                    if (HexUtils.HexOutOfBounds(m_world.size, dirData.hex))
+                    if (HexUtils.HexOutOfBounds(m_world.size, dirHex))
                     {
+                        tempPlates[hData.plateId].movementSpeed = -1f;
+                        tempData[mapKey].empty = false;
                         continue;
                     }
 
@@ -505,8 +511,7 @@ namespace Conquest
 
                     if (hData.height > 100.0f && dirData.height > 100.0f && dirDiffPlate && !dirAway)
                     {
-                        tempPlates[hData.plateId].movementSpeed -= .05f;
-
+                        tempPlates[hData.plateId].movementSpeed -= .2f;
                     }
 
                     float mod = 0f;
@@ -518,9 +523,9 @@ namespace Conquest
                     tmpData.height = hData.height + mod;
                     tmpData.empty = false;
                     tempData[mapKey].moved = true;
-                    m_world.plates[dirData.plateId].RemoveHex(dirHex);
                     plate.AddHex(dirHex);
                     tmpData.plateId = hData.plateId;
+                    tempPlates[hData.plateId].movementSpeed -= .02f;
 
                 }
             }
@@ -532,8 +537,10 @@ namespace Conquest
                 bool res = m_world.TryGetHexData(m_world.plates[i].center, true, out TileObject data);
                 if (res && data.moved)
                 {
-                    m_world.plates[i].center = data.hex.Neighbor((int)m_world.plates[i].direction);
-                    Point pt = m_layout.HexToPixel(data.hex);
+                    Hex newH = data.hex.Neighbor((int)m_world.plates[i].direction);
+                    if (HexUtils.HexOutOfBounds(m_world.size, newH)) continue;
+                    m_world.plates[i].center = newH;
+                    Point pt = m_layout.HexToPixel(newH);
                     m_world.plates[i].obj.transform.position = new Vector3((float)pt.x, (float)pt.y, -1);
                 }
             }

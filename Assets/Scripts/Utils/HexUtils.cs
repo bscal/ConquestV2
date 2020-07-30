@@ -51,6 +51,20 @@ namespace Conquest {
             return new Hex(newQ, h.r, -newQ - h.r);
         }
 
+        public static Hex WrapHexIfNull(Hex h, int gridWidth, in Dictionary<string, TileObject> data)
+        {
+            bool contains = data.ContainsKey(h.GetKey());
+            if (!WorldSettings.Singleton.wrapWorld && !contains)
+            {
+                return null;
+            }
+            else if (!contains)
+            {
+                return WrapOffset(h, gridWidth);
+            }
+            return h;
+        }
+
         public static bool HexOutOfBounds(Vector2Int size, Hex hex)
         {
             OffsetCoord coord = OffsetCoord.RoffsetFromCube(WorldSettings.Singleton.offset, hex);
