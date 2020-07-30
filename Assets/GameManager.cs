@@ -16,10 +16,13 @@ public class GameManager : MonoBehaviour
 
     public HexFilter currentFilter = HexFilter.NONE;
 
+    private UIGeneratorDebugger m_UIGenDebug;
+
     void Start()
     {
         Singleton = this;
         World = generator.CreateWorld();
+        m_UIGenDebug = GameObject.Find("GeneratorUI").GetComponent<UIGeneratorDebugger>();
     }
 
     void Update()
@@ -29,7 +32,7 @@ public class GameManager : MonoBehaviour
         {
             var p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Hex hex = World.layout.PixelToHex(new Point(p.x, p.y)).HexRound();
-            if (!World.ContainsHex(hex)) hex = HexUtils.WrapOffset(hex, World.size.x);
+            if (!World.ContainsHex(hex)) return;
             foreach (Hex h in hex.Ring(2))
             {
                 World.GetHexData(h, true).render.sprite = generator.tiles[3];
@@ -39,13 +42,18 @@ public class GameManager : MonoBehaviour
         {
             var p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Hex hex = World.layout.PixelToHex(new Point(p.x, p.y)).HexRound();
+            OffsetCoord coord = OffsetCoord.RoffsetFromCube(WorldSettings.Singleton.offset, hex);
             Hex wrap = HexUtils.WrapOffset(hex, World.size.x);
-            print(string.Format("PixelToHex: {0}, {1}, {2} ", hex.q, hex.r, hex.s));
-            print(string.Format("PixelToHex: {0}, {1}, ", wrap.q, wrap.r));
-            print(World.tileData[hex.GetKey()].height);
-            print(World.tileData[hex.GetKey()].plateId);
-            print(World.tileData[hex.GetKey()].isPlateEdge);
-            print(World.plates[World.tileData[hex.GetKey()].plateId].direction);
+            OffsetCoord wcoord = OffsetCoord.RoffsetFromCube(WorldSettings.Singleton.offset, wrap);
+            print(string.Format("WrappedHex: {0}, {1}, ", wrap.q, wrap.r));
+            print(string.Format("WrappedCoords: {0}, {1}, ", wcoord.col, wcoord.row));
+
+            var data = World.tileData[hex.GetKey()];
+            var pl = World.GetPlateByID(data.plateId);
+            m_UIGenDebug.hexInfoText.text = $"Hex={hex.q}/{hex.r}/{hex.s}::{coord.col}/{coord.row}";
+            m_UIGenDebug.tileObjText.text = $"h={Math.Round(data.height, 2)},t={data.temp},tid={data.tileId}";
+            m_UIGenDebug.movementText.text = $"mv={data.moved},emp={data.empty}";
+            m_UIGenDebug.plateDataText.text = $"p={data.plateId},d={pl.direction},ms={Math.Round(pl.movementSpeed, 2)}";
         }
 
         if (Input.GetKeyDown(KeyCode.R))
