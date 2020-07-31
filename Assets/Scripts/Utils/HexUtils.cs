@@ -7,7 +7,7 @@ namespace Conquest {
     public static class HexUtils
     {
 
-        public static bool ArrayContainsPlate(Dictionary<string, TileObject> hexdata, Hex[] hexes, int plateId, bool wrap)
+        public static bool ArrayContainsPlate(in Dictionary<string, TileObject> hexdata, Hex[] hexes, int plateId, bool wrap)
         {
             foreach (Hex h in hexes)
             {

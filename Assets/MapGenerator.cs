@@ -441,6 +441,7 @@ namespace Conquest
                     Hex hex = new Hex(q, r, -q - r);
                     string mapKey = Hex.ToKey(q, r);
 
+                    // Current Hex. This hex moves to directional hex.
                     TileObject hData = m_world.tileData[mapKey];
                     Plate plate = m_world.GetPlateByID(hData.plateId);
                     HexDirection dir = plate.direction;
@@ -448,51 +449,26 @@ namespace Conquest
                     float height = hData.height;
                     bool isEdge = hData.isPlateEdge;
 
+                    // Move Direction Hex.
                     Hex dirHex = hex.Neighbor((int)dir);
-                    Hex revHex = hex.Neighbor((int)Hex.ReverseDirection(dir));
-
                     bool dirNotNull = m_world.TryGetHexData(dirHex, WorldSettings.Singleton.wrapWorld, out TileObject dirData);
-                    bool revNotNull = m_world.TryGetHexData(revHex, WorldSettings.Singleton.wrapWorld, out TileObject revData);
-
-
                     Plate dirPlate = dirNotNull ? m_world.plates[dirData.plateId] : null;
                     bool dirDiffPlate = dirNotNull && hData.plateId != dirData.plateId;
-                    bool revDiffPlate = revNotNull && hData.plateId != revData.plateId;
-
                     bool dirInto = dirNotNull && dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
-                    bool revAway = revNotNull && dir == Hex.ReverseDirection(m_world.plates[revData.plateId].direction);
                     bool dirAway = dirNotNull && dir == m_world.plates[dirData.plateId].direction;
-                    bool revInto = revNotNull && dir == m_world.plates[revData.plateId].direction;
-
                     bool dirHigher = dirNotNull && plate.elevation < dirPlate.elevation;
 
-                    //old
+                    //bools to track more complicated issues
                     //bool plateCollision = dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
                     //bool isDifferentPlate = dirData.plateId != data.plateId;
                     //bool isDifferentPlateMovingIntoCur = dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
-                    //bool isCurPlateSmaller = m_world.plates[dirData.plateId].elevation < m_world.plates[dirData.plateId].elevation;
-                    //bool isFrontCollision = dirNotNull && HexUtils.ArrayContainsPlate(m_world.tileData, hex.Front(dir), dirData.plateId, WorldSettings.Singleton.wrapWorld);
+                    bool isFrontCollision = dirNotNull && HexUtils.ArrayContainsPlate(m_world.tileData, hex.Front(dir), dirData.plateId, WorldSettings.Singleton.wrapWorld);
 
 
                     //                     float baseVal = height * .015f;
                     // 
                     //                     data.height -= baseVal;
-                    //                     if (dirHigher)
-                    //                         dirData.height += baseVal;
-
-                    //values
-                    //                     float val = height * .015f;
-                    //                     float baseVal = height * .005f;
-                    // 
-                    //                     data.height -= baseVal;
-                    //                     if (dirHigher)
-                    //                         dirData.height += val;
-                    //                     else
-                    //                         dirData.height += baseVal;
-
-                    float val = height;
-                    float increase = height * .1f;
-                    float start = height * .1f;
+                    //                     dirData.height += baseVal;
                     
                     if (HexUtils.HexOutOfBounds(m_world.size, dirHex))
                     {
@@ -502,6 +478,22 @@ namespace Conquest
                     }
 
                     var tmpData = tempData[dirData.hex.GetKey()];
+                    //hData.height > 100.0f && dirData.height > 100.0f && 
+                    if (dirDiffPlate && dirInto)
+                    {
+                        tempPlates[hData.plateId].movementSpeed -= 1f;
+                        tempData[mapKey].empty = false;
+                        continue;
+                    }
+
+                    if (dirDiffPlate)
+                    {
+                        //tempPlates[hData.plateId].movementSpeed -= .02f;
+                        if (dirHigher)
+                        {
+                            continue;
+                        }
+                    }
 
                     if (plate.movementSpeed < 0f)
                     {
@@ -509,24 +501,19 @@ namespace Conquest
                         continue;
                     }
 
-                    if (hData.height > 100.0f && dirData.height > 100.0f && dirDiffPlate && !dirAway)
-                    {
-                        tempPlates[hData.plateId].movementSpeed -= .2f;
-                    }
 
                     float mod = 0f;
-                    if (hData.height < 50f)
+                    if (hData.height < 150f)
                     {
-                        mod = hData.height * .1f + 1;
+                        mod = hData.height * .1f + 5;
                     }
 
                     tmpData.height = hData.height + mod;
+                    tempData[mapKey].empty = true;
                     tmpData.empty = false;
-                    tempData[mapKey].moved = true;
+                    tmpData.moved = true;
                     plate.AddHex(dirHex);
                     tmpData.plateId = hData.plateId;
-                    tempPlates[hData.plateId].movementSpeed -= .02f;
-
                 }
             }
 
@@ -593,7 +580,7 @@ namespace Conquest
                             closestId = i;
                         }
                     }
-                    m_world.tileData[pair.Value.hex.GetKey()].plateId = closestId;
+                    m_world.tileData[pair.Key].plateId = closestId;
                     m_world.plates[closestId].AddHex(pair.Value.hex);
                 }
 
@@ -652,7 +639,6 @@ namespace Conquest
                     continue;
                 bool dirDiffPlate = pair.Value.plateId != dirData.plateId;
 
-                pair.Value.empty = true;
                 pair.Value.moved = false;
 
                 if (HexUtils.HexOutOfBounds(m_world.size, dirData.hex) || dirData.collision)
