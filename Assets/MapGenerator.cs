@@ -481,14 +481,14 @@ namespace Conquest
                     //hData.height > 100.0f && dirData.height > 100.0f && 
                     if (dirDiffPlate && dirInto)
                     {
-                        tempPlates[hData.plateId].movementSpeed -= 1f;
+                        tempPlates[hData.plateId].movementSpeed = -1f;
                         tempData[mapKey].empty = false;
                         continue;
                     }
 
                     if (dirDiffPlate)
                     {
-                        //tempPlates[hData.plateId].movementSpeed -= .02f;
+                        tempPlates[hData.plateId].movementSpeed -= .025f;
                         if (dirHigher)
                         {
                             continue;
@@ -502,16 +502,17 @@ namespace Conquest
                     }
 
 
-                    float mod = 0f;
-                    if (hData.height < 150f)
-                    {
-                        mod = hData.height * .1f + 5;
-                    }
+                     float mod = 0f;
+//                     if (hData.height < 150f)
+//                     {
+//                         mod = hData.height * .1f + 5;
+//                     }
 
                     tmpData.height = hData.height + mod;
-                    tempData[mapKey].empty = true;
+                    //tempData[mapKey].empty = true;
                     tmpData.empty = false;
-                    tmpData.moved = true;
+                    hData.moved = true;
+                    dirPlate.RemoveHex(dirHex);
                     plate.AddHex(dirHex);
                     tmpData.plateId = hData.plateId;
                 }
