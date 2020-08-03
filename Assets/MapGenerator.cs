@@ -3,6 +3,8 @@ using SimplexNoise;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ExceptionServices;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -252,7 +254,7 @@ namespace Conquest
              *      Simulate plates moving
              *  ------------------------------------------------------
              */
-            Dictionary<string, TileObject> tempData = m_world.tileData.ToDictionary(entry => entry.Key, entry => entry.Value);
+            //Dictionary<string, TileObject> tempData = m_world.tileData.ToDictionary(entry => entry.Key, entry => entry.Value);
             const int iterations = 0;
             for (int i = 0; i < iterations; i++)
             {
@@ -432,6 +434,9 @@ namespace Conquest
             CalcCollisions();
             Plate[] tempPlates = m_world.plates.ToArray();
             Dictionary<string, TileObject> tempData = m_world.tileData.ToDictionary(entry => entry.Key, entry => entry.Value);
+            Dictionary<string, float> tempHeights = new Dictionary<string, float>(m_world.tileData.Count);
+
+
 
             for (int r = 0; r <= m_height; r++) // height
             {
@@ -473,26 +478,39 @@ namespace Conquest
                     if (HexUtils.HexOutOfBounds(m_world.size, dirHex))
                     {
                         tempPlates[hData.plateId].movementSpeed = -1f;
-                        tempData[mapKey].empty = false;
+                        hData.empty = false;
                         continue;
                     }
-
+                    if (!dirNotNull) continue;
+                    tempHeights[dirData.hex.GetKey()] = height;
                     var tmpData = tempData[dirData.hex.GetKey()];
                     //hData.height > 100.0f && dirData.height > 100.0f && 
                     if (dirDiffPlate && dirInto)
                     {
-                        tempPlates[hData.plateId].movementSpeed = -1f;
+                        tempPlates[hData.plateId].movementSpeed -= .1f;
+                        if (!dirHigher)
+                        {
+                            tempData[mapKey].height = height + (height * .1f);
+                        }
+                        tempData[mapKey].empty = false;
+                        continue;
+                    }
+
+                    if (dirDiffPlate && dirPlate.movementSpeed < 0f)
+                    {
+                        // collision by moving plate into non moving plate
+                        tempPlates[hData.plateId].movementSpeed -= .2f;
+                        if (!dirHigher)
+                        {
+                            tempData[mapKey].height = height + (height * .1f);
+                        }
                         tempData[mapKey].empty = false;
                         continue;
                     }
 
                     if (dirDiffPlate)
                     {
-                        tempPlates[hData.plateId].movementSpeed -= .025f;
-                        if (dirHigher)
-                        {
-                            continue;
-                        }
+                        tempPlates[hData.plateId].movementSpeed -= .01f;
                     }
 
                     if (plate.movementSpeed < 0f)
@@ -500,21 +518,19 @@ namespace Conquest
                         tempData[mapKey].empty = false;
                         continue;
                     }
-
-
-                     float mod = 0f;
-//                     if (hData.height < 150f)
-//                     {
-//                         mod = hData.height * .1f + 5;
-//                     }
-
-                    tmpData.height = hData.height + mod;
-                    //tempData[mapKey].empty = true;
+                    float mod = 0f;
+                    print($"{tmpData.height}, {height}");
+                    tempHeights[dirData.hex.GetKey()] = height + mod;
+                    //tmpData.height = height + mod;
+                    //tempData[mapKey].moved = true;
                     tmpData.empty = false;
                     hData.moved = true;
+                    dirData.generated = false;
                     dirPlate.RemoveHex(dirHex);
                     plate.AddHex(dirHex);
-                    tmpData.plateId = hData.plateId;
+                    dirData.plateId = hData.plateId;
+
+                    print(hex.GetKey() + " -> " + dirHex.GetKey());
                 }
             }
 
@@ -533,7 +549,7 @@ namespace Conquest
                 }
             }
 
-            ApplyTiles(tempData);
+            ApplyTiles(tempData, tempHeights);
         }
 
         private IEnumerator GenerateRoutine()
@@ -548,16 +564,16 @@ namespace Conquest
             }
         }
 
-        private void ApplyTiles(in Dictionary<string, TileObject> tempData)
+        private void ApplyTiles(in Dictionary<string, TileObject> tempData, in Dictionary<string, float> tempHeights)
         {
             foreach (var pair in tempData)
             {
-                float h = pair.Value.height;
-
+                float h = tempHeights[pair.Key];
+                TileObject toTile = m_world.tileData[pair.Key];
                 if (pair.Value.empty)
                 {
                     h = 10f;
-
+                    toTile.generated = true;
                     m_world.plates[pair.Value.plateId].RemoveHex(pair.Value.hex);
                     int closestId = 0;
                     int closest = int.MaxValue;
@@ -585,7 +601,7 @@ namespace Conquest
                     m_world.plates[closestId].AddHex(pair.Value.hex);
                 }
 
-                TileObject toTile = m_world.tileData[pair.Key];
+                
                 toTile.height = h;
                 int n = 0;
                 if (h < 100)
@@ -620,7 +636,7 @@ namespace Conquest
                 }
                 tempData[key].height += (avg / count) * .1f;
             }
-            ApplyTiles(tempData);
+            ApplyTiles(tempData, null);
         }
 
         private void SetCollisions(bool val)
@@ -641,6 +657,7 @@ namespace Conquest
                 bool dirDiffPlate = pair.Value.plateId != dirData.plateId;
 
                 pair.Value.moved = false;
+                pair.Value.empty = true;
 
                 if (HexUtils.HexOutOfBounds(m_world.size, dirData.hex) || dirData.collision)
                 {

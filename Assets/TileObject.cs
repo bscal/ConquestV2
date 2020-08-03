@@ -30,6 +30,7 @@ namespace Conquest
         public bool collision = false;
         public bool empty = false;
         public bool moved = false;
+        public bool generated = false;
 
         private void OnBecameVisible()
         {

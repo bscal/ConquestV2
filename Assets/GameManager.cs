@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
@@ -35,7 +36,9 @@ public class GameManager : MonoBehaviour
             if (!World.ContainsHex(hex)) return;
             foreach (Hex h in hex.Ring(2))
             {
-                World.GetHexData(h, true).render.sprite = generator.tiles[3];
+                bool res = World.TryGetHexData(h, WorldSettings.Singleton.wrapWorld, out TileObject data);
+                if (!res) continue;
+                data.render.sprite = generator.tiles[3];
             }
         }
         if (Input.GetMouseButtonDown((int)MouseButton.RightMouse))
