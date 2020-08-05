@@ -477,60 +477,66 @@ namespace Conquest
                     
                     if (HexUtils.HexOutOfBounds(m_world.size, dirHex))
                     {
-                        tempPlates[hData.plateId].movementSpeed = -1f;
+                        if (hData.height > 99)
+                            tempPlates[hData.plateId].movementSpeed = -1f;
                         hData.empty = false;
                         continue;
                     }
                     if (!dirNotNull) continue;
-                    tempHeights[dirData.hex.GetKey()] = height;
+                    
                     var tmpData = tempData[dirData.hex.GetKey()];
-                    //hData.height > 100.0f && dirData.height > 100.0f && 
+
+                    // current hex plate and moving direction plate colliding
                     if (dirDiffPlate && dirInto)
                     {
-                        tempPlates[hData.plateId].movementSpeed -= .1f;
+                        tempPlates[hData.plateId].movementSpeed -= .05f;
                         if (!dirHigher)
                         {
-                            tempData[mapKey].height = height + (height * .1f);
+                            tempHeights[mapKey] = height + (height * .1f);
                         }
-                        tempData[mapKey].empty = false;
+                        hData.empty = false;
                         continue;
                     }
 
+                    // collision by moving plate into non moving plate
                     if (dirDiffPlate && dirPlate.movementSpeed < 0f)
                     {
-                        // collision by moving plate into non moving plate
-                        tempPlates[hData.plateId].movementSpeed -= .2f;
+                        tempPlates[hData.plateId].movementSpeed -= .025f;
                         if (!dirHigher)
                         {
-                            tempData[mapKey].height = height + (height * .1f);
+                            tempHeights[mapKey] = height + (height * .1f);
                         }
-                        tempData[mapKey].empty = false;
+                        hData.empty = false;
                         continue;
                     }
 
-                    if (dirDiffPlate)
-                    {
+
+                    if (dirDiffPlate && dirData.height > 100)
                         tempPlates[hData.plateId].movementSpeed -= .01f;
-                    }
 
                     if (plate.movementSpeed < 0f)
                     {
-                        tempData[mapKey].empty = false;
+                        hData.empty = false;
                         continue;
                     }
+
+
+
                     float mod = 0f;
-                    print($"{tmpData.height}, {height}");
+
+                    if (height < 100)
+                        mod = height * .1f + 5;
+
                     tempHeights[dirData.hex.GetKey()] = height + mod;
                     //tmpData.height = height + mod;
                     //tempData[mapKey].moved = true;
-                    tmpData.empty = false;
+                    dirData.empty = false;
                     hData.moved = true;
                     dirData.generated = false;
                     dirPlate.RemoveHex(dirHex);
                     plate.AddHex(dirHex);
                     dirData.plateId = hData.plateId;
-
-                    print(hex.GetKey() + " -> " + dirHex.GetKey());
+                    tempPlates[hData.plateId].movementSpeed -= .01f;
                 }
             }
 
@@ -566,14 +572,15 @@ namespace Conquest
 
         private void ApplyTiles(in Dictionary<string, TileObject> tempData, in Dictionary<string, float> tempHeights)
         {
-            foreach (var pair in tempData)
+            foreach (var pair in m_world.tileData)
             {
-                float h = tempHeights[pair.Key];
-                TileObject toTile = m_world.tileData[pair.Key];
+                if (tempHeights.ContainsKey(pair.Key))
+                    pair.Value.height = tempHeights[pair.Key];
+
                 if (pair.Value.empty)
                 {
-                    h = 10f;
-                    toTile.generated = true;
+                    pair.Value.height = 10f;
+                    pair.Value.generated = true;
                     m_world.plates[pair.Value.plateId].RemoveHex(pair.Value.hex);
                     int closestId = 0;
                     int closest = int.MaxValue;
@@ -601,8 +608,8 @@ namespace Conquest
                     m_world.plates[closestId].AddHex(pair.Value.hex);
                 }
 
-                
-                toTile.height = h;
+
+                float h = pair.Value.height;
                 int n = 0;
                 if (h < 100)
                     n = 2;
@@ -610,9 +617,8 @@ namespace Conquest
                     n = 0;
                 if (h > 200)
                     n = 1;
-                toTile.tileId = n;
-                toTile.render.sprite = tiles[n];
-                toTile.collision = pair.Value.collision;
+                pair.Value.tileId = n;
+                pair.Value.render.sprite = tiles[n];
 
             }
         }

@@ -8,9 +8,14 @@ using UnityEngine;
 // For pointy
 public enum HexDirection
 {
-    NONE = -1, E, SE, SW, W, NW, NE
+    NONE = -1,
+    E,
+    SE,
+    SW,
+    W,
+    NW,
+    NE
 }
-
 
 
 public struct Point
@@ -26,7 +31,8 @@ public struct Point
 
 public class Hex
 {
-    public static int DIRECTION_COUNT = 6;
+    public static readonly Hex ZERO = new Hex(0, 0, 0);
+    public const int DIRECTION_COUNT = 6;
 
     public Hex(int q, int r, int s)
     {
@@ -69,6 +75,7 @@ public class Hex
     }
 
     static public List<Hex> directions = new List<Hex> { new Hex(1, 0, -1), new Hex(1, -1, 0), new Hex(0, -1, 1), new Hex(-1, 0, 1), new Hex(-1, 1, 0), new Hex(0, 1, -1) };
+    static public List<Hex> reveredDirections = new List<Hex> { new Hex(-1, 0, 1), new Hex(-1, 1, 0), new Hex(0, 1, -1), new Hex(1, 0, -1), new Hex(1, -1, 0), new Hex(0, -1, 1) };
 
     static public Hex Direction(int direction)
     {
@@ -154,6 +161,11 @@ public class Hex
         return new Hex[] { Add(Neighbor(dirBack)), Add(Neighbor(dirUp)), Add(Neighbor(dirDown)) };
     }
 
+    public Hex ReverseNeightbor(int direction)
+    {
+        return reveredDirections[direction];
+    }
+
     public string GetKey()
     {
         return Key(q, r);
@@ -181,11 +193,11 @@ public class Hex
 
     public static HexDirection ReverseDirection(HexDirection dir)
     {
-        int e = (int)dir;
-        e += 3;
-        if (e >= DIRECTION_COUNT)
-            e -= DIRECTION_COUNT;
-        return (HexDirection)e;
+        //return directions[(int)dir].Subtract(reveredDirections[(int)dir]) == ZERO;
+        int d = (int)dir;
+        d += 3;
+        if (d > 5) d -= 6;
+        return (HexDirection)d;
     }
 
     public override bool Equals(object obj)
