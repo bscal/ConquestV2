@@ -199,25 +199,6 @@ public class Hex
         if (d > 5) d -= 6;
         return (HexDirection)d;
     }
-
-    public override bool Equals(object obj)
-    {
-        if (this == null || obj == null) return false;
-        if (obj.GetType() != typeof(Hex)) return false;
-
-        Hex other = (Hex)obj;
-        return q == other.q && r == other.r && s == other.s;
-    }
-
-    public static bool operator ==(Hex left, Hex right)
-    {
-        return left.Equals(right);
-    }
-
-    public static bool operator !=(Hex left, Hex right)
-    {
-        return !(left == right);
-    }
 }
 
 public struct FractionalHex

@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
 
             var data = World.tileData[hex.GetKey()];
             var pl = World.GetPlateByID(data.plateId);
-            m_UIGenDebug.hexInfoText.text = $"Hex={hex.q}/{hex.r}/{hex.s}::{coord.col}/{coord.row}";
+            m_UIGenDebug.hexInfoText.text = $"Hex={hex.q}/{hex.r}/{hex.s} | {coord.col}/{coord.row}";
             m_UIGenDebug.tileObjText.text = $"h={Math.Round(data.height, 2)},t={data.temp},tid={data.tileId}";
             m_UIGenDebug.movementText.text = $"mv={data.moved},emp={data.empty}";
             m_UIGenDebug.plateDataText.text = $"p={data.plateId},d={pl.direction},ms={Math.Round(pl.movementSpeed, 2)}";

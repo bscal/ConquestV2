@@ -16,7 +16,7 @@ public class UIGeneratorDebugger : MonoBehaviour
     public Text movementText;
     public Text plateDataText;
 
-    private Hex m_watchedHex = null;
+    private Hex m_watchedHex;
 
     private void Start()
     {
