@@ -6,5 +6,6 @@ public class HexMovableData
 {
     public float height;
     public int plateId;
+    public int oldPlateId;
 
 }
