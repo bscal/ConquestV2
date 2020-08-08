@@ -352,7 +352,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 519420031}
-  moveSpeed: 32
+  moveSpeed: 320
   scrollSpeed: 16
   minZoom: 5
   maxZoom: 800
@@ -1038,7 +1038,7 @@ MonoBehaviour:
   - {fileID: -4218347658839152434, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
   prefab: {fileID: 4317224222930441826, guid: a20208484b5061645b14296486d437d3, type: 3}
   dot: {fileID: 9140088084167084064, guid: 353dee8747d05094ba47405d2a47743f, type: 3}
-  paused: 0
+  paused: 1
   iterations: 0
 --- !u!850595691 &1937995574
 LightingSettings:
