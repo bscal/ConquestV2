@@ -235,18 +235,25 @@ namespace Conquest
             }
 
 
-            if (iters != 0 && iters % 25 == 0)
+            if (iters != 0 && iters % 30 == 0)
             {
                 for (int i = 0; i < m_world.plates.Count; i++)
                 {
                     Plate p = m_world.plates[i];
                     p.direction = (HexDirection)Random.Range(0, Hex.DIRECTION_COUNT - 1);
-                    p.movementSpeed = Random.Range(20.0f, 22.0f);
-                    SetCollisions(false);
                 }
-                
                 Debug.LogWarning("changing directions");
             }
+            if (iters != 0 && iters % 10 == 0)
+            {
+                for (int i = 0; i < m_world.plates.Count; i++)
+                {
+                    Plate p = m_world.plates[i];
+                    p.movementSpeed = Random.Range(8.0f, 11.0f);
+                }
+                Debug.LogWarning("changing directions");
+            }
+
             CalcCollisions();
             float[] tempPlates = new float[m_world.plates.Count];
             for (int i = 0; i < tempPlates.Length; i++)
@@ -272,10 +279,14 @@ namespace Conquest
                     // Move Direction Hex.
                     Hex dirHex = hex.Neighbor((int)dir);
                     bool dirNotNull = m_world.TryGetHexData(dirHex, WorldSettings.Singleton.wrapWorld, out TileObject dirData);
-                    Plate dirPlate = dirNotNull ? m_world.plates[dirData.plateId] : null;
-                    bool dirDiffPlate = dirNotNull && hData.plateId != dirData.plateId;
-                    bool dirInto = dirNotNull && dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
-                    bool dirHigher = dirNotNull && plate.elevation < dirPlate.elevation;
+                    // if dataHex's TileObject is null
+                    if (!dirNotNull) continue;
+
+                    Plate dirPlate = m_world.plates[dirData.plateId];
+                    bool dirDiffPlate = hData.plateId != dirData.plateId;
+                    bool dirInto = dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
+                    bool dirHigher = plate.elevation < dirPlate.elevation;
+                    bool dirIntoFront = hex.Front(plate.direction).Contains(dirHex);
 
                     // old way of movement
                     // float baseVal = height * .015f;
@@ -283,8 +294,7 @@ namespace Conquest
                     // data.height -= baseVal;
                     // dirData.height += baseVal;
                     
-                    // if dataHex's TileObject is null
-                    if (!dirNotNull) continue;
+
 
                     if (!tempHeights.ContainsKey(mapKey))
                     {
@@ -323,7 +333,7 @@ namespace Conquest
                         tempPlates[hData.plateId] -= .5f;
                         if (!dirHigher)
                         {
-                            tempHeights[mapKey].height = height + (height * .05f);
+                            tempHeights[mapKey].height = height + (height * .25f) + 5;
                         }
                         hData.empty = false;
                         continue;
@@ -336,7 +346,7 @@ namespace Conquest
                         tempPlates[hData.plateId] -= .5f;
                         if (!dirHigher)
                         {
-                            tempHeights[mapKey].height = height + (height * .05f);
+                            tempHeights[mapKey].height = height + (height * .2f) + 1;
                         }
                         hData.empty = false;
                         continue;
@@ -356,9 +366,13 @@ namespace Conquest
                     /*
                      * Moves hex from current iterated hex -> neighboring hex using the current plates direction
                      */
-                    float mod = 5f;
-                    if (height < 80)
-                        mod = height * .2f + 10;
+                    float mod = 3f;
+                    if (height < 100)
+                        mod += height * .2f + 10;
+                    if (height > 200)
+                        mod += -5f;
+                    if (dirDiffPlate && dirIntoFront)
+                        mod += height * .1f;
                     tempHeights[dirData.hex.GetKey()].height = height + mod;
 
                     if (plate.center == hex)
