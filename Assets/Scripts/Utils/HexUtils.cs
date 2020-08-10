@@ -71,5 +71,33 @@ namespace Conquest {
             return (coord.row < 0 || coord.row > size.y ) || !WorldSettings.Singleton.wrapWorld && coord.col < 0 || !WorldSettings.Singleton.wrapWorld && coord.col > size.x;
         }
 
+        /// <summary>
+        /// Detects if movDir is moving in an "away" direction from curDir.
+        /// An away direction would be if curDir is moving NE then away directions would be E, NE, NW.
+        /// (HexDirection enum is for pointy hex directions. This would still work same for flat top hexes just not same cardinal direction name)
+        /// </summary>
+        /// <param name="curDir"></param>
+        /// <param name="movDir"></param>
+        /// <returns></returns>
+        public static bool HexMovingTowards(int curDir, int movDir)
+        {
+            return curDir == movDir
+                || ClampWrap(curDir + 1, HexConstants.MIN_DIR, HexConstants.MAX_DIR) == movDir
+                || ClampWrap(curDir - 1, HexConstants.MIN_DIR, HexConstants.MAX_DIR) == movDir;
+        }
+
+        /// <summary>
+        /// Works similar to Clamp function but min wraps to max and max wraps to min.
+        /// </summary>
+        public static int ClampWrap(int value, int min, int max)
+        {
+            if (value < min)
+                return max;
+            else if (value > max)
+                return min;
+            else
+                return value;
+        }
+
     }
 }
