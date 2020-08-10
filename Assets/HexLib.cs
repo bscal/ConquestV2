@@ -17,6 +17,12 @@ public enum HexDirection
     NE
 }
 
+public static class HexConstants
+{
+    public const int DIRECTIONS = 6;
+    public const int MIN_DIR = 0;
+    public const int MAX_DIR = 5;
+}
 
 public struct Point
 {
@@ -32,7 +38,6 @@ public struct Point
 public class Hex
 {
     public static readonly Hex ZERO = new Hex(0, 0, 0);
-    public const int DIRECTION_COUNT = 6;
 
     public Hex(int q, int r, int s)
     {
@@ -198,6 +203,23 @@ public class Hex
         d += 3;
         if (d > 5) d -= 6;
         return (HexDirection)d;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is Hex hex &&
+               q == hex.q &&
+               r == hex.r &&
+               s == hex.s;
+    }
+
+    public override int GetHashCode()
+    {
+        int hashCode = -332974341;
+        hashCode = hashCode * -1521134295 + q.GetHashCode();
+        hashCode = hashCode * -1521134295 + r.GetHashCode();
+        hashCode = hashCode * -1521134295 + s.GetHashCode();
+        return hashCode;
     }
 }
 
