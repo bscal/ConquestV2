@@ -140,8 +140,8 @@ namespace Conquest
 
                 Plate p = new Plate(hex, UnityEngine.Random.ColorHSV()) {
                     elevation = Random.Range(0f, 255f),
-                    movementSpeed = rand.NextFloat(26.0f, 29.0f),
-                    direction = (HexDirection)Random.Range(0, Hex.DIRECTION_COUNT - 1),
+                    movementSpeed = rand.NextFloat(10.0f, 16.0f),
+                    direction = (HexDirection)Random.Range(0, HexConstants.DIRECTIONS - 1),
                     obj = Instantiate(dot, new Vector3((float)pt.x, (float)pt.y, -1), Quaternion.identity)
             };
                 m_world.plates.Add(p);
@@ -213,7 +213,7 @@ namespace Conquest
             }
         }
 
-        public const int numOfIters = 500;
+        public const int numOfIters = 250;
         float timer = 0f;
         int iters = 0;
         void Update()
@@ -223,7 +223,7 @@ namespace Conquest
             if (m_state == GenState.DONE) return;
             if (m_state != GenState.ITERATING) m_state = GenState.ITERATING;
             timer += Time.deltaTime;
-            if (timer < 0.25f) return;
+            if (timer < 0.20f) return;
             timer = 0;
             iters++;
             if (iters > numOfIters)
@@ -235,12 +235,12 @@ namespace Conquest
             }
 
 
-            if (iters != 0 && iters % 30 == 0)
+            if (iters != 0 && iters % 50 == 0)
             {
                 for (int i = 0; i < m_world.plates.Count; i++)
                 {
                     Plate p = m_world.plates[i];
-                    p.direction = (HexDirection)Random.Range(0, Hex.DIRECTION_COUNT - 1);
+                    p.direction = (HexDirection)Random.Range(0, HexConstants.MAX_DIR);
                 }
                 Debug.LogWarning("changing directions");
             }
@@ -249,9 +249,8 @@ namespace Conquest
                 for (int i = 0; i < m_world.plates.Count; i++)
                 {
                     Plate p = m_world.plates[i];
-                    p.movementSpeed = Random.Range(8.0f, 11.0f);
+                    p.movementSpeed = Random.Range(10.0f, 16.0f);
                 }
-                Debug.LogWarning("changing directions");
             }
 
             CalcCollisions();
@@ -287,6 +286,7 @@ namespace Conquest
                     bool dirInto = dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
                     bool dirHigher = plate.elevation < dirPlate.elevation;
                     bool dirIntoFront = hex.Front(plate.direction).Contains(dirHex);
+                    bool dirMovingAway = HexUtils.HexMovingTowards((int)plate.direction, (int)dirPlate.direction);
 
                     // old way of movement
                     // float baseVal = height * .015f;
@@ -333,7 +333,7 @@ namespace Conquest
                         tempPlates[hData.plateId] -= .5f;
                         if (!dirHigher)
                         {
-                            tempHeights[mapKey].height = height + (height * .25f) + 5;
+                            tempHeights[mapKey].height = height + (height * .5f) + 15;
                         }
                         hData.empty = false;
                         continue;
@@ -346,7 +346,7 @@ namespace Conquest
                         tempPlates[hData.plateId] -= .5f;
                         if (!dirHigher)
                         {
-                            tempHeights[mapKey].height = height + (height * .2f) + 1;
+                            tempHeights[mapKey].height = height + (height * .5f) + 10;
                         }
                         hData.empty = false;
                         continue;
@@ -366,28 +366,35 @@ namespace Conquest
                     /*
                      * Moves hex from current iterated hex -> neighboring hex using the current plates direction
                      */
-                    float mod = 3f;
+                    float mod = 2f;
                     if (height < 100)
-                        mod += height * .2f + 10;
-                    if (height > 200)
-                        mod += -5f;
-                    if (dirDiffPlate && dirIntoFront)
-                        mod += height * .1f;
+                        mod += height * .2f + 8;
+                    if (height > 150)
+                        mod += -4f;
+                    if (dirDiffPlate && !dirMovingAway)
+                        mod += height * .1f + 10;
+
                     tempHeights[dirData.hex.GetKey()].height = height + mod;
 
-                    if (plate.center == hex)
-                        plate.center = dirData.hex;
 
                     dirData.empty = false;
-                    hData.moved = true;
+                    
                     dirData.generated = false;
 
+                    if (plate.center.Equals(hex))
+                    {
+                        plate.center = dirData.hex;
+                        hData.moved = true;
+                    }
+                    
                     dirPlate.RemoveHex(dirHex);
                     plate.AddHex(dirHex);
+                    tempHeights[mapKey].movedToHex = dirData.hex;
                     tempHeights[mapKey].oldPlateId = hData.plateId;
                     tempHeights[dirData.hex.GetKey()].plateId = hData.plateId;
                     
                     tempPlates[hData.plateId] -= .1f;
+
                 }
             }
 
@@ -397,16 +404,6 @@ namespace Conquest
             for (int i = 0; i < tempPlates.Length; i++)
             {
                 m_world.plates[i].movementSpeed = tempPlates[i];
-
-                bool res = m_world.TryGetHexData(m_world.plates[i].center, true, out TileObject data);
-                if (res && data.moved)
-                {
-                    Hex newH = data.hex.Neighbor((int)m_world.plates[i].direction);
-                    if (HexUtils.HexOutOfBounds(m_world.size, newH)) continue;
-                    m_world.plates[i].center = newH;
-                    Point pt = m_layout.HexToPixel(newH);
-                    m_world.plates[i].obj.transform.position = new Vector3((float)pt.x, (float)pt.y, -1);
-                }
             }
 
             ApplyTiles(tempHeights);
@@ -445,6 +442,12 @@ namespace Conquest
                     m_world.plates[closestId].AddHex(pair.Value.hex);
                 }
 
+                if (pair.Value.moved)
+                {
+                    Point pt = m_layout.HexToPixel(tempHeights[pair.Key].movedToHex);
+                    m_world.plates[tempHeights[pair.Key].plateId].obj.transform.position = new Vector3((float)pt.x, (float)pt.y, -1);
+                }
+
                 float h = pair.Value.height;
                 int n = 0;
                 if (h < 100)
@@ -455,7 +458,6 @@ namespace Conquest
                     n = 1;
                 pair.Value.tileId = n;
                 pair.Value.render.sprite = tiles[n];
-                
 
             }
         }
@@ -481,14 +483,6 @@ namespace Conquest
                 tempData[key].height += (avg / count) * .1f;
             }
             ApplyTiles(null);
-        }
-
-        private void SetCollisions(bool val)
-        {
-            foreach (var pair in m_world.tileData)
-            {
-                pair.Value.collision = val;
-            }
         }
 
         private void CalcCollisions()
