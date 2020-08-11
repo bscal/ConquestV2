@@ -8,5 +8,7 @@ public class HexMovableData
     public int plateId;
     public int oldPlateId;
     public Hex movedToHex;
+    public bool formingMoutain;
+    public bool isOcean;
 
 }

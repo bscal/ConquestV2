@@ -242,6 +242,7 @@ namespace Conquest
                     Plate p = m_world.plates[i];
                     p.direction = (HexDirection)Random.Range(0, HexConstants.MAX_DIR);
                 }
+                OnDirectionChange();
                 Debug.LogWarning("changing directions");
             }
             if (iters != 0 && iters % 10 == 0)
@@ -295,19 +296,25 @@ namespace Conquest
                     // dirData.height += baseVal;
                     
 
-
+                    /**
+                     * Adds HexMovableData to tempData array
+                     */
                     if (!tempHeights.ContainsKey(mapKey))
                     {
                         tempHeights[mapKey] = new HexMovableData() {
                             height = hData.height,
-                            plateId = hData.plateId
-                        };
+                            plateId = hData.plateId,
+                            formingMoutain = hData.formingMoutain,
+                            isOcean = hData.isOcean
+                    };
                     }
                     if (!tempHeights.ContainsKey(dirData.hex.GetKey()))
                     {
                         tempHeights[dirData.hex.GetKey()] = new HexMovableData() {
                             height = dirData.height,
-                            plateId = dirData.plateId
+                            plateId = dirData.plateId,
+                            formingMoutain = dirData.formingMoutain,
+                            isOcean = dirData.isOcean
                         };
                     }
 
@@ -333,7 +340,8 @@ namespace Conquest
                         tempPlates[hData.plateId] -= .5f;
                         if (!dirHigher)
                         {
-                            tempHeights[mapKey].height = height + (height * .5f) + 15;
+                            tempHeights[mapKey].height = height + (height * .75f) + 15;
+                            tempHeights[mapKey].formingMoutain = true;
                         }
                         hData.empty = false;
                         continue;
@@ -347,6 +355,7 @@ namespace Conquest
                         if (!dirHigher)
                         {
                             tempHeights[mapKey].height = height + (height * .5f) + 10;
+                            tempHeights[mapKey].formingMoutain = true;
                         }
                         hData.empty = false;
                         continue;
@@ -373,6 +382,8 @@ namespace Conquest
                         mod += -4f;
                     if (dirDiffPlate && !dirMovingAway)
                         mod += height * .1f + 10;
+                    if (!dirDiffPlate && dirData.formingMoutain)
+                        mod += height * .25f + 5;
 
                     tempHeights[dirData.hex.GetKey()].height = height + mod;
 
@@ -428,6 +439,8 @@ namespace Conquest
                 if (tempHeights.ContainsKey(pair.Key)) {
                     pair.Value.height = tempHeights[pair.Key].height;
                     pair.Value.plateId = tempHeights[pair.Key].plateId;
+                    pair.Value.formingMoutain = tempHeights[pair.Key].formingMoutain;
+                    pair.Value.isOcean = tempHeights[pair.Key].isOcean;
                 }
 
                 if (pair.Value.empty)
@@ -458,7 +471,7 @@ namespace Conquest
                     n = 1;
                 pair.Value.tileId = n;
                 pair.Value.render.sprite = tiles[n];
-
+                
             }
         }
 
@@ -483,6 +496,14 @@ namespace Conquest
                 tempData[key].height += (avg / count) * .1f;
             }
             ApplyTiles(null);
+        }
+
+        private void OnDirectionChange()
+        {
+            foreach (var pair in m_world.tileData)
+            {
+                pair.Value.formingMoutain = false;
+            }
         }
 
         private void CalcCollisions()

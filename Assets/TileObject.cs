@@ -31,6 +31,8 @@ namespace Conquest
         public bool empty = false;
         public bool moved = false;
         public bool generated = false;
+        public bool formingMoutain = false;
+        public bool isOcean = false;
 
         private void OnBecameVisible()
         {
