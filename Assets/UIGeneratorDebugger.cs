@@ -15,6 +15,7 @@ public class UIGeneratorDebugger : MonoBehaviour
     public Text tileObjText;
     public Text movementText;
     public Text plateDataText;
+    public Text plateData2Text;
 
     private Hex m_watchedHex;
 
