@@ -33,6 +33,7 @@ namespace Conquest
         public bool generated = false;
         public bool formingMoutain = false;
         public bool isOcean = false;
+        public bool isCoast = false;
 
         private void OnBecameVisible()
         {

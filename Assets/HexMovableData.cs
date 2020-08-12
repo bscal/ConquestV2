@@ -10,5 +10,6 @@ public class HexMovableData
     public Hex movedToHex;
     public bool formingMoutain;
     public bool isOcean;
+    public bool isCoast;
 
 }
