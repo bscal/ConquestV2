@@ -525,8 +525,8 @@ MonoBehaviour:
   size: {x: 0, y: 0}
   seed: 0
   wrapWorld: 1
-  width: 32
-  height: 24
+  width: 64
+  height: 48
   plates: 5
   worldType: 0
   worldAge: 0
@@ -722,7 +722,7 @@ GameObject:
   - component: {fileID: 1398113787}
   - component: {fileID: 1398113786}
   m_Layer: 0
-  m_Name: Plate Data
+  m_Name: Plate Data 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1308,6 +1308,7 @@ MonoBehaviour:
   tileObjText: {fileID: 18124490}
   movementText: {fileID: 17744062}
   plateDataText: {fileID: 773686831}
+  plateData2Text: {fileID: 1398113786}
 --- !u!1 &2013488975
 GameObject:
   m_ObjectHideFlags: 0

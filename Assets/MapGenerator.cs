@@ -40,6 +40,9 @@ namespace Conquest
 
         private GenState m_state;
 
+        private uint m_seed;
+        private Unity.Mathematics.Random m_rand;
+
         public World CreateWorld()
         {
             m_width = WorldSettings.Singleton.width;
@@ -49,7 +52,9 @@ namespace Conquest
             m_world = new World(m_width, m_height);
             m_layout = m_world.layout;
 
+            m_seed = 123;
             SimplexNoise.Noise.Seed = 209323094;
+            m_rand = new Unity.Mathematics.Random(m_seed);
 
             m_state = GenState.PRE_GEN;
             StartCoroutine(GenerateRoutine());
@@ -131,19 +136,17 @@ namespace Conquest
             l4.startWidth = 2;
             l4.endWidth = 2;
 
-            uint seed = 123;
-            Unity.Mathematics.Random rand = new Unity.Mathematics.Random(seed);
             for (int i = 0; i < WorldSettings.Singleton.plates; i++)
             {
-                int x = rand.NextInt(0, m_pixelW);
-                int y = rand.NextInt(0, m_pixelH);
+                int x = m_rand.NextInt(0, m_pixelW);
+                int y = m_rand.NextInt(0, m_pixelH);
 
                 Hex hex = m_layout.PixelToHex(new Point(x, y)).HexRound();
                 Point pt = m_layout.HexToPixel(hex);
 
                 Plate p = new Plate(hex, UnityEngine.Random.ColorHSV()) {
                     elevation = Random.Range(0f, 255f),
-                    movementSpeed = rand.NextFloat(10.0f, 16.0f),
+                    movementSpeed = m_rand.NextFloat(10.0f, 16.0f),
                     direction = (HexDirection)Random.Range(0, HexConstants.DIRECTIONS - 1),
                     obj = Instantiate(dot, new Vector3((float)pt.x, (float)pt.y, -1), Quaternion.identity)
             };
@@ -226,7 +229,7 @@ namespace Conquest
             if (m_state == GenState.DONE) return;
             if (m_state != GenState.ITERATING) m_state = GenState.ITERATING;
             timer += Time.deltaTime;
-            if (timer < 0.20f) return;
+            if (timer < 0.10f) return;
             timer = 0;
             iters++;
             if (iters > numOfIters)
@@ -347,7 +350,7 @@ namespace Conquest
                     // Plate collision. current hex plate and moving direction plate colliding
                     if (dirDiffPlate && dirInto)
                     {
-                        tempPlates[hData.plateId] -= .5f;
+                        tempPlates[hData.plateId] -= 5f;
                         if (!dirHigher)
                         {
                             tempHeights[mapKey].height = height + (height * .75f) + 15;
@@ -361,7 +364,7 @@ namespace Conquest
                     // This is handled the similar to a plate collision but technically is not real one.
                     if (dirDiffPlate && dirPlate.movementSpeed < 0f)
                     {
-                        tempPlates[hData.plateId] -= .5f;
+                        tempPlates[hData.plateId] -= 2f;
                         if (!dirHigher)
                         {
                             tempHeights[mapKey].height = height + (height * .5f) + 10;
@@ -424,7 +427,7 @@ namespace Conquest
                         }
                     }
 
-                                dirPlate.RemoveHex(dirHex);
+                    dirPlate.RemoveHex(dirHex);
                     plate.AddHex(dirHex);
                     tempHeights[mapKey].movedToHex = dirData.hex;
                     tempHeights[mapKey].oldPlateId = hData.plateId;
@@ -530,22 +533,46 @@ namespace Conquest
         private void Smooth()
         {
             // TODO REDO
-            Dictionary<string, TileObject> tempData = m_world.tileData.ToDictionary(entry => entry.Key, entry => entry.Value);
+            Dictionary<string, HexMovableData> tempHeights = new Dictionary<string, HexMovableData>(m_world.tileData.Count);
+
             foreach (var pair in m_world.tileData)
             {
                 string key = pair.Key;
                 TileObject tile = pair.Value;
-                float val = tile.height;
-                float avg = 0;
-                int count = 0;
-                foreach (Hex hex in tile.hex.Ring(1))
+
+                if (!tempHeights.ContainsKey(key))
                 {
-                    var obj = m_world.GetHexData(hex, WorldSettings.Singleton.wrapWorld);
-                    if (obj == null) continue;
-                    avg += (obj.height / 455) * 100;
-                    count++;
+                    tempHeights[key] = new HexMovableData() {
+                        height = tile.height,
+                        plateId = tile.plateId,
+                        formingMoutain = tile.formingMoutain,
+                        isOcean = tile.isOcean,
+                        isCoast = tile.isCoast
+                    };
                 }
-                tempData[key].height += (avg / count) * .1f;
+
+                if (tile.isCoast)
+                {
+                    float randVal = m_rand.NextFloat();
+                    if (randVal < 0.5f)
+                    {
+                        tile.height = 90f;
+                        tile.tileId = 2;
+                        tile.render.sprite = tiles[2];
+                    }
+                }
+
+//                 float val = tile.height;
+//                 float avg = 0;
+//                 int count = 0;
+//                 foreach (Hex hex in tile.hex.Ring(1))
+//                 {
+//                     var obj = m_world.GetHexData(hex, WorldSettings.Singleton.wrapWorld);
+//                     if (obj == null) continue;
+//                     avg += (obj.height / 455) * 100;
+//                     count++;
+//                 }
+//                 tempHeights[key].height += (avg / count) * .1f;
             }
             ApplyTiles(null);
         }
