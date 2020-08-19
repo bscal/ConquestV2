@@ -1119,6 +1119,7 @@ MonoBehaviour:
   dot: {fileID: 9140088084167084064, guid: 353dee8747d05094ba47405d2a47743f, type: 3}
   paused: 1
   iterations: 0
+  tileMap: {fileID: 11400000, guid: 3b027e8f6b3b5cd47a0335cb849a1c1b, type: 2}
 --- !u!850595691 &1937995574
 LightingSettings:
   m_ObjectHideFlags: 0

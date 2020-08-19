@@ -16,11 +16,11 @@ namespace Conquest {
                     if (wrap && !HexUtils.HexOutOfBounds(GameManager.Singleton.World.size, h))
                     {
                         string key = HexUtils.WrapOffset(h, WorldSettings.Singleton.width).GetKey();
-                        if (hexdata.ContainsKey(key) && hexdata[key].plateId == plateId)
+                        if (hexdata.ContainsKey(key) && hexdata[key].hexData.plateId == plateId)
                             return true;
                     }
                 }
-                else if(hexdata[h.GetKey()].plateId == plateId)
+                else if(hexdata[h.GetKey()].hexData.plateId == plateId)
                 {
                     return true;
                 }
@@ -34,7 +34,7 @@ namespace Conquest {
             foreach (Hex h in hexes)
             {
                 if (!hexdata.ContainsKey(h.GetKey())) continue;
-                if (hexdata[h.GetKey()].plateId == plateId) contains++;
+                if (hexdata[h.GetKey()].hexData.plateId == plateId) contains++;
             }
             return hexes.Length == contains;
         }

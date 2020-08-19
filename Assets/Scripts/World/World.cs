@@ -46,14 +46,14 @@ namespace Conquest
             return tileData[key];
         }
 
-        public bool TryGetHexData(Hex hex, bool wrapIfNull, out TileObject data)
+        public bool TryGetHexData(Hex hex, bool wrapIfNull, out TileObject obj)
         {
             string key = hex.GetKey();
 
             if (wrapIfNull && !tileData.ContainsKey(key) && !HexUtils.HexOutOfBounds(size, hex))
                 key = HexUtils.WrapOffset(hex, size.x).GetKey();
 
-            return tileData.TryGetValue(key, out data);
+            return tileData.TryGetValue(key, out obj);
         }
 
         public TileObject GetWrappedHex(Hex hex)

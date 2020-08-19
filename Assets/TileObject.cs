@@ -18,22 +18,31 @@ namespace Conquest
         public GameObject gameobject;
         public SpriteRenderer render;
         public Hex hex;
+        public HexData hexData;
 
-        public int plateId = 0;
         public int tileId = 0;
 
-        public float height = 0;
-        public float temp = 0;
-        public float wetness = 0;
+        //         public int plateId = 0;
+        //         public int tileId = 0;
+        // 
+        //         public int age = 0;
+        //         public float height = 0;
+        //         public float temp = 0;
+        //         public float wetness = 0;
+        // 
+        //         public bool isPlateEdge = false;
+        //         public bool collision = false;
+        //         public bool empty = false;
+        //         public bool moved = false;
+        //         public bool generated = false;
+        //         public bool formingMoutain = false;
+        //         public bool isOcean = false;
+        //         public bool isCoast = false;
 
-        public bool isPlateEdge = false;
-        public bool collision = false;
-        public bool empty = false;
-        public bool moved = false;
-        public bool generated = false;
-        public bool formingMoutain = false;
-        public bool isOcean = false;
-        public bool isCoast = false;
+        void Awake()
+        {
+            hexData = new HexData();
+        }
 
         private void OnBecameVisible()
         {
@@ -81,7 +90,7 @@ namespace Conquest
             }
             else if (filter == HexFilter.PLATE)
             {
-                render.color = GameManager.Singleton.World.plates[plateId].color;
+                render.color = GameManager.Singleton.World.plates[hexData.plateId].color;
             }
         }
     }

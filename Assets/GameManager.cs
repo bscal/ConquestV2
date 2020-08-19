@@ -51,13 +51,14 @@ public class GameManager : MonoBehaviour
             print(string.Format("WrappedHex: {0}, {1}, ", wrap.q, wrap.r));
             print(string.Format("WrappedCoords: {0}, {1}, ", wcoord.col, wcoord.row));
 
-            var data = World.tileData[hex.GetKey()];
-            var pl = World.GetPlateByID(data.plateId);
+            var obj = World.tileData[hex.GetKey()];
+            var hData = obj.hexData;
+            var pl = World.GetPlateByID(hData.plateId);
             m_UIGenDebug.hexInfoText.text = $"Hex={hex.q}/{hex.r}/{hex.s} | {coord.col}/{coord.row}";
-            m_UIGenDebug.tileObjText.text = $"h={Math.Round(data.height, 2)},t={data.temp},tid={data.tileId}";
-            m_UIGenDebug.movementText.text = $"m={data.moved},e={data.empty},d={pl.direction}";
-            m_UIGenDebug.plateDataText.text = $"id={data.plateId},s={Math.Round(pl.movementSpeed, 1)},e={Math.Round(pl.elevation, 0)}";
-            m_UIGenDebug.plateData2Text.text = $"o={data.isOcean},c={data.isCoast},";
+            m_UIGenDebug.tileObjText.text = $"h={Math.Round(hData.height, 2)},t={hData.temp},tid={obj.tileId}";
+            m_UIGenDebug.movementText.text = $"m={hData.moved},e={hData.empty},d={pl.direction}";
+            m_UIGenDebug.plateDataText.text = $"id={hData.plateId},s={Math.Round(pl.movementSpeed, 1)},e={Math.Round(pl.elevation, 0)}";
+            m_UIGenDebug.plateData2Text.text = $"o={hData.isOcean},c={hData.isCoast},";
         }
 
         if (Input.GetKeyDown(KeyCode.R))

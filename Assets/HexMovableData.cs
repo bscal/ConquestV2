@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
 
+[Obsolete("HexMovableData is deprecated, please use HexData instead.", true)]
 public class HexMovableData
 {
     public float height;
