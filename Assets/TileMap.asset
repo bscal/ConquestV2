@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97644cb5d40bb814581ac0dcc74c7a85, type: 3}
+  m_Name: TileMap
+  m_EditorClassIdentifier: 
+  tiles:
+  - name: grass
+    sprite: {fileID: -374796290018590942, guid: f3ef18d3698ceee48a19016fa82dd654,
+      type: 3}
+  - name: plains
+    sprite: {fileID: -453650012503169676, guid: f3ef18d3698ceee48a19016fa82dd654,
+      type: 3}
+  - name: water
+    sprite: {fileID: -7245373555578790540, guid: f3ef18d3698ceee48a19016fa82dd654,
+      type: 3}
+  - name: sand
+    sprite: {fileID: -4218347658839152434, guid: f3ef18d3698ceee48a19016fa82dd654,
+      type: 3}
