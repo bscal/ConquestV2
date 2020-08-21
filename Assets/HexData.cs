@@ -12,10 +12,11 @@
         public bool collision = false;
         public bool empty = false;
         public bool moved = false;
-        public bool generated = false;
+        public bool moveCenter = false;
         public bool formingMoutain = false;
         public bool isOcean = false;
         public bool isCoast = false;
+        public bool isHotSpot = false;
 
         public int oldPlateId;
         public Hex movedToHex;
@@ -41,11 +42,13 @@
             isPlateEdge     = other.isPlateEdge;
             collision       = other.collision;
             empty           = other.empty;
-            moved           = other.moved;
-            generated       = other.generated;
+            moveCenter           = other.moveCenter;
+            moved       = other.moved;
             formingMoutain  = other.formingMoutain;
             isOcean         = other.isOcean;
             isCoast         = other.isCoast;
+            isHotSpot       = other.isHotSpot;
+
             oldPlateId      = other.oldPlateId;
             movedToHex      = other.movedToHex;
         }

@@ -222,6 +222,8 @@ namespace Conquest
             }
         }
         public const float seaLevel = 100;
+        public const float hillLevel = 200;
+
         public const int numOfIters = 250;
         float timer = 0f;
         int iters = 0;
@@ -254,7 +256,7 @@ namespace Conquest
                 OnDirectionChange();
                 Debug.LogWarning("changing directions");
             }
-            if (iters != 0 && iters % 10 == 0)
+            if (iters != 0 && iters % 5 == 0)
             {
                 for (int i = 0; i < m_world.plates.Count; i++)
                 {
@@ -286,10 +288,12 @@ namespace Conquest
                     HexDirection dir = plate.direction;
                     float height = hData.height;
 
+                    bool move = true;
+                    bool destroy = false;
+
                     // Move Direction Hex.
                     Hex dirHex = hex.Neighbor((int)dir);
                     bool dirNotNull = m_world.TryGetHexData(dirHex, WorldSettings.Singleton.wrapWorld, out TileObject dirObj);
-                    // if dataHex's TileObject is null
                     if (!dirNotNull) continue;
                     HexData dirData = dirObj.hexData;
 
@@ -304,11 +308,10 @@ namespace Conquest
                     // float baseVal = height * .015f;
                     // 
                     // data.height -= baseVal;
-                    // dirData.height += baseVal;
-                    
+                    // dirData.height += baseVal;  
 
                     /**
-                     * Adds HexMovableData to tempData array
+                     * Adds HexData to tempData array
                      */
                     if (!tempHeights.ContainsKey(mapKey))
                     {
@@ -328,7 +331,7 @@ namespace Conquest
                     if (plate.movementSpeed < 0.0f)
                     {
                         hData.empty = false;
-                        continue;
+                        move = false;
                     }
 
                     // Checks if dirHex is out of grid bounds. 
@@ -336,7 +339,7 @@ namespace Conquest
                     {
                         tempPlates[hData.plateId] -= 5f;
                         hData.empty = false;
-                        continue;
+                        move = false;
                     }
 
                     // Convergent boundary
@@ -349,8 +352,12 @@ namespace Conquest
                             tempHeights[mapKey].height = height + (height * .75f) + 15;
                             tempHeights[mapKey].formingMoutain = true;
                         }
+                        else
+                        {
+                            destroy = true;
+                        }
                         hData.empty = false;
-                        continue;
+                        move = false;
                     }
 
                     // dirHex is on different plate and diff plate is not moving.
@@ -363,8 +370,12 @@ namespace Conquest
                             tempHeights[mapKey].height = height + (height * .5f) + 10;
                             tempHeights[mapKey].formingMoutain = true;
                         }
+                        else
+                        {
+                            destroy = this;
+                        }
                         hData.empty = false;
-                        continue;
+                        move = false;
                     }
 
                     /*
@@ -373,62 +384,63 @@ namespace Conquest
                      * hexes are set to a default height (to simulate crust being created). These naturally
                      * happen in areas of diverging plates.
                      */
-
-                    // dirHex is on different plate and height > water level
-                    //if (dirDiffPlate && dirData.height > 100)
-                        //tempPlates[hData.plateId] -= .01f;
-
-                    /*
-                     * Moves hex from current iterated hex -> neighboring hex using the current plates direction
-                     */
-                    float mod = 2f;
-                    if (height < seaLevel)
-                        mod += height * .2f + 8;
-                    if (height > 150)
-                        mod += -4f;
-                    if (dirDiffPlate && !dirMovingAway)
-                        mod += height * .1f + 10;
-                    if (!dirDiffPlate && dirData.formingMoutain)
-                        mod += height * .25f + 5;
-
-                    tempHeights[dirObj.hex.GetKey()].height = height + mod;
-
-                    dirData.empty = false;
-                    dirData.generated = false;
-                    if (plate.center.Equals(hex))
+                    hData.moved = move;
+                    if (move)
                     {
-                        plate.center = dirObj.hex;
-                        hData.moved = true;
-                    }
+                        /*
+                         * Moves hex from current iterated hex -> neighboring hex using the current plates direction
+                         */
+                        float mod = 1f;
+                        if (hData.isHotSpot)
+                            mod += 20f;
+                        if (height < seaLevel)
+                            mod += height * .2f + 8;
+                        if (height > 150)
+                            mod += -6f;
+                        if (dirDiffPlate && !dirMovingAway)
+                            mod += height * .1f + 10;
+                        if (!dirDiffPlate && dirData.formingMoutain)
+                            mod += height * .3f;
+                        if (dirData.height > hillLevel && height < dirData.height && !dirData.isCoast)
+                            mod += height * .1f + 5f;
 
-                    if (hData.height >= seaLevel)
-                    {
-                        tempHeights[dirObj.hex.GetKey()].isOcean = false;
-                    }
-
-                    foreach (Hex ringHex in hexObj.hex.Ring(1))
-                    {
-                        if (m_world.TryGetHexData(ringHex, WorldSettings.Singleton.wrapWorld, out TileObject ringObj))
+                        tempHeights[dirObj.hex.GetKey()].height = height + mod;
+                        tempHeights[mapKey].isHotSpot = false;
+                        dirData.empty = false;
+                        if (plate.center.Equals(hex))
                         {
-                            HexData data = ringObj.hexData;
-                            if (data.isOcean)
+                            plate.center = dirObj.hex;
+                            hData.moveCenter = true;
+                        }
+
+                        if (hData.height >= seaLevel)
+                        {
+                            tempHeights[dirObj.hex.GetKey()].isOcean = false;
+                        }
+
+                        foreach (Hex ringHex in hexObj.hex.Ring(1))
+                        {
+                            if (m_world.TryGetHexData(ringHex, WorldSettings.Singleton.wrapWorld, out TileObject ringObj))
                             {
-                                if (hData.height < seaLevel)
+                                HexData data = ringObj.hexData;
+                                if (data.isOcean)
                                 {
-                                    tempHeights[hexObj.hex.GetKey()].isOcean = true;
+                                    if (hData.height < seaLevel)
+                                    {
+                                        tempHeights[hexObj.hex.GetKey()].isOcean = true;
+                                    }
                                 }
                             }
                         }
+
+                        dirPlate.RemoveHex(dirHex);
+                        plate.AddHex(dirHex);
+                        tempHeights[mapKey].movedToHex = dirObj.hex;
+                        tempHeights[mapKey].oldPlateId = hData.plateId;
+                        tempHeights[dirObj.hex.GetKey()].plateId = hData.plateId;
+
+                        tempPlates[hData.plateId] -= .1f;
                     }
-
-                    dirPlate.RemoveHex(dirHex);
-                    plate.AddHex(dirHex);
-                    tempHeights[mapKey].movedToHex = dirObj.hex;
-                    tempHeights[mapKey].oldPlateId = hData.plateId;
-                    tempHeights[dirObj.hex.GetKey()].plateId = hData.plateId;
-                    
-                    tempPlates[hData.plateId] -= .1f;
-
                 }
             }
 
@@ -484,15 +496,18 @@ namespace Conquest
             foreach (var pair in m_world.tileData)
             {
                 HexData hData = pair.Value.hexData;
-                if (tempHeights.ContainsKey(pair.Key)) {
-                    hData.UpdateValues(tempHeights[pair.Key]);
+                if (!tempHeights.ContainsKey(pair.Key)) {
+                    continue;
                 }
+                hData.UpdateValues(tempHeights[pair.Key]);
 
                 if (hData.empty)
                 {
                     hData.height = 10f;
-                    hData.generated = true;
+                    hData.moved = true;
                     hData.isOcean = true;
+                    if (m_rand.NextFloat() < .05f)
+                        hData.isHotSpot = true;
 
                     m_world.plates[hData.plateId].RemoveHex(pair.Value.hex);
                     int closestId = tempHeights[pair.Key].oldPlateId;
@@ -501,7 +516,7 @@ namespace Conquest
                     m_world.plates[closestId].AddHex(pair.Value.hex);
                 }
 
-                if (hData.moved)
+                if (hData.moveCenter)
                 {
                     Point pt = m_layout.HexToPixel(tempHeights[pair.Key].movedToHex);
                     m_world.plates[tempHeights[pair.Key].plateId].obj.transform.position = new Vector3((float)pt.x, (float)pt.y, -1);
@@ -531,7 +546,7 @@ namespace Conquest
                 TileObject obj = pair.Value;
                 HexData hData = pair.Value.hexData;
 
-                if (!tempHeights.ContainsKey(key))
+                if (tempHeights.ContainsKey(key))
                 {
                     hData.UpdateValues(tempHeights[key]);
                 }
@@ -567,6 +582,7 @@ namespace Conquest
             foreach (var pair in m_world.tileData)
             {
                 pair.Value.hexData.formingMoutain = false;
+                pair.Value.hexData.isHotSpot = false;
             }
         }
 
@@ -579,7 +595,7 @@ namespace Conquest
                 if (!m_world.TryGetHexData(h, WorldSettings.Singleton.wrapWorld, out TileObject dirData))
                     continue;
 
-                hData.moved = false;
+                hData.moveCenter = false;
                 hData.empty = true;
 
                 if (HexUtils.HexOutOfBounds(m_world.size, dirData.hex) || hData.collision)
