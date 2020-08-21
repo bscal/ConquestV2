@@ -41,25 +41,7 @@ public class GameManager : MonoBehaviour
                 data.render.sprite = generator.tiles[3];
             }
         }
-        if (Input.GetMouseButtonDown((int)MouseButton.RightMouse))
-        {
-            var p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Hex hex = World.layout.PixelToHex(new Point(p.x, p.y)).HexRound();
-            OffsetCoord coord = OffsetCoord.RoffsetFromCube(WorldSettings.Singleton.offset, hex);
-            Hex wrap = HexUtils.WrapOffset(hex, World.size.x);
-            OffsetCoord wcoord = OffsetCoord.RoffsetFromCube(WorldSettings.Singleton.offset, wrap);
-            print(string.Format("WrappedHex: {0}, {1}, ", wrap.q, wrap.r));
-            print(string.Format("WrappedCoords: {0}, {1}, ", wcoord.col, wcoord.row));
 
-            var obj = World.tileData[hex.GetKey()];
-            var hData = obj.hexData;
-            var pl = World.GetPlateByID(hData.plateId);
-            m_UIGenDebug.hexInfoText.text = $"Hex={hex.q}/{hex.r}/{hex.s} | {coord.col}/{coord.row}";
-            m_UIGenDebug.tileObjText.text = $"h={Math.Round(hData.height, 2)},t={hData.temp},tid={obj.tileId}";
-            m_UIGenDebug.movementText.text = $"m={hData.moved},e={hData.empty},d={pl.direction}";
-            m_UIGenDebug.plateDataText.text = $"id={hData.plateId},s={Math.Round(pl.movementSpeed, 1)},e={Math.Round(pl.elevation, 0)}";
-            m_UIGenDebug.plateData2Text.text = $"o={hData.isOcean},c={hData.isCoast},";
-        }
 
         if (Input.GetKeyDown(KeyCode.R))
         {
