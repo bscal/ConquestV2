@@ -296,6 +296,7 @@ namespace Conquest
                     bool dirNotNull = m_world.TryGetHexData(dirHex, WorldSettings.Singleton.wrapWorld, out TileObject dirObj);
                     if (!dirNotNull) continue;
                     HexData dirData = dirObj.hexData;
+                    string dirKey = dirObj.hex.GetKey();
 
                     Plate dirPlate = m_world.plates[dirData.plateId];
                     bool dirDiffPlate = hData.plateId != dirData.plateId;
@@ -317,9 +318,9 @@ namespace Conquest
                     {
                         tempHeights[mapKey] = new HexData(hData);
                     }
-                    if (!tempHeights.ContainsKey(dirObj.hex.GetKey()))
+                    if (!tempHeights.ContainsKey(dirKey))
                     {
-                        tempHeights[dirObj.hex.GetKey()] = new HexData(dirData);
+                        tempHeights[dirKey] = new HexData(dirData);
                     }
 
                     if (height >= seaLevel)
@@ -385,27 +386,30 @@ namespace Conquest
                      * happen in areas of diverging plates.
                      */
                     hData.moved = move;
+                    hData.age++;
                     if (move)
                     {
                         /*
                          * Moves hex from current iterated hex -> neighboring hex using the current plates direction
                          */
                         float mod = 1f;
-                        if (hData.isHotSpot)
-                            mod += 20f;
-                        if (height < seaLevel)
-                            mod += height * .2f + 8;
-                        if (height > 150)
-                            mod += -6f;
-                        if (dirDiffPlate && !dirMovingAway)
+                        if (hData.isHotSpot) // Hot spots
+                            mod += 10f;
+                        if (height < seaLevel && hData.age < 20) // New created land gains more height
+                            mod += height * .25f + 5; 
+                        if (height > 150) // Erosion
+                            mod += -3f;
+                        if (height > hillLevel) // Erosion
+                            mod -= m_rand.NextInt(5, 8);
+                        if (dirDiffPlate && !dirMovingAway) // plates moving away
                             mod += height * .1f + 10;
-                        if (!dirDiffPlate && dirData.formingMoutain)
+                        if (!dirDiffPlate && dirData.formingMoutain) // hex moving into hex that forming mountain
                             mod += height * .3f;
-                        if (dirData.height > hillLevel && height < dirData.height && !dirData.isCoast)
+                        if (dirData.height > hillLevel && height < dirData.height && !dirData.isCoast) // hex that are moving into a higher hex that is not coast increase height
                             mod += height * .1f + 5f;
 
-                        tempHeights[dirObj.hex.GetKey()].height = height + mod;
-                        tempHeights[mapKey].isHotSpot = false;
+                        tempHeights[dirKey].height = height + mod;
+                        tempHeights[dirKey].isHotSpot = false;
                         dirData.empty = false;
                         if (plate.center.Equals(hex))
                         {
@@ -415,7 +419,7 @@ namespace Conquest
 
                         if (hData.height >= seaLevel)
                         {
-                            tempHeights[dirObj.hex.GetKey()].isOcean = false;
+                            tempHeights[dirKey].isOcean = false;
                         }
 
                         foreach (Hex ringHex in hexObj.hex.Ring(1))
@@ -506,6 +510,7 @@ namespace Conquest
                     hData.height = 10f;
                     hData.moved = true;
                     hData.isOcean = true;
+                    hData.age = 0;
                     if (m_rand.NextFloat() < .05f)
                         hData.isHotSpot = true;
 

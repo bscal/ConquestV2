@@ -41,11 +41,11 @@ public class UIGeneratorDebugger : MonoBehaviour
             var hData = obj.hexData;
             var pl = GameManager.Singleton.World.GetPlateByID(hData.plateId);
             hexInfoText.text = $"Hex={hex.q}/{hex.r}/{hex.s} | {coord.col}/{coord.row}";
-            tileObjText.text = $"h={Math.Round(hData.height, 2)},t={hData.temp},tid={obj.tileId}";
+            tileObjText.text = $"h={Math.Round(hData.height, 2)},t={hData.temp},id={obj.tileId},a={hData.age}";
             movementText.text = $"m={Convert.ToInt32(hData.moveCenter)}," +
                 $"e={Convert.ToInt32(hData.empty)}," +
-                $"d={Convert.ToInt32(pl.direction)}" +
-                $"M={Convert.ToInt32(hData.formingMoutain)}" +
+                $"d={Convert.ToInt32(pl.direction)}," +
+                $"M={Convert.ToInt32(hData.formingMoutain)}," +
                 $"I={Convert.ToInt32(hData.isHotSpot)}";
             plateDataText.text = $"id={hData.plateId},s={Math.Round(pl.movementSpeed, 1)},e={Math.Round(pl.elevation, 0)}";
             plateData2Text.text = $"o={hData.isOcean},c={hData.isCoast},";
