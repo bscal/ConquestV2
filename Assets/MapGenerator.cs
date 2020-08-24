@@ -149,7 +149,7 @@ namespace Conquest
 
                 Plate p = new Plate(hex, UnityEngine.Random.ColorHSV()) {
                     elevation = Random.Range(0f, 255f),
-                    movementSpeed = m_rand.NextFloat(10.0f, 16.0f),
+                    movementSpeed = m_rand.NextFloat(1f, 2f),
                     direction = (HexDirection)Random.Range(0, HexConstants.DIRECTIONS - 1),
                     obj = Instantiate(dot, new Vector3((float)pt.x, (float)pt.y, -1), Quaternion.identity)
             };
@@ -261,7 +261,7 @@ namespace Conquest
                 for (int i = 0; i < m_world.plates.Count; i++)
                 {
                     Plate p = m_world.plates[i];
-                    p.movementSpeed = Random.Range(10.0f, 16.0f);
+                    p.movementSpeed = Random.Range(0.5f, 2.0f);
                 }
             }
 
@@ -289,6 +289,7 @@ namespace Conquest
                     HexDirection dir = plate.direction;
                     float height = hData.height;
 
+                    float speedModifier = Mathf.Clamp(plate.movementSpeed, 0.05f, 2.0f);
                     bool move = true;
                     bool destroy = false;
 
@@ -338,7 +339,7 @@ namespace Conquest
                     // Checks if dirHex is out of grid bounds. 
                     if (HexUtils.HexOutOfBounds(m_world.size, dirObj.hex))
                     {
-                        tempPlates[hData.plateId] -= 5f;
+                        tempPlates[hData.plateId] -= .25f;
                         hData.empty = false;
                         move = false;
                     }
@@ -347,10 +348,10 @@ namespace Conquest
                     // Plate collision. current hex plate and moving direction plate colliding
                     if (dirDiffPlate && dirInto)
                     {
-                        tempPlates[hData.plateId] -= 5f;
+                        tempPlates[hData.plateId] -= .25f;
                         if (!dirHigher)
                         {
-                            tempHeights[mapKey].height = height + (height * .1f) + 10;
+                            tempHeights[mapKey].height = height + ((height * .1f) + 10) * speedModifier;
                             tempHeights[mapKey].formingMoutain = true;
                         }
                         else
@@ -365,10 +366,10 @@ namespace Conquest
                     // This is handled the similar to a plate collision but technically is not real one.
                     if (dirDiffPlate && dirPlate.movementSpeed < 0f)
                     {
-                        tempPlates[hData.plateId] -= 2f;
+                        tempPlates[hData.plateId] -= .25f;
                         if (!dirHigher)
                         {
-                            tempHeights[mapKey].height = height + (height * .05f) + 10;
+                            tempHeights[mapKey].height = height + ((height * .05f) + 10) * speedModifier;
                             tempHeights[mapKey].formingMoutain = true;
                         }
                         else
@@ -397,16 +398,19 @@ namespace Conquest
                             mod += 10f;
                         if (height < seaLevel && hData.age < 20) // New created land gains more height
                             mod += 10; 
-                        if (height > seaLevel) // Erosion
+                        if (height > 150) // Erosion
                             mod += -3f;
                         if (height > hillLevel) // Erosion of higher terrain
-                            mod -= m_rand.NextInt(3, 5);
+                            mod -= m_rand.NextInt(1, 3);
                         if (dirDiffPlate && !dirMovingAway) // plates moving away
                             mod += 0;
                         if (!dirDiffPlate && dirData.formingMoutain) // hex moving into hex that forming mountain
-                            mod += 3f;
-                        if (dirData.height > hillLevel && height < dirData.height && !dirData.isCoast) // hex that are moving into a higher hex that is not coast increase height
                             mod += 5f;
+                        if (dirData.height > hillLevel && height < dirData.height && !dirData.isCoast) // hex that are moving into a higher hex that is not coast increase height
+                            mod += 10f;
+
+                        mod *= speedModifier;
+                        
 
                         tempHeights[dirKey].height = height + mod;
                         tempHeights[dirKey].isHotSpot = false;
