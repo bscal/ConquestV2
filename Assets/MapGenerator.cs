@@ -353,13 +353,14 @@ namespace Conquest
                         {
                             tempHeights[mapKey].height = height + ((height * .1f) + 10) * speedModifier;
                             tempHeights[mapKey].formingMoutain = true;
+                            hData.empty = false;
+                            move = false;
                         }
                         else
                         {
+                            hData.empty = false;
                             destroy = true;
                         }
-                        hData.empty = false;
-                        move = false;
                     }
 
                     // dirHex is on different plate and diff plate is not moving.
@@ -369,15 +370,16 @@ namespace Conquest
                         tempPlates[hData.plateId] -= .25f;
                         if (!dirHigher)
                         {
-                            tempHeights[mapKey].height = height + ((height * .05f) + 10) * speedModifier;
+                            tempHeights[mapKey].height = height + ((height * .1f) + 10) * speedModifier;
                             tempHeights[mapKey].formingMoutain = true;
+                            hData.empty = false;
+                            move = false;
                         }
                         else
                         {
-                            destroy = this;
+                            hData.empty = false;
+                            destroy = true;
                         }
-                        hData.empty = false;
-                        move = false;
                     }
 
                     /*
@@ -396,8 +398,8 @@ namespace Conquest
                         float mod = 2f;
                         if (hData.isHotSpot) // Hot spots
                             mod += 10f;
-                        if (height < seaLevel && hData.age < 20) // New created land gains more height
-                            mod += 10; 
+                        if (height < seaLevel && hData.age < 25) // New created land gains more height
+                            mod += (height * .2f) + 5; 
                         if (height > 150) // Erosion
                             mod += -3f;
                         if (height > hillLevel) // Erosion of higher terrain
@@ -434,6 +436,7 @@ namespace Conquest
 
                         tempPlates[hData.plateId] -= .1f;
                     }
+
                     foreach (Hex ringHex in hexObj.hex.Ring(1))
                     {
                         if (m_world.TryGetHexData(ringHex, WorldSettings.Singleton.wrapWorld, out TileObject ringObj))
@@ -486,6 +489,8 @@ namespace Conquest
                 }
                 hData.UpdateValues(tempHeights[pair.Key]);
 
+                var ring = pair.Value.hex.Ring(1);
+
                 if (hData.empty)
                 {
                     hData.height = 10f;
@@ -496,8 +501,9 @@ namespace Conquest
                         hData.isHotSpot = true;
 
                     m_world.plates[hData.plateId].RemoveHex(pair.Value.hex);
-                    int closestId = tempHeights[pair.Key].oldPlateId;
+                    //int closestId = tempHeights[pair.Key].oldPlateId;
                     //int closestId = GetHighestPlateInHexList(pair.Value.hex.Ring(1));
+                    int closestId = GetClosestRingPlate(pair.Value.hex, ring);
                     m_world.tileData[pair.Key].hexData.plateId = closestId;
                     m_world.plates[closestId].AddHex(pair.Value.hex);
                 }
@@ -520,7 +526,7 @@ namespace Conquest
                 pair.Value.render.sprite = tiles[n];
 
                 int notOceanCount = 0;
-                foreach (Hex ringHex in pair.Value.hex.Ring(1))
+                foreach (Hex ringHex in ring)
                 {
                     if (m_world.TryGetHexData(ringHex, WorldSettings.Singleton.wrapWorld, out TileObject ringObj))
                     {
@@ -621,6 +627,42 @@ namespace Conquest
                     top = hData.plateId;
             }
             return top;
+        }
+
+        private int GetClosestRingPlate(Hex hex, in List<Hex> ring)
+        {
+            int[] ids = CountHexList(ring);
+            return GetClosestPlate(hex, ids);
+        }
+
+        public int GetClosestPlate(Hex hex, int[] platesIds)
+        {
+            int closestId = 0;
+            int closest = int.MaxValue;
+            for (int i = 0; i < platesIds.Length; i++)
+            {
+                if (platesIds[i] < 1) continue;
+                int dist = hex.Distance(m_world.plates[platesIds[i]].center);
+
+                if (closest > dist)
+                {
+                    closest = dist;
+                    closestId = platesIds[i];
+                }
+            }
+            for (int i = 0; i < platesIds.Length; i++)
+            {
+                if (platesIds[i] < 1) continue;
+                int dist = hex.Distance(HexUtils.WrapOffset(m_world.plates[platesIds[i]].center, m_world.size.x));
+
+                if (closest > dist)
+                {
+                    closest = dist;
+                    closestId = platesIds[i];
+                }
+            }
+            print(closestId);
+            return closestId;
         }
     }
 }
