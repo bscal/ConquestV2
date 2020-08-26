@@ -525,8 +525,8 @@ MonoBehaviour:
   size: {x: 0, y: 0}
   seed: 0
   wrapWorld: 1
-  width: 64
-  height: 48
+  width: 80
+  height: 64
   plates: 5
   worldType: 0
   worldAge: 0
