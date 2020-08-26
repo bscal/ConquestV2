@@ -13,7 +13,7 @@ namespace Conquest
 
         public readonly Layout layout;
         public readonly Vector2Int size;
-        public readonly Dictionary<string, TileObject> tileData;
+        public readonly Dictionary<Hex, TileObject> tileData;
 
         public readonly List<Plate> plates;
 
@@ -21,7 +21,7 @@ namespace Conquest
         {
             layout = new Layout(Layout.pointy, new Point(8, 8), new Point(0, 0));
             size = new Vector2Int(w, h);
-            tileData = new Dictionary<string, TileObject>();
+            tileData = new Dictionary<Hex, TileObject>();
             plates = new List<Plate>(WorldSettings.Singleton.plates + 1);
         }
 
@@ -32,7 +32,7 @@ namespace Conquest
 
         public TileObject GetHexData(Hex hex, bool wrapIfNull)
         {
-            string key = hex.GetKey();
+            var key = hex.GetKey();
 
             if (!tileData.ContainsKey(key))
             {
@@ -46,9 +46,14 @@ namespace Conquest
             return tileData[key];
         }
 
+        public bool TryGetHexData(Hex hex, out TileObject obj)
+        {
+            return TryGetHexData(hex, WorldSettings.Singleton.wrapWorld, out obj);
+        }
+
         public bool TryGetHexData(Hex hex, bool wrapIfNull, out TileObject obj)
         {
-            string key = hex.GetKey();
+            var key = hex.GetKey();
 
             if (wrapIfNull && !tileData.ContainsKey(key) && !HexUtils.HexOutOfBounds(size, hex))
                 key = HexUtils.WrapOffset(hex, size.x).GetKey();

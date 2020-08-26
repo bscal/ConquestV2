@@ -171,29 +171,24 @@ public class Hex
         return reveredDirections[direction];
     }
 
-    public string GetKey()
+    public Hex GetKey()
     {
-        return Key(q, r);
+        return this;
     }
 
-    public static string ToKey(int q, int r)
+    public static Hex ToKey(int q, int r, int s)
     {
-        return Key(q, r);
+        return Key(q, r, s);
     }
 
-    public static string ToKey(float q, float r)
+    public static Hex ToKey(float q, float r, float s)
     {
-        return Key(Mathf.RoundToInt(q), Mathf.RoundToInt(r));
+        return Key(Mathf.RoundToInt(q), Mathf.RoundToInt(r), Mathf.RoundToInt(s));
     }
 
-    public static string ToKey(Point pt)
+    private static Hex Key(int q, int r, int s)
     {
-        return Key(Convert.ToInt32(pt.x), Convert.ToInt32(pt.y));
-    }
-
-    private static string Key(int q, int r)
-    {
-        return q + "_" + r;
+        return new Hex(q, r, s);
     }
 
     public static HexDirection ReverseDirection(HexDirection dir)

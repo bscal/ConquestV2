@@ -10,7 +10,7 @@ namespace Conquest
 
         public Hex center;
         public Color color;
-        public List<string> hexes;
+        public List<Hex> hexes;
 
         public int age;
         public float elevation;
@@ -22,7 +22,7 @@ namespace Conquest
         {
             this.center = center;
             this.color = color;
-            this.hexes = new List<string>();
+            this.hexes = new List<Hex>();
             this.age = 0;
             this.elevation = 0f;
             this.direction = HexDirection.NONE;

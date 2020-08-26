@@ -7,15 +7,16 @@ namespace Conquest {
     public static class HexUtils
     {
 
-        public static bool ArrayContainsPlate(in Dictionary<string, TileObject> hexdata, Hex[] hexes, int plateId, bool wrap)
+        public static bool ArrayContainsPlate(in Dictionary<Hex, TileObject> hexdata, Hex[] hexes, int plateId, bool wrap)
         {
             foreach (Hex h in hexes)
             {
-                if (!hexdata.ContainsKey(h.GetKey()))
+                var key = h.GetKey();
+                if (!hexdata.ContainsKey(key))
                 {
                     if (wrap && !HexUtils.HexOutOfBounds(GameManager.Singleton.World.size, h))
                     {
-                        string key = HexUtils.WrapOffset(h, WorldSettings.Singleton.width).GetKey();
+                        key = HexUtils.WrapOffset(h, WorldSettings.Singleton.width).GetKey();
                         if (hexdata.ContainsKey(key) && hexdata[key].hexData.plateId == plateId)
                             return true;
                     }
@@ -28,13 +29,14 @@ namespace Conquest {
             return false;
         }
 
-        public static bool ArrayCountContains(Dictionary<string, TileObject> hexdata, Hex[] hexes, int plateId)
+        public static bool ArrayCountContains(Dictionary<Hex, TileObject> hexdata, Hex[] hexes, int plateId)
         {
             int contains = 0;
             foreach (Hex h in hexes)
             {
-                if (!hexdata.ContainsKey(h.GetKey())) continue;
-                if (hexdata[h.GetKey()].hexData.plateId == plateId) contains++;
+                var key = h.GetKey();
+                if (!hexdata.ContainsKey(key)) continue;
+                if (hexdata[key].hexData.plateId == plateId) contains++;
             }
             return hexes.Length == contains;
         }
@@ -51,7 +53,7 @@ namespace Conquest {
             return new Hex(newQ, h.r, -newQ - h.r);
         }
 
-        public static Hex WrapHexIfNull(Hex h, int gridWidth, in Dictionary<string, TileObject> data)
+        public static Hex WrapHexIfNull(Hex h, int gridWidth, in Dictionary<Hex, TileObject> data)
         {
             bool contains = data.ContainsKey(h.GetKey());
             if (!WorldSettings.Singleton.wrapWorld && !contains)
