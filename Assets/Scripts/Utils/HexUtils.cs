@@ -70,7 +70,9 @@ namespace Conquest {
         public static bool HexOutOfBounds(Vector2Int size, Hex hex)
         {
             OffsetCoord coord = OffsetCoord.RoffsetFromCube(WorldSettings.Singleton.offset, hex);
-            return (coord.row < 0 || coord.row > size.y ) || !WorldSettings.Singleton.wrapWorld && coord.col < 0 || !WorldSettings.Singleton.wrapWorld && coord.col > size.x;
+            if (coord.row < 0 || coord.row > size.y) return true;
+            if (!WorldSettings.Singleton.wrapWorld) return coord.col < 0 || coord.col > size.x;
+            return false;
         }
 
         /// <summary>

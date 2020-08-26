@@ -56,7 +56,7 @@ namespace Conquest
 
         private uint m_seed;
         private Unity.Mathematics.Random m_rand;
-        private float m_plateSpdDecayModifier = 1.5f;   // Increase for larger plates, Decrease for smaller plates
+        private float m_plateSpdDecayModifier = 10f;   // Increase for larger plates, Decrease for smaller plates
 
         public World CreateWorld()
         {
@@ -81,7 +81,6 @@ namespace Conquest
                 {
                     Hex hex = new Hex(q, r, -q - r);
                     var mapKey = hex.GetKey();
-                    print(mapKey);
                     Point pixel = m_layout.HexToPixel(hex);
 
                     if (!m_world.tileData.ContainsKey(mapKey))
@@ -161,8 +160,8 @@ namespace Conquest
                 Point pt = m_layout.HexToPixel(hex);
 
                 Plate p = new Plate(hex, UnityEngine.Random.ColorHSV()) {
-                    elevation = Random.Range(0f, 255f) * m_plateSpdDecayModifier,
-                    movementSpeed = m_rand.NextFloat(MIN_SPD, MAX_SPD),
+                    elevation = Random.Range(0f, 255f),
+                    movementSpeed = m_rand.NextFloat(MIN_SPD, MAX_SPD) * m_plateSpdDecayModifier,
                     direction = (HexDirection)Random.Range(0, HexConstants.DIRECTIONS - 1),
                     obj = Instantiate(dot, new Vector3((float)pt.x, (float)pt.y, -1), Quaternion.identity)
             };
@@ -235,7 +234,7 @@ namespace Conquest
             }
         }
 
-        public const int numOfIters = 250;
+        public const int numOfIters = 500;
         float timer = 0f;
         int iters = 0;
         void Update()
@@ -305,6 +304,36 @@ namespace Conquest
 
                     // Move Direction Hex.
                     Hex dirHex = hex.Neighbor((int)dir);
+
+                    if (!tempHeights.ContainsKey(mapKey))
+                    {
+                        tempHeights[mapKey] = new HexData(hData);
+                    }
+
+                    if (height > SEA_LVL)
+                    {
+                        tempHeights[mapKey].isOcean = false;
+                    }
+                    else if (height <= SEA_LVL)
+                    {
+                        tempHeights[mapKey].isCoast = false;
+                    }
+
+                    // Do not move hex if plate is not moving
+                    if (plate.movementSpeed < 0.0f)
+                    {
+                        hData.empty = false;
+                        move = false;
+                    }
+
+                    if (!HexUtils.HexOutOfBounds(m_world.size, hex) && HexUtils.HexOutOfBounds(m_world.size, dirHex))
+                    {
+                        tempPlates[hData.plateId] -= 5f;
+                        hData.empty = false;
+                        hData.moved = false;
+                        continue;
+                    }
+
                     bool dirNotNull = m_world.TryGetHexData(dirHex, WorldSettings.Singleton.wrapWorld, out TileObject dirObj);
                     if (!dirNotNull) continue;
                     HexData dirData = dirObj.hexData;
@@ -325,45 +354,16 @@ namespace Conquest
                     /**
                      * Adds HexData to tempData array
                      */
-                    if (!tempHeights.ContainsKey(mapKey))
-                    {
-                        tempHeights[mapKey] = new HexData(hData);
-                    }
                     if (!tempHeights.ContainsKey(dirKey))
                     {
                         tempHeights[dirKey] = new HexData(dirData);
-                    }
-
-                    if (height > SEA_LVL)
-                    {
-                        tempHeights[mapKey].isOcean = false;
-                    }
-                    else if (height <= SEA_LVL)
-                    {
-                        tempHeights[mapKey].isCoast = false;
-                    }
-
-                    // Do not move hex if plate is not moving
-                    if (plate.movementSpeed < 0.0f)
-                    {
-                        hData.empty = false;
-                        move = false;
-                    }
-
-                    // Checks if dirHex is out of grid bounds. 
-                    if (HexUtils.HexOutOfBounds(m_world.size, dirObj.hex))
-                    {
-                        tempPlates[hData.plateId] -= 20f;
-                        //plate.movementSpeed -= .1f;
-                        hData.empty = false;
-                        move = false;
                     }
 
                     // Convergent boundary
                     // Plate collision. current hex plate and moving direction plate colliding
                     if (dirDiffPlate && dirInto)
                     {
-                        tempPlates[hData.plateId] -= 2.5f;
+                        tempPlates[hData.plateId] -= 2f;
                         //plate.movementSpeed -= .025f;
                         if (!dirHigher)
                         {
@@ -383,7 +383,7 @@ namespace Conquest
                     // This is handled the similar to a plate collision but technically is not real one.
                     if (dirDiffPlate && dirPlate.movementSpeed < 0f)
                     {
-                        tempPlates[hData.plateId] -= 2.5f;
+                        tempPlates[hData.plateId] -= 2f;
                         //plate.movementSpeed -= .025f;
                         if (!dirHigher)
                         {
@@ -412,19 +412,23 @@ namespace Conquest
                         /*
                          * Moves hex from current iterated hex -> neighboring hex using the current plates direction
                          */
-                        float mod = 2f;
+                        float mod = 0f;
                         if (hData.isHotSpot) // Hot spots
-                            mod += 15f;
-                        if (height < SEA_LVL && hData.age < 25) // New created land gains more height
-                            mod += (height * .25f) + 7.5f; 
+                            mod += 25f;
+                        if (hData.age < 10) // New created land gains more height
+                            mod += 5f;
+                        if (height < SEA_LVL)
+                            mod += 0;//3f;
+                        if (hData.age < 50)
+                            mod += 1.5f;
                         if (height > 150) // Erosion
-                            mod += -3f;
+                            mod += -2f;
                         if (height > HILL_LVL) // Erosion of higher terrain
-                            mod -= m_rand.NextInt(2, 4);
+                            mod -= m_rand.NextInt(1, 2);
                         if (!dirDiffPlate && dirData.formingMoutain) // hex moving into hex that forming mountain
-                            mod += 10f;
+                            mod += 0f;
                         if (dirData.height > HILL_LVL && height < dirData.height && !dirData.isCoast) // hex that are moving into a higher hex that is not coast increase height
-                            mod += 10f;
+                            mod += 5f;
 
                         mod *= speedModifier;
                         
@@ -467,6 +471,7 @@ namespace Conquest
                             }
                         }
                     }
+                    hData.isHotSpot = false;
                 }
             }
 
@@ -602,7 +607,6 @@ namespace Conquest
             foreach (var pair in m_world.tileData)
             {
                 pair.Value.hexData.formingMoutain = false;
-                pair.Value.hexData.isHotSpot = false;
             }
         }
 

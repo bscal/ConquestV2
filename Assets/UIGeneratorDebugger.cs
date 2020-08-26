@@ -35,7 +35,7 @@ public class UIGeneratorDebugger : MonoBehaviour
             OffsetCoord coord = OffsetCoord.RoffsetFromCube(WorldSettings.Singleton.offset, hex);
             Hex wrap = HexUtils.WrapOffset(hex, GameManager.Singleton.World.size.x);
             OffsetCoord wcoord = OffsetCoord.RoffsetFromCube(WorldSettings.Singleton.offset, wrap);
-            //print(string.Format("WrappedHex: {0}, {1} | WrappedCoords: {0}, {1}", wrap.q, wrap.r, wcoord.col, wcoord.row));
+            print(string.Format("WrappedHex: {0}, {1} | WrappedCoords: {0}, {1}", hex.q, hex.r, coord.col, coord.row));
 
             var obj = GameManager.Singleton.World.tileData[hex.GetKey()];
             var hData = obj.hexData;
