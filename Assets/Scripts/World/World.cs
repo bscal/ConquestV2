@@ -1,4 +1,5 @@
 ﻿using Conquest;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -71,5 +72,13 @@ namespace Conquest
             return plates[id];
         }
 
+        public void SetPlate(Hex hex, int i)
+        {
+            if (!tileData.TryGetValue(hex, out TileObject hData)) return;
+            plates[hData.hexData.plateId].RemoveHex(hData.hex);
+            
+            hData.hexData.plateId = i;
+            plates[hData.hexData.plateId].AddHex(hData.hex);
+        }
     }
 }
