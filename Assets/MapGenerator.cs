@@ -347,6 +347,7 @@ namespace Conquest
                     bool dirDiffPlate = hData.plateId != dirData.plateId;
                     bool dirInto = dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
                     bool dirHigher = plate.elevation < dirPlate.elevation;
+                    bool isDirLTESealvl = dirData.height <= SEA_LVL;
                     //bool dirMovingAway = HexUtils.HexMovingTowards((int)plate.direction, (int)dirPlate.direction);
 
                     // old way of movement
@@ -367,44 +368,69 @@ namespace Conquest
                     // Plate collision. current hex plate and moving direction plate colliding
                     if (dirDiffPlate && dirInto)
                     {
-                        if (isLTESealvl)
-                            tempPlates[hData.plateId] -= .01f;
-                        else
-                            tempPlates[hData.plateId] -= 20f;
-                        //plate.movementSpeed -= .025f;
-                        if (!dirHigher && dirData.height > SEA_LVL)
-                        {
-                            tempHeights[mapKey].height = height + ((height * .1f) + 10) * speedModifier;
-                            tempHeights[mapKey].formingMoutain = true;
-                            hData.empty = false;
+                        hData.empty = false;
+                        bool collision = false;
+                        if (!isLTESealvl && !isDirLTESealvl)
+                            collision = true;
+                        else if (isLTESealvl && !isDirLTESealvl)
                             move = false;
+
+                        if (collision)
+                        {
+                            if (!dirHigher)
+                            {
+                                tempHeights[mapKey].height = height + ((height * .25f) + 10) * speedModifier;
+                                tempHeights[mapKey].formingMoutain = true;
+                            }
+                            move = false;
+                            tempPlates[hData.plateId] -= 25f;
                         }
                         else
                         {
-                            hData.empty = false;
                             destroy = true;
                         }
+
+
+//                         if (!isLTESealvl && dirData.height > SEA_LVL)
+//                             tempPlates[hData.plateId] -= 20f;
+//                         if (!dirHigher && dirData.height > SEA_LVL)
+//                         {
+//                             tempHeights[mapKey].height = height + ((height * .1f) + 10) * speedModifier;
+//                             tempHeights[mapKey].formingMoutain = true;
+//                             hData.empty = false;
+//                             move = false;
+//                             tempPlates[hData.plateId] -= 20f;
+//                         }
+//                         else
+//                         {
+//                             hData.empty = false;
+//                             destroy = true;
+//                         }
                     }
 
                     // dirHex is on different plate and diff plate is not moving.
                     // This is handled the similar to a plate collision but technically is not real one.
                     if (dirDiffPlate && dirPlate.movementSpeed < 0f)
                     {
-                        if (isLTESealvl)
-                            tempPlates[hData.plateId] -= .01f;
-                        else
-                            tempPlates[hData.plateId] -= 20f;
-                        //plate.movementSpeed -= .025f;
-                        if (!dirHigher && dirData.height > SEA_LVL)
-                        {
-                            tempHeights[mapKey].height = height + ((height * .1f) + 10) * speedModifier;
-                            tempHeights[mapKey].formingMoutain = true;
-                            hData.empty = false;
+                        hData.empty = false;
+                        bool collision = false;
+                        if (!isLTESealvl && !isDirLTESealvl)
+                            collision = true;
+                        else if (isLTESealvl && !isDirLTESealvl)
                             move = false;
+
+                        if (collision)
+                        {
+                            if (!dirHigher)
+                            {
+                                tempHeights[mapKey].height = height + ((height * .25f) + 10) * speedModifier;
+                                tempHeights[mapKey].formingMoutain = true;
+                            }
+                            move = false;
+                            tempPlates[hData.plateId] -= 25f;
                         }
                         else
                         {
-                            hData.empty = false;
                             destroy = true;
                         }
                     }
@@ -427,22 +453,22 @@ namespace Conquest
                             mod += 25f;
                         if (isLTESealvl)
                             mod += 0;//3f;
-                        if (hData.age < 2)
-                            mod += 0f;
+                        if (hData.age < 25)
+                            mod += 1f;
                         if (hData.age < 10) // New created land gains more height
-                            mod += 4f;
+                            mod += 3f;
                         if (hData.age < 50)
                             mod += 2f;
-                        if (hData.age < 150)
+                        if (hData.age < 200)
                             mod += 1f;
-                        if (height > 125) // Erosion
+                        if (height > 150) // Erosion
                             mod += -.5f;
                         if (height > HILL_LVL) // Erosion of higher terrain
                             mod -= m_rand.NextInt(1, 3);
                         if (!dirDiffPlate && dirData.formingMoutain) // hex moving into hex that forming mountain
-                            mod += 5f;
+                            mod += 10f;
                         if (dirData.height > HILL_LVL && height < dirData.height && !dirData.isCoast) // hex that are moving into a higher hex that is not coast increase height
-                            mod += m_rand.NextInt(1, 3);
+                            mod += m_rand.NextInt(3, 5);
 
                         mod *= speedModifier;
                         
