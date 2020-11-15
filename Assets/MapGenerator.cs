@@ -112,33 +112,16 @@ namespace Conquest
 
         private void Generate()
         {
-            GameObject test = new GameObject();
-            var l1 = test.AddComponent<LineRenderer>();
-            l1.SetPosition(0, new Vector3(0, 0, -1));
-            l1.SetPosition(1, new Vector3(m_pixelW, 0, -1));
-            l1.startWidth = 2;
-            l1.endWidth = 2;
-
-            GameObject test1 = new GameObject();
-            var l2 = test1.AddComponent<LineRenderer>();
-            l2.SetPosition(0, new Vector3(m_pixelW, 0, -1));
-            l2.SetPosition(1, new Vector3(m_pixelW, m_pixelH, -1));
-            l2.startWidth = 2;
-            l2.endWidth = 2;
-
-            GameObject test2 = new GameObject();
-            var l3 = test2.AddComponent<LineRenderer>();
-            l3.SetPosition(0, new Vector3(m_pixelW, m_pixelH, -1));
-            l3.SetPosition(1, new Vector3(0, m_pixelH, -1));
-            l3.startWidth = 2;
-            l3.endWidth = 2;
-
-            GameObject test3 = new GameObject();
-            var l4 = test3.AddComponent<LineRenderer>();
-            l4.SetPosition(0, new Vector3(0, m_pixelH, -1));
-            l4.SetPosition(1, new Vector3(0, 0, -1));
-            l4.startWidth = 2;
-            l4.endWidth = 2;
+            GameObject line = new GameObject();
+            var lr = line.AddComponent<LineRenderer>();
+            lr.positionCount = 5;
+            lr.SetPosition(0, new Vector3(0, 0, -1));
+            lr.SetPosition(1, new Vector3(m_pixelW, 0, -1));
+            lr.SetPosition(2, new Vector3(m_pixelW, m_pixelH, -1));
+            lr.SetPosition(3, new Vector3(0, m_pixelH, -1));
+            lr.SetPosition(4, new Vector3(0, 0, -1));
+            lr.startWidth = 2;
+            lr.endWidth = 2;
 
             for (int i = 0; i < WorldSettings.Singleton.plates; i++)
             {
@@ -296,18 +279,12 @@ namespace Conquest
                     Hex dirHex = hex.Neighbor((int)dir);
 
                     if (!tempHeights.ContainsKey(mapKey))
-                    {
                         tempHeights[mapKey] = new HexData(hData);
-                    }
 
                     if (!isLTESealvl)
-                    {
                         tempHeights[mapKey].isOcean = false;
-                    }
                     else if (isLTESealvl)
-                    {
                         tempHeights[mapKey].isCoast = false;
-                    }
 
                     // Do not move hex if plate is not moving
                     if (plate.movementSpeed < 0.0f)
@@ -337,21 +314,10 @@ namespace Conquest
                     bool dirInto = dir == Hex.ReverseDirection(m_world.plates[dirData.plateId].direction);
                     bool dirHigher = plate.elevation < dirPlate.elevation;
                     bool isDirLTESealvl = dirData.height <= SEA_LVL;
-                    //bool dirMovingAway = HexUtils.HexMovingTowards((int)plate.direction, (int)dirPlate.direction);
 
-                    // old way of movement
-                    // float baseVal = height * .015f;
-                    // 
-                    // data.height -= baseVal;
-                    // dirData.height += baseVal;  
-
-                    /**
-                     * Adds HexData to tempData array
-                     */
+                    // Adds HexData to tempData array
                     if (!tempHeights.ContainsKey(dirKey))
-                    {
                         tempHeights[dirKey] = new HexData(dirData);
-                    }
 
                     // Convergent boundary
                     // Plate collision. current hex plate and moving direction plate colliding
@@ -378,23 +344,6 @@ namespace Conquest
                         {
                             destroy = true;
                         }
-
-
-//                         if (!isLTESealvl && dirData.height > SEA_LVL)
-//                             tempPlates[hData.plateId] -= 20f;
-//                         if (!dirHigher && dirData.height > SEA_LVL)
-//                         {
-//                             tempHeights[mapKey].height = height + ((height * .1f) + 10) * speedModifier;
-//                             tempHeights[mapKey].formingMoutain = true;
-//                             hData.empty = false;
-//                             move = false;
-//                             tempPlates[hData.plateId] -= 20f;
-//                         }
-//                         else
-//                         {
-//                             hData.empty = false;
-//                             destroy = true;
-//                         }
                     }
 
                     // dirHex is on different plate and diff plate is not moving.
@@ -472,19 +421,13 @@ namespace Conquest
                         }
 
                         if (isLTESealvl)
-                        {
                             tempHeights[dirKey].isOcean = false;
-                        }
 
                         dirPlate.RemoveHex(dirHex);
                         plate.AddHex(dirHex);
                         tempHeights[mapKey].movedToHex = dirObj.hex;
                         tempHeights[mapKey].oldPlateId = hData.plateId;
                         tempHeights[dirKey].plateId = hData.plateId;
-
-                        //tempPlates[hData.plateId] -= .01f;
-
-                        //plate.movementSpeed -= .0001f;
                     }
 
                     foreach (Hex ringHex in hexObj.hex.Ring(1))
@@ -505,22 +448,11 @@ namespace Conquest
                 }
             }
 
-            /*
-             * Moves plate dot if hex was moved
-             */
+            // Moves plate dot if hex was moved
             for (int i = 0; i < tempPlates.Length; i++)
             {
                 Plate p = m_world.plates[i];
                 p.movementSpeed = tempPlates[i];
-//                 m_world.SetPlate(p.center, i);
-// 
-//                 foreach (Hex ringHex in p.center.Ring(1))
-//                 {
-//                     if (m_world.TryGetHexData(ringHex, out TileObject ringObj))
-//                     {
-//                         m_world.SetPlate(p.center, i);
-//                     }
-//                 }
             }
             ApplyTiles(tempHeights);
         }
@@ -572,8 +504,6 @@ namespace Conquest
                     m_world.plates[pair.Value.hexData.plateId].obj.transform.position = new Vector3((float)pt.x, (float)pt.y, -1);
                 }
 
-                float h = hData.height;
-
                 Tile tile = pair.Value.FindCorrectTile();
                 pair.Value.SetTile(tile);
 
@@ -615,9 +545,7 @@ namespace Conquest
                 HexData hData = pair.Value.hexData;
 
                 if (tempHeights.ContainsKey(key))
-                {
                     hData.UpdateValues(tempHeights[key]);
-                }
 
                 if (hData.isCoast)
                 {
@@ -700,23 +628,7 @@ namespace Conquest
                     closestId = i;
                     closest = m_world.plates[i].hexes.Count;
                 }
-
-                //int dist = hex.Distance(m_world.plates[i].center);
             }
-            //             for (int i = 0; i < platesIds.Length; i++)
-            //             {
-            //                 if (platesIds[i] < 1) continue;
-            //                 int dist = hex.Distance(HexUtils.WrapOffset(m_world.plates[i].center, m_world.size.x));
-            // 
-            //                 if (closestId != -1 && m_world.plates[closestId].hexes.Count < m_world.plates[i].hexes.Count / 2) continue;
-            // 
-            //                 if (closest > dist)
-            //                 {
-            //                     closest = dist;
-            //                     closestId = i;
-            //                 }
-            //             }
-
             return closestId;
         }
 
