@@ -525,8 +525,8 @@ MonoBehaviour:
   size: {x: 0, y: 0}
   seed: 0
   wrapWorld: 1
-  width: 96
-  height: 64
+  width: 64
+  height: 48
   plates: 5
   worldType: 0
   worldAge: 0
@@ -1110,11 +1110,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85450709f22baa24cab0a98268aeb1d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tiles:
-  - {fileID: -374796290018590942, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
-  - {fileID: -453650012503169676, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
-  - {fileID: -7245373555578790540, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
-  - {fileID: -4218347658839152434, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
   prefab: {fileID: 4317224222930441826, guid: a20208484b5061645b14296486d437d3, type: 3}
   dot: {fileID: 9140088084167084064, guid: 353dee8747d05094ba47405d2a47743f, type: 3}
   paused: 1
