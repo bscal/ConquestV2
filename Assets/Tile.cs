@@ -13,6 +13,10 @@ namespace Conquest
     {
         public string name;
         public Sprite sprite;
+        public bool isSpriteInFront = false;
+
+        [NonSerialized]
+        public int id;
     }
 }
 

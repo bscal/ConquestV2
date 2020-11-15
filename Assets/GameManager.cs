@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
             {
                 bool res = World.TryGetHexData(h, WorldSettings.Singleton.wrapWorld, out TileObject data);
                 if (!res) continue;
-                data.render.sprite = generator.tiles[3];
+                data.render.sprite = TileMap.Singleton.GetTileByName("desert").sprite;
             }
         }
 

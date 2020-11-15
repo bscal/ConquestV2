@@ -21,8 +21,6 @@ namespace Conquest
 
     public class MapGenerator : MonoBehaviour
     {
-        [Header("Map Setup")]
-        public Sprite[] tiles;
 
         [Header("Prefabs")]
         public GameObject prefab;
@@ -86,32 +84,23 @@ namespace Conquest
                     if (!m_world.tileData.ContainsKey(mapKey))
                     {
                         GameObject gameobject = Instantiate(prefab, new Vector3((float)pixel.x, (float)pixel.y, 0), Quaternion.identity);
-                        TileObject tObj = gameobject.AddComponent<TileObject>();
+                        TileObject tObj = gameobject.GetComponent<TileObject>();
                         m_world.tileData.Add(mapKey, tObj);
-                        SpriteRenderer render = gameobject.GetComponent<SpriteRenderer>();
                         HexData hData = tObj.hexData;
-                        int n = UnityEngine.Random.Range(0, 2);
 
+                        int n = UnityEngine.Random.Range(0, 2);
                         float d = Noise.CalcPixel2D(q, r, .1f);
-                        //float d = 150;
-                        if (d > 0)
-                            n = 2;
-                        if (d > 100)
-                            n = 0;
-                        if (d > 200)
-                            n = 1;
 
                         if (d < 100)
                             hData.isOcean = true;
 
-                        render.sprite = tileMap.GetTile(n).sprite;
-
                         tObj.hex = hex;
-                        tObj.gameobject = gameobject;
-                        tObj.render = render;
-                        tObj.tileId = n;
+
                         hData.age = Random.Range(0, 50);
                         hData.height = d;
+
+                        Tile tile = tObj.FindCorrectTile();
+                        tObj.SetTile(tile);
                     }
                 }
             }
@@ -584,15 +573,9 @@ namespace Conquest
                 }
 
                 float h = hData.height;
-                int n = 0;
-                if (h < 100)
-                    n = 2;
-                if (h > 100)
-                    n = 0;
-                if (h > 200)
-                    n = 1;
-                pair.Value.tileId = n;
-                pair.Value.render.sprite = tiles[n];
+
+                Tile tile = pair.Value.FindCorrectTile();
+                pair.Value.SetTile(tile);
 
                 int notOceanCount = 0;
                 foreach (Hex ringHex in ring)
@@ -642,8 +625,7 @@ namespace Conquest
                     if (randVal < 0.5f)
                     {
                         hData.height = 90f;
-                        obj.tileId = 2;
-                        obj.render.sprite = tiles[2];
+                        obj.SetTile(tileMap.GetTileByName("grassland"));
                     }
                 }
             }
