@@ -10,7 +10,7 @@
 
         public bool isPlateEdge = false;
         public bool collision = false;
-        public bool empty = false;
+        public bool empty = true;
         public bool moved = false;
         public bool moveCenter = false;
         public bool formingMoutain = false;

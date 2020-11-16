@@ -247,7 +247,7 @@ namespace Conquest
                 }
             }
 
-            CalcCollisions();
+            //CalcCollisions();
             float[] tempPlates = new float[m_world.plates.Count];
             for (int i = 0; i < tempPlates.Length; i++)
             {
@@ -475,6 +475,8 @@ namespace Conquest
             {
                 HexData hData = pair.Value.hexData;
                 if (!tempHeights.ContainsKey(pair.Key)) {
+                    hData.moveCenter = false;
+                    hData.empty = true;
                     continue;
                 }
                 hData.UpdateValues(tempHeights[pair.Key]);
@@ -531,6 +533,8 @@ namespace Conquest
                 {
                     hData.isCoast = false;
                 }
+                hData.moveCenter = false;
+                hData.empty = true;
             }
         }
 
