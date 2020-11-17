@@ -1,6 +1,8 @@
-﻿namespace Conquest
+﻿using System;
+
+namespace Conquest
 {
-    public class HexData
+    public class HexData : ICloneable
     {
         public int plateId = 0;
         public int age = 0;
@@ -26,6 +28,13 @@
         public HexData(HexData other)
         {
             CopyValues(other);
+        }
+
+        public object Clone()
+        {
+            HexData data = new HexData();
+            data.CopyValues(this);
+            return data;
         }
 
         /// <summary>

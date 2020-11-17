@@ -31,46 +31,30 @@ namespace Conquest
             return tileData.ContainsKey(hex.GetKey());
         }
 
-        public TileObject GetHexData(Hex hex, bool wrapIfNull)
-        {
-            var key = hex.GetKey();
-
-            if (!tileData.ContainsKey(key))
-            {
-                if (wrapIfNull && !HexUtils.HexOutOfBounds(size, hex))
-                {
-                    key = HexUtils.WrapOffset(hex, size.x).GetKey();
-                    return tileData[key];
-                }
-                return null;
-            }
-            return tileData[key];
-        }
-
         public bool TryGetHexData(Hex hex, out TileObject obj)
         {
-            return TryGetHexData(hex, WorldSettings.Singleton.wrapWorld, out obj);
+            return GetHexData(hex, WorldSettings.Singleton.wrapWorld, out obj);
         }
 
-        public bool TryGetHexData(Hex hex, bool wrapIfNull, out TileObject obj)
+        public bool GetHexData(Hex hex, bool wrapIfNull, out TileObject obj)
         {
-            var key = hex.GetKey();
+            if (wrapIfNull && !tileData.ContainsKey(hex) && !HexUtils.HexOutOfBounds(size, hex))
+                hex = HexUtils.WrapOffset(hex, size.x);
 
-            if (wrapIfNull && !tileData.ContainsKey(key) && !HexUtils.HexOutOfBounds(size, hex))
-                key = HexUtils.WrapOffset(hex, size.x).GetKey();
-
-            return tileData.TryGetValue(key, out obj);
+            return tileData.TryGetValue(hex, out obj);
         }
 
         public TileObject GetWrappedHex(Hex hex)
         {
-            return tileData[HexUtils.WrapOffset(hex, size.x).GetKey()];
+            return tileData[HexUtils.WrapOffset(hex, size.x)];
         }
 
         public Plate GetPlateByID(int id)
         {
             return plates[id];
         }
+
+        public List<Plate> GetPlates() => plates;
 
         public void SetPlate(Hex hex, int i)
         {

@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
             if (!World.ContainsHex(hex)) return;
             foreach (Hex h in hex.Ring(2))
             {
-                bool res = World.TryGetHexData(h, WorldSettings.Singleton.wrapWorld, out TileObject data);
+                bool res = World.TryGetHexData(h, out TileObject data);
                 if (!res) continue;
                 data.render.sprite = TileMap.Singleton.GetTileByName("desert").sprite;
             }

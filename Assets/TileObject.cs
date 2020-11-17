@@ -24,6 +24,8 @@ namespace Conquest
         private Tile m_tile;
         private Tile m_topTile;
 
+        private HexFilter m_filter;
+
         //         public int plateId = 0;
         //         public int tileId = 0;
         // 
@@ -44,6 +46,15 @@ namespace Conquest
         void Awake()
         {
             hexData = new HexData();
+        }
+
+        private void Update()
+        {
+            if (m_filter == HexFilter.PLATE)
+            {
+                render.color = GameManager.Singleton.World.plates[hexData.plateId].color;
+                topRender.color = GameManager.Singleton.World.plates[hexData.plateId].color;
+            }
         }
 
         private void OnBecameVisible()
@@ -121,14 +132,16 @@ namespace Conquest
 
         public void SetFilter(HexFilter filter)
         {
-
+            m_filter = filter;
             if (filter == HexFilter.NONE)
             {
                 render.color = Color.white;
+                topRender.color = Color.white;
             }
             else if (filter == HexFilter.PLATE)
             {
                 render.color = GameManager.Singleton.World.plates[hexData.plateId].color;
+                topRender.color = GameManager.Singleton.World.plates[hexData.plateId].color;
             }
         }
 
