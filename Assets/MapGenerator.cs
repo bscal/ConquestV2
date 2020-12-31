@@ -228,7 +228,7 @@ namespace Conquest
             }
 
 
-            if (iters != 0 && iters % 25 == 0)
+            if (iters != 0 && iters % 3 == 0)
             {
                 for (int i = 0; i < m_world.plates.Count; i++)
                 {
@@ -261,6 +261,7 @@ namespace Conquest
                 for (int q = -r_offset; q <= m_width - r_offset; q++) // width with offset
                 {
                     Hex hex = new Hex(q, r, -q - r);
+                    // This is a var because testing different types
                     var mapKey = hex.GetKey();
 
                     // Current Hex. This hex moves to directional hex.
@@ -278,27 +279,30 @@ namespace Conquest
                     // Move Direction Hex.
                     Hex dirHex = hex.Neighbor((int)dir);
 
+                    // Adds hex into temp map
                     if (!tempHeights.ContainsKey(mapKey))
-                    {
                         tempHeights[mapKey] = new HexData(hData);
-                    }
 
-                    if (!isLTESealvl)
+
+                    tempHeights[mapKey].isOcean = isLTESealvl;
+/*                    if (!isLTESealvl)
                     {
                         tempHeights[mapKey].isOcean = false;
                     }
                     else if (isLTESealvl)
                     {
                         tempHeights[mapKey].isCoast = false;
-                    }
+                    }*/
 
                     // Do not move hex if plate is not moving
-                    if (plate.movementSpeed < 0.0f)
-                    {
-                        hData.empty = false;
-                        move = false;
-                    }
+                    //if (plate.movementSpeed < 0.0f)
+                    //{
+                    //    hData.empty = false;
+                    //    move = false;
+                    //}
 
+                    // Hex is NOT out of bounds and dirHex is
+                    // This does not apply is world wrapping is on
                     if (!HexUtils.HexOutOfBounds(m_world.size, hex) && HexUtils.HexOutOfBounds(m_world.size, dirHex))
                     {
                         if (isLTESealvl)
@@ -395,10 +399,11 @@ namespace Conquest
                         {
                             if (!dirHigher)
                             {
-                                tempHeights[mapKey].height = height + ((height * .25f) + 10) * speedModifier;
+                                tempHeights[mapKey].height += 20;
                                 tempHeights[mapKey].formingMoutain = true;
                             }
                             move = false;
+                            hData.empty = false;
                             tempPlates[hData.plateId] -= 25f;
                         }
                         else
@@ -422,27 +427,27 @@ namespace Conquest
                          */
                         float mod = 0f;
                         if (hData.isHotSpot) // Hot spots
-                            mod += 25f;
-                        if (isLTESealvl)
-                            mod += 0;//3f;
-                        if (hData.age < 25)
-                            mod += 1f;
+                            mod += 25f + m_rand.NextFloat(0f, 10f);
+                        if (hData.height < SEA_LVL - 55)
+                            mod += 1;//3f;
                         if (hData.age < 10) // New created land gains more height
-                            mod += 3f;
+                            mod += m_rand.NextFloat(4f, 6f);
                         if (hData.age < 50)
-                            mod += 2f;
+                            mod += 3f;
                         if (hData.age < 200)
                             mod += 1f;
-                        if (height > 150) // Erosion
-                            mod += -.5f;
-                        if (height > HILL_LVL) // Erosion of higher terrain
-                            mod -= m_rand.NextInt(1, 3);
+                        if (height > 155) // Erosion
+                            mod -= 1f;
+                        if (height > HILL_LVL)
+                            mod -= 2f;
+                        if (height > HILL_LVL + 25 && !hData.formingMoutain)
+                            mod -= 2f;
                         if (!dirDiffPlate && dirData.formingMoutain) // hex moving into hex that forming mountain
-                            mod += 10f;
-                        if (dirData.height > HILL_LVL && height < dirData.height && !dirData.isCoast) // hex that are moving into a higher hex that is not coast increase height
-                            mod += m_rand.NextInt(3, 5);
+                            mod -= 10f;
+                        if (dirData.height > HILL_LVL && height < dirData.height - 10 && !dirData.isCoast) // hex that are moving into a higher hex that is not coast increase height
+                            mod += 6f;
 
-                        mod *= speedModifier;
+                        //mod *= speedModifier;
 
 
                         tempHeights[dirKey].height = height + mod;
