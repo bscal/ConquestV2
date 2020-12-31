@@ -228,7 +228,7 @@ namespace Conquest
             }
 
 
-            if (iters != 0 && iters % 3 == 0)
+            if (iters != 0 && iters % 10 == 0)
             {
                 for (int i = 0; i < m_world.plates.Count; i++)
                 {
@@ -238,14 +238,14 @@ namespace Conquest
                 OnDirectionChange();
                 Debug.LogWarning("changing directions");
             }
-            if (iters != 0 && iters % 25 == 0)
-            {
-                for (int i = 0; i < m_world.plates.Count; i++)
-                {
-                    Plate p = m_world.plates[i];
-                    p.movementSpeed = Random.Range(MIN_SPD, MAX_SPD) * m_plateSpdDecayModifier;
-                }
-            }
+//            if (iters != 0 && iters % 30 == 0)
+//            {
+//                for (int i = 0; i < m_world.plates.Count; i++)
+//                {
+//                    Plate p = m_world.plates[i];
+//                    p.movementSpeed = Random.Range(MIN_SPD, MAX_SPD) * m_plateSpdDecayModifier;
+//                }
+//            }
 
             CalcCollisions();
             float[] tempPlates = new float[m_world.plates.Count];
@@ -439,13 +439,13 @@ namespace Conquest
                         if (height > 155) // Erosion
                             mod -= 1f;
                         if (height > HILL_LVL)
-                            mod -= 2f;
-                        if (height > HILL_LVL + 25 && !hData.formingMoutain)
+                            mod -= 3f;
+                        if (height > HILL_LVL + 55 && !hData.formingMoutain)
                             mod -= 2f;
                         if (!dirDiffPlate && dirData.formingMoutain) // hex moving into hex that forming mountain
                             mod -= 10f;
-                        if (dirData.height > HILL_LVL && height < dirData.height - 10 && !dirData.isCoast) // hex that are moving into a higher hex that is not coast increase height
-                            mod += 6f;
+                        if (dirData.height > HILL_LVL && height < dirData.height - 5 && !dirData.isCoast) // hex that are moving into a higher hex that is not coast increase height
+                            mod += 5f;
 
                         //mod *= speedModifier;
 
@@ -551,6 +551,8 @@ namespace Conquest
                     //int closestId = tempHeights[pair.Key].oldPlateId;
                     //int closestId = GetHighestPlateInHexList(pair.Value.hex.Ring(1));
                     int closestId = GetClosestRingPlate(pair.Value.hex, ring);
+                    if (closestId < 0)
+                        closestId = hData.plateId;
                     m_world.tileData[pair.Key].hexData.plateId = closestId;
                     m_world.plates[closestId].AddHex(pair.Value.hex);
                 }
