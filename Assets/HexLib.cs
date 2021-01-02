@@ -133,11 +133,6 @@ public class Hex
 
     public List<Hex> Spiral(int radius)
     {
-        //var results = [center]
-        //for each 1 ≤ k ≤ radius:
-            //results = results + cube_ring(center, k)
-        //return results
-
         List<Hex> results = new List<Hex>();
 
         for (int i = 1; i < radius + 1; i++)

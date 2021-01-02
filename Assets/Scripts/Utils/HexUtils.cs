@@ -103,5 +103,21 @@ namespace Conquest {
                 return value;
         }
 
+        public static bool IsHexLeftOfHex(Hex a, Hex b)
+        {
+            Point pA = GameManager.Singleton.World.layout.HexToPixel(a);
+            Point pB = GameManager.Singleton.World.layout.HexToPixel(b);
+
+            return Mathf.Abs((float)pA.x - (float)pB.x) > 0;
+        }
+
+        public static bool IsHexAboveHex(Hex a, Hex b)
+        {
+            Point pA = GameManager.Singleton.World.layout.HexToPixel(a);
+            Point pB = GameManager.Singleton.World.layout.HexToPixel(b);
+
+            return Mathf.Abs((float)pA.y - (float)pB.y) > 0;
+        }
+
     }
 }

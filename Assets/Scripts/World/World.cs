@@ -17,6 +17,7 @@ namespace Conquest
         public readonly Dictionary<Hex, TileObject> tileData;
 
         public readonly List<Plate> plates;
+        public int plateCounter;
 
         public World(int w, int h)
         {
@@ -51,7 +52,7 @@ namespace Conquest
 
         public Plate GetPlateByID(int id)
         {
-            return plates[id];
+            return plates.Find(plate => plate.id == id); 
         }
 
         public List<Plate> GetPlates() => plates;
@@ -59,10 +60,20 @@ namespace Conquest
         public void SetPlate(Hex hex, int i)
         {
             if (!tileData.TryGetValue(hex, out TileObject hData)) return;
-            plates[hData.hexData.plateId].RemoveHex(hData.hex);
-            
+            Plate old = GetPlateByID(hData.hexData.plateId);
+            if (old != null)
+                old.RemoveHex(hex);
+
             hData.hexData.plateId = i;
-            plates[hData.hexData.plateId].AddHex(hData.hex);
+
+            GetPlateByID(i).AddHex(hex);
+        }
+
+        public int AddPlate(Plate plate)
+        {
+            plates.Add(plate);
+            plate.id = plateCounter++;
+            return plate.id;
         }
     }
 }

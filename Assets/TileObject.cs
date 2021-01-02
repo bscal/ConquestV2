@@ -52,8 +52,8 @@ namespace Conquest
         {
             if (m_filter == HexFilter.PLATE)
             {
-                render.color = GameManager.Singleton.World.plates[hexData.plateId].color;
-                topRender.color = GameManager.Singleton.World.plates[hexData.plateId].color;
+                render.color = GameManager.Singleton.World.GetPlateByID(hexData.plateId).color;
+                topRender.color = GameManager.Singleton.World.GetPlateByID(hexData.plateId).color;
             }
         }
 
@@ -140,8 +140,8 @@ namespace Conquest
             }
             else if (filter == HexFilter.PLATE)
             {
-                render.color = GameManager.Singleton.World.plates[hexData.plateId].color;
-                topRender.color = GameManager.Singleton.World.plates[hexData.plateId].color;
+                render.color = GameManager.Singleton.World.GetPlateByID(hexData.plateId).color;
+                topRender.color = GameManager.Singleton.World.GetPlateByID(hexData.plateId).color;
             }
         }
 

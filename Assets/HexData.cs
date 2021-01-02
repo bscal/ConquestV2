@@ -73,6 +73,7 @@ namespace Conquest
             formingMoutain  = other.formingMoutain;
             isOcean         = other.isOcean;
             isCoast         = other.isCoast;
+            oldPlateId      = other.oldPlateId;
         }
     }
 }
