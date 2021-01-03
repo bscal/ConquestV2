@@ -12,9 +12,10 @@ namespace Conquest
 
         public bool isPlateEdge = false;
         public bool collision = false;
-        public bool empty = true;
+        public bool empty = false;
         public bool moved = false;
         public bool moveCenter = false;
+        public bool movedInto;
         public bool formingMoutain = false;
         public bool isOcean = false;
         public bool isCoast = false;
@@ -51,13 +52,13 @@ namespace Conquest
             isPlateEdge     = other.isPlateEdge;
             collision       = other.collision;
             empty           = other.empty;
-            moveCenter           = other.moveCenter;
-            moved       = other.moved;
+            moveCenter      = other.moveCenter;
+            moved           = other.moved;
+            movedInto = other.movedInto;
             formingMoutain  = other.formingMoutain;
             isOcean         = other.isOcean;
             isCoast         = other.isCoast;
             isHotSpot       = other.isHotSpot;
-
             oldPlateId      = other.oldPlateId;
             movedToHex      = other.movedToHex;
         }
@@ -74,6 +75,9 @@ namespace Conquest
             isOcean         = other.isOcean;
             isCoast         = other.isCoast;
             oldPlateId      = other.oldPlateId;
+            empty = other.empty;
+            moveCenter = other.moveCenter;
+            moved = other.moved;
         }
     }
 }

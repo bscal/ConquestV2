@@ -21,6 +21,7 @@ namespace Conquest
         public HexDirection direction;
         public float movementSpeed;
         public GameObject obj;
+        public bool stopped;
 
         public Plate(Color color)
         {
