@@ -8,8 +8,8 @@ namespace Conquest
     public class Plate
     {
 
-        public const float MIN_SPLIT_PERCENTAGE = 0.35f;
-        public const float MAX_SPLIT_PERCENTAGE = 0.8f;
+        public const float MIN_SPLIT_PERCENTAGE = 0.45f;
+        public const float MAX_SPLIT_PERCENTAGE = 0.9f;
 
         public int id;
         public Hex center;
@@ -76,9 +76,9 @@ namespace Conquest
             
             else if (percentageOfWorld > MIN_SPLIT_PERCENTAGE)
             {
-                float chance = ((percentageOfWorld - MIN_SPLIT_PERCENTAGE) / (MAX_SPLIT_PERCENTAGE - MIN_SPLIT_PERCENTAGE)) + .25f;
+                float chance = ((percentageOfWorld - MIN_SPLIT_PERCENTAGE) / (MAX_SPLIT_PERCENTAGE - MIN_SPLIT_PERCENTAGE)) + .1f;
                 float rand = UnityEngine.Random.value;
-                Debug.Log(chance + " | " + rand);
+                Debug.Log(percentageOfWorld + " = " + chance + " | " + rand);
                 if (chance >= rand)
                 {
                     Split(SplitType.NORMAL);

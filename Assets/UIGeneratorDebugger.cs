@@ -66,9 +66,9 @@ public class UIGeneratorDebugger : MonoBehaviour
 
         GUI.Box(new Rect(0, y, WIDTH, HEIGHT), "");
 
-        Rect viewport = new Rect(0, 0, WIDTH - 16, 16 * 32);
+        Rect viewport = new Rect(0, 0, WIDTH - 30, 16 * 32);
 
-        m_scroll = GUI.BeginScrollView(new Rect(0, y, WIDTH, 16 * 32), m_scroll, viewport);
+        m_scroll = GUI.BeginScrollView(new Rect(0, y, WIDTH, HEIGHT), m_scroll, viewport);
 
         World w = GameManager.Singleton.World;
         Rect total = new Rect(2, 0, viewport.width - 32, 32);
@@ -76,12 +76,12 @@ public class UIGeneratorDebugger : MonoBehaviour
         for (int i = 0; i < w.plates.Count; i++)
         {
             Rect labelRect = new Rect(2, 32 + 32 * i, viewport.width - 32, 32);
-            GUI.Label(labelRect, w.plates[i].id + " = " + w.plates[i].hexes.Count.ToString() + "(" + (float)w.plates[i].hexes.Count / (float)WorldSettings.Singleton.numOfHexes + ")");
+            float perc = (float)w.plates[i].hexes.Count / (float)WorldSettings.Singleton.numOfHexes;
+            String txt = string.Format("{0} = {1} ({2}), {3}", w.plates[i].id, w.plates[i].hexes.Count.ToString(), perc.ToString("0.00"), w.plates[i].movementSpeed);
+            GUI.Label(labelRect, txt);
         }
 
         GUI.EndScrollView();
-
-        y += 32;
     }
 
     private void OnPauseClicked()

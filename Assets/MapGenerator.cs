@@ -228,7 +228,7 @@ namespace Conquest
             }
             
 
-            if (iters != 0 && iters % 1 == 0)
+            if (iters != 0 && iters % 10 == 0)
             {
                 for (int i = m_world.plates.Count - 1; i > -1 ; i--)
                 {
@@ -236,6 +236,7 @@ namespace Conquest
                     p.direction = (HexDirection)Random.Range(0, HexConstants.MAX_DIR);
                     p.TrySplit();
                     p.stopped = false;
+                    p.movementSpeed = 1000f;
                 }
                 //OnDirectionChange();
                 //Debug.LogWarning("changing directions");
@@ -244,7 +245,7 @@ namespace Conquest
             //CalcCollisions();
 
             Dictionary<Hex, HexData> tempData = new Dictionary<Hex, HexData>();
-            Dictionary<int, bool> tempPlates = new Dictionary<int, bool>();
+            //Dictionary<int, float> tempPlates = new Dictionary<int, bool>();
             for (int r = 0; r <= m_height; r++) // height
             {
                 int r_offset = Mathf.FloorToInt(r / 2);
@@ -261,6 +262,7 @@ namespace Conquest
                     if (!tempData.ContainsKey(hex))
                         tempData.Add(hex, new HexData(hData));
                     HexData tempHexData = tempData[hex];
+                    //tempHexData.plateId = hPlate.id;
                     
                     
 
@@ -298,7 +300,7 @@ namespace Conquest
                             tempHexData.formingMoutain = true;
                             tempHexData.empty = false;
                             tempHexData.moved = false;
-                            tempPlates[hPlate.id] = true;
+                            hPlate.movementSpeed -= 1;
                         }
                         else
                         {
@@ -307,7 +309,7 @@ namespace Conquest
                         }
                     }
 
-                    if (hPlate.stopped)
+                    if (hPlate.movementSpeed < 0)
                     {
                         tempHexData.empty = false;
                         tempHexData.moved = false;
@@ -332,21 +334,11 @@ namespace Conquest
                             mod += 3f;
                         tempHexData.height += mod;
 
-                        tempDirData.empty = false;
-                        tempHexData.oldPlateId = hPlate.id;
+                        tempDirData.empty = false; 
                         tempDirData.plateId = hPlate.id;
                     }
+                    tempHexData.oldPlateId = hPlate.id;
                 }
-            }
-
-            foreach (var plate in m_world.plates)
-            {
-                plate.stopped = false;
-            }
-
-            foreach (var pair in tempPlates)
-            {
-                m_world.GetPlateByID(pair.Key).stopped = true;
             }
 
             ApplyTiles(tempData);
@@ -368,9 +360,9 @@ namespace Conquest
         {
             foreach (var pair in m_world.tileData)
             {
+                if (!tempData.ContainsKey(pair.Key))
+                    continue;
                 pair.Value.hexData.CopyValues(tempData[pair.Key]);
-
-
 
                 //m_world.GetPlateByID(pair.Value.hexData.oldPlateId).RemoveHex(pair.Key);
 
@@ -384,8 +376,12 @@ namespace Conquest
 
                 }
 
-                m_world.GetPlateByID(pair.Value.hexData.oldPlateId).RemoveHex(pair.Key);
-                m_world.GetPlateByID(pair.Value.hexData.plateId).AddHex(pair.Key);
+                if (pair.Value.hexData.oldPlateId != pair.Value.hexData.plateId)
+                {
+                    m_world.GetPlateByID(pair.Value.hexData.oldPlateId).RemoveHex(pair.Key);
+                    m_world.GetPlateByID(pair.Value.hexData.plateId).AddHex(pair.Key);
+                }
+
 
                 if (pair.Value.hexData.height < SEA_LVL - 55)
                     pair.Value.hexData.isOcean = true;
