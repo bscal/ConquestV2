@@ -43,8 +43,8 @@ public class UIGeneratorDebugger : MonoBehaviour
             var pl = GameManager.Singleton.World.GetPlateByID(hData.plateId);
             hexInfoText.text = $"Hex={hex.q}/{hex.r}/{hex.s} | {coord.col}/{coord.row}";
             tileObjText.text = $"h={Math.Round(hData.height, 2)}|tmp={hData.temp}|tid={obj.TileInfo()}|a={hData.age}";
-            movementText.text = $"mv={hData.moved}|" +
-                $"em={hData.empty}|" +
+            movementText.text = $"mv={hData.lastMoved}|" +
+                $"em={hData.lastEmpty}|" +
                 $"dir={pl.direction}|" +
                 $"fm={hData.formingMoutain}|" +
                 $"hs={hData.isHotSpot}";
@@ -55,7 +55,7 @@ public class UIGeneratorDebugger : MonoBehaviour
 
 
     private Vector2 m_scroll;
-    private const float HEIGHT = 250;
+    private const float HEIGHT = 282;
     private const float WIDTH = 200;
     private void OnGUI()
     {
@@ -64,24 +64,28 @@ public class UIGeneratorDebugger : MonoBehaviour
         float y = Screen.height - HEIGHT;
 
 
-        GUI.Box(new Rect(0, y, WIDTH, HEIGHT), "");
+        GUI.Box(new Rect(0, y, WIDTH - 16, HEIGHT), "");
 
-        Rect viewport = new Rect(0, 0, WIDTH - 30, 16 * 32);
+        Rect viewport = new Rect(0, 0, WIDTH, 16 * 32);
 
-        m_scroll = GUI.BeginScrollView(new Rect(0, y, WIDTH, HEIGHT), m_scroll, viewport);
+        m_scroll = GUI.BeginScrollView(new Rect(0, y, WIDTH - 16, HEIGHT - 32), m_scroll, viewport);
 
         World w = GameManager.Singleton.World;
-        Rect total = new Rect(2, 0, viewport.width - 32, 32);
-        GUI.Label(total, "Total: " + WorldSettings.Singleton.numOfHexes);
+        int realPlateCount = 0;
         for (int i = 0; i < w.plates.Count; i++)
         {
-            Rect labelRect = new Rect(2, 32 + 32 * i, viewport.width - 32, 32);
+            Rect labelRect = new Rect(2, 32 * i, viewport.width, 32);
             float perc = (float)w.plates[i].hexes.Count / (float)WorldSettings.Singleton.numOfHexes;
+            realPlateCount += w.plates[i].hexes.Count;
             String txt = string.Format("{0} = {1} ({2}), {3}", w.plates[i].id, w.plates[i].hexes.Count.ToString(), perc.ToString("0.00"), w.plates[i].movementSpeed);
             GUI.Label(labelRect, txt);
         }
 
         GUI.EndScrollView();
+        Rect total = new Rect(2, Screen.height - 32, viewport.width, 32);
+        String totalTxt = string.Format("#of: {0} | Total: {1} | Real: {2}", w.plates.Count, WorldSettings.Singleton.numOfHexes, realPlateCount);
+        GUI.Label(total, totalTxt);
+
     }
 
     private void OnPauseClicked()
