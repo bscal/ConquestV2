@@ -282,50 +282,53 @@ namespace Conquest
 
                     tempHexData.age++;
 
-                    if (hPlate.movementSpeed < 0)
+                    if (hPlate.movementSpeed > 0 && platesDiff)
                     {
-                        tempHexData.empty = false;
-                        tempHexData.moved = false;
-                    }
+                        const float HEIGHT_MOD = 20f;
+                        float spd = 0f;
 
-                    else if (platesDiff)
-                    {
-                        if (platesCollide || heightGTE)
+                        if (heightGTE)
                         {
-                            tempHexData.height += 20;
+                            tempHexData.height += HEIGHT_MOD;
                             tempHexData.formingMoutain = true;
-                            tempHexData.empty = false;
-                            tempHexData.moved = false;
-                            if (!tempPlates.ContainsKey(hPlate.id))
-                                tempPlates.Add(hPlate.id, hPlate.movementSpeed - 1);
-                            else
-                                tempPlates[hPlate.id] -= 1f;
-                            //hPlate.movementSpeed -= 1;
                         }
                         else
                         {
-                            tempHexData.empty = false;
-                            tempHexData.moved = false;
+                            tempHexData.height -= HEIGHT_MOD;
+                            tempHexData.formingMoutain = false;
                         }
+                        tempHexData.empty = false;
+                        tempHexData.moved = false;
+                        spd += (platesCollide) ? -15f : -7.5f;
+
+                        if (!tempPlates.ContainsKey(hPlate.id))
+                            tempPlates.Add(hPlate.id, hPlate.movementSpeed - spd);
+                        else
+                            tempPlates[hPlate.id] += spd;
+                    }
+                    else if (hPlate.movementSpeed <= 0)
+                    {
+                        tempHexData.empty = false;
+                        tempHexData.moved = false;
                     }
 
                     if (tempHexData.moved)
                     {
                         float mod = 0f;
                         if (hData.isHotSpot) // Hot spots
-                            mod += 25f + m_rand.NextFloat(0f, 10f);
+                            mod += 20f + m_rand.NextFloat(0f, 10f);
                         if (hData.height < SEA_LVL - 55)
                             mod += 2;
-                        if (hData.age < 25) // New created land gains more height
+                        if (hData.age < 5) // New created land gains more height
+                            mod += 10;
+                        if (hData.age < 30) // New created land gains more height
                             mod += 5f;
-                        if (hData.age < 100)
-                            mod += 1f;
-                        if (hData.height > HILL_LVL)
+                        if (hData.height > HILL_LVL && hData.age > 100)
                             mod -= 1f;
                         if (hData.height > HILL_LVL + 55)
-                            mod -= 3f;
+                            mod -= 5f;
                         if (hData.height < dirData.height - 35 && !dirData.isCoast && !dirData.isOcean)
-                            mod += 3f;
+                            mod += 5f;
 
                         tempDirData.height = hData.height + mod;
 
@@ -366,7 +369,7 @@ namespace Conquest
                 pair.Value.hexData.CopyValues(tempData[pair.Key]);
 
                 //m_world.GetPlateByID(pair.Value.hexData.oldPlateId).RemoveHex(pair.Key);
-
+                var ring = pair.Value.hex.Ring(1);
                 if (pair.Value.hexData.empty)
                 {
                     pair.Value.hexData.height = 10f;
@@ -374,11 +377,17 @@ namespace Conquest
                     pair.Value.hexData.age = 0;
                     if (m_rand.NextFloat() < .025f)
                         pair.Value.hexData.isHotSpot = true;
-                    var ring = pair.Value.hex.Ring(1);
+
                     int closestId = GetClosestRingPlate(pair.Value.hex, ring);
                     if (closestId < 0)
                         closestId = pair.Value.hexData.plateId;
                     pair.Value.hexData.plateId = closestId;
+                }
+                int id = IsSurrounded(pair.Key, ring);
+                if (id > 0)
+                {
+                    pair.Value.hexData.oldPlateId = pair.Value.hexData.plateId;
+                    pair.Value.hexData.plateId = id;
                 }
 
                 if (pair.Value.hexData.oldPlateId != pair.Value.hexData.plateId)
@@ -388,9 +397,9 @@ namespace Conquest
                 }
 
 
-                if (pair.Value.hexData.height < SEA_LVL - 55)
+                if (pair.Value.hexData.height < 60)
                     pair.Value.hexData.isOcean = true;
-                else if (pair.Value.hexData.height < SEA_LVL - 55)
+                else if (pair.Value.hexData.height < SEA_LVL)
                 {
                     pair.Value.hexData.isOcean = false;
                     pair.Value.hexData.isCoast = true;
@@ -439,22 +448,6 @@ namespace Conquest
             ApplyTiles(tempHeights);
         }
 
-        private void OnDirectionChange()
-        {
-            foreach (var pair in m_world.tileData)
-                pair.Value.hexData.formingMoutain = false;
-        }
-
-        private void CalcCollisions()
-        {
-            foreach (var pair in m_world.tileData)
-            {
-                HexData hData = pair.Value.hexData;
-                hData.moveCenter = false;
-                hData.empty = true;
-            }
-        }
-
         private Dictionary<int, int> CountHexList(in List<Hex> ring)
         {
             Dictionary<int, int> counts = new Dictionary<int, int>(m_world.GetPlates().Count);
@@ -477,6 +470,9 @@ namespace Conquest
             return GetClosestPlate(hex, ids);
         }
 
+        // TODO move
+        const int SURROUND_SIZE = 4;
+
         public int GetClosestPlate(Hex hex, Dictionary<int, int> platesIds)
         {
             int closestId = -1;
@@ -484,7 +480,7 @@ namespace Conquest
             foreach (var pair in platesIds)
             {
                 if (pair.Value < 2) continue;
-                if (pair.Value > 4) return pair.Key; // If a hex (6 sides) has 5 or 6 hexes around it we add it to that plate.
+                if (pair.Value > SURROUND_SIZE) return pair.Key; // If a hex (6 sides) has 5 or 6 hexes around it we add it to that plate.
 
                 int count = m_world.GetPlateByID(pair.Key).hexes.Count;
                 if (count < closest)
@@ -496,6 +492,21 @@ namespace Conquest
 
             return closestId;
         }
+
+
+        public int IsSurrounded(Hex hex, List<Hex> ring)
+        {
+            Dictionary<int, int> ids = CountHexList(ring);
+            
+            foreach (var pair in ids)
+            {
+                if (pair.Value > SURROUND_SIZE) 
+                    return pair.Key;
+            }
+
+            return -1;
+        }
+
 
         private float Normalize(float value, float min, float max)
         {

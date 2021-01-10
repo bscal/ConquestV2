@@ -157,7 +157,7 @@ namespace Conquest
 
         public Tile FindCorrectTile()
         {
-            if (hexData.height < 50)
+            if (hexData.height < 60)
                 return TileMap.Singleton.GetTileByName("ocean");
             else if (hexData.height < 100)
                 return TileMap.Singleton.GetTileByName("coast");
