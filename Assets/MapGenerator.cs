@@ -200,6 +200,7 @@ namespace Conquest
             }
         }
 
+        float avgHeight;
         public const int numOfIters = 500;
         float timer = 0f;
         int iters = 0;
@@ -222,7 +223,7 @@ namespace Conquest
             }
             
 
-            if (iters != 0 && iters % 10 == 0)
+            if (iters != 0 && iters % 5 == 0)
             {
                 for (int i = m_world.plates.Count - 1; i > -1 ; i--)
                 {
@@ -240,6 +241,7 @@ namespace Conquest
 
             Dictionary<Hex, HexData> tempData = new Dictionary<Hex, HexData>();
             Dictionary<int, float> tempPlates = new Dictionary<int, float>();
+            float tempAvgHelp = 0;
             //Dictionary<int, float> tempPlates = new Dictionary<int, bool>();
             for (int r = 0; r <= m_height; r++) // height
             {
@@ -294,12 +296,12 @@ namespace Conquest
                         }
                         else
                         {
-                            tempHexData.height -= HEIGHT_MOD;
+                            //tempHexData.height -= HEIGHT_MOD;
                             tempHexData.formingMoutain = false;
                         }
                         tempHexData.empty = false;
                         tempHexData.moved = false;
-                        spd += (platesCollide) ? -15f : -7.5f;
+                        spd += (platesCollide) ? -5f : -2f;
 
                         if (!tempPlates.ContainsKey(hPlate.id))
                             tempPlates.Add(hPlate.id, hPlate.movementSpeed - spd);
@@ -314,19 +316,19 @@ namespace Conquest
 
                     if (tempHexData.moved)
                     {
-                        float mod = 0f;
+                        float mod = 1f;
                         if (hData.isHotSpot) // Hot spots
                             mod += 20f + m_rand.NextFloat(0f, 10f);
                         if (hData.height < SEA_LVL - 55)
-                            mod += 2;
+                            mod += 3;
                         if (hData.age < 5) // New created land gains more height
-                            mod += 10;
-                        if (hData.age < 30) // New created land gains more height
-                            mod += 5f;
-                        if (hData.height > HILL_LVL && hData.age > 100)
+                            mod += 15;
+                        if (hData.age < 100) // New created land gains more height
+                            mod += 3f;
+                        if (hData.height > HILL_LVL && hData.age > 200)
                             mod -= 1f;
                         if (hData.height > HILL_LVL + 55)
-                            mod -= 5f;
+                            mod -= 2f;
                         if (hData.height < dirData.height - 35 && !dirData.isCoast && !dirData.isOcean)
                             mod += 5f;
 
