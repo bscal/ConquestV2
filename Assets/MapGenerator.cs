@@ -293,15 +293,17 @@ namespace Conquest
                         {
                             tempHexData.height += HEIGHT_MOD;
                             tempHexData.formingMoutain = true;
+                            tempHexData.moved = false;
+                            spd += (platesCollide) ? -5f : -2f;
                         }
                         else
                         {
                             //tempHexData.height -= HEIGHT_MOD;
                             tempHexData.formingMoutain = false;
+                            tempHexData.moved = true;
                         }
                         tempHexData.empty = false;
-                        tempHexData.moved = false;
-                        spd += (platesCollide) ? -5f : -2f;
+                        
 
                         if (!tempPlates.ContainsKey(hPlate.id))
                             tempPlates.Add(hPlate.id, hPlate.movementSpeed - spd);
