@@ -264,7 +264,14 @@ namespace Conquest
                     bool dirInBounds = m_world.TryGetHexData(dirHex, out TileObject dirObj);
 
                     if (!dirInBounds)
+                    {
+                        if (!tempPlates.ContainsKey(hPlate.id))
+                            tempPlates.Add(hPlate.id, hPlate.movementSpeed - -5f);
+                        else
+                            tempPlates[hPlate.id] += -5f;
                         continue;
+                    }
+                        
 
                     dirHex = dirObj.hex; // Reassign hex incase world wrapping is on and we need to wrap.
                     HexData dirData = dirObj.hexData;
@@ -293,15 +300,17 @@ namespace Conquest
                         {
                             tempHexData.height += HEIGHT_MOD;
                             tempHexData.formingMoutain = true;
-                            tempHexData.moved = false;
-                            spd += (platesCollide) ? -5f : -2f;
+                            tempHexData.moved = true;
+                            spd += (platesCollide) ? -1f : -.25f;
                         }
                         else
                         {
                             //tempHexData.height -= HEIGHT_MOD;
                             tempHexData.formingMoutain = false;
-                            tempHexData.moved = true;
+                            tempHexData.moved = false;
+                            spd += (platesCollide) ? -5f : -2f;
                         }
+                        
                         tempHexData.empty = false;
                         
 
@@ -322,17 +331,19 @@ namespace Conquest
                         if (hData.isHotSpot) // Hot spots
                             mod += 20f + m_rand.NextFloat(0f, 10f);
                         if (hData.height < SEA_LVL - 55)
-                            mod += 3;
+                            mod += 1;
                         if (hData.age < 5) // New created land gains more height
                             mod += 15;
-                        if (hData.age < 100) // New created land gains more height
-                            mod += 3f;
-                        if (hData.height > HILL_LVL && hData.age > 200)
-                            mod -= 1f;
+                        if (hData.age < 50) // New created land gains more height
+                            mod += 1f;
+                        if (hData.height > HILL_LVL && hData.age > 100)
+                            mod -= 2f;
                         if (hData.height > HILL_LVL + 55)
                             mod -= 2f;
+                        if (dirData.height > HILL_LVL + 55 && hData.height < dirData.height - 25 && !dirData.isCoast && !dirData.isOcean)
+                            mod += 3f;
                         if (hData.height < dirData.height - 35 && !dirData.isCoast && !dirData.isOcean)
-                            mod += 5f;
+                            mod += 3f;
 
                         tempDirData.height = hData.height + mod;
 
