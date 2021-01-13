@@ -308,7 +308,7 @@ namespace Conquest
                             //tempHexData.height -= HEIGHT_MOD;
                             tempHexData.formingMoutain = false;
                             tempHexData.moved = false;
-                            spd += (platesCollide) ? -5f : -2f;
+                            spd += (platesCollide) ? -10f : -2.5f;
                         }
                         
                         tempHexData.empty = false;
