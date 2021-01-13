@@ -26,23 +26,6 @@ namespace Conquest
 
         private HexFilter m_filter;
 
-        //         public int plateId = 0;
-        //         public int tileId = 0;
-        // 
-        //         public int age = 0;
-        //         public float height = 0;
-        //         public float temp = 0;
-        //         public float wetness = 0;
-        // 
-        //         public bool isPlateEdge = false;
-        //         public bool collision = false;
-        //         public bool empty = false;
-        //         public bool moved = false;
-        //         public bool generated = false;
-        //         public bool formingMoutain = false;
-        //         public bool isOcean = false;
-        //         public bool isCoast = false;
-
         void Awake()
         {
             hexData = new HexData();
@@ -54,44 +37,6 @@ namespace Conquest
             {
                 render.color = GameManager.Singleton.World.GetPlateByID(hexData.plateId).color;
                 topRender.color = GameManager.Singleton.World.GetPlateByID(hexData.plateId).color;
-            }
-        }
-
-        private void OnBecameVisible()
-        {
-            Point op = GameManager.Singleton.World.layout.HexToPixel(hex);
-            Vector3 opos = new Vector3((float)op.x, (float)op.y);
-            if (Camera.main != null && new Rect(0, 0, 1, 1).Contains(Camera.main.WorldToViewportPoint(opos)))
-            {
-                var curPos = GameManager.Singleton.World.layout.HexToPixel(hex);
-                transform.position = new Vector3((float)curPos.x, (float)curPos.y);
-                return;
-            }
-        }
-
-        private void OnBecameInvisible()
-        {
-            if (Camera.main == null) return;
-            Point op = GameManager.Singleton.World.layout.HexToPixel(hex);
-            Vector3 opos = new Vector3((float)op.x, (float)op.y);
-            if (new Rect(0, 0, 1, 1).Contains(Camera.main.WorldToViewportPoint(opos)))
-            {
-                transform.position = new Vector3((float)opos.x, (float)opos.y);
-                return;
-            }
-
-            OffsetCoord coord = OffsetCoord.RoffsetFromCube(OffsetCoord.EVEN, hex);
-            int newQ;
-            if (coord.col > GameManager.Singleton.World.size.x / 2)
-                newQ = hex.q - GameManager.Singleton.World.size.x - 1;
-            else
-                newQ = hex.q + GameManager.Singleton.World.size.x + 1;
-            Hex h = new Hex(newQ, hex.r, -newQ - hex.r);
-            Point p = GameManager.Singleton.World.layout.HexToPixel(h);
-            Vector3 pos = new Vector3((float)p.x, (float)p.y);
-            if (new Rect(0, 0, 1, 1).Contains(Camera.main.WorldToViewportPoint(pos)))
-            {
-                transform.position = pos;
             }
         }
 
