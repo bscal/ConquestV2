@@ -102,18 +102,33 @@ namespace Conquest
 
         public Tile FindCorrectTile()
         {
-            if (hexData.height < 60)
-                return TileMap.Singleton.GetTileByName("ocean");
-            else if (hexData.height < 100)
-                return TileMap.Singleton.GetTileByName("coast");
-            else if (hexData.height < 175)
-                return TileMap.Singleton.GetTileByName("grassland");
-            else if (hexData.height < 215)
-                return TileMap.Singleton.GetTileByName("hill");
-            else if (hexData.height >= 215)
-                return TileMap.Singleton.GetTileByName("mountain");
+            // new TODO Figure a way to do temp and wetness... Possibly
+            // loop through all tiles and compare or compare in the return statement?
+            
+            TileMap map = TileMap.Singleton;
+            float h = hexData.height;
+
+
+            if (h > map.mountainPeaklvl)
+                return map.GetTileByName("mountain_peak");
+            else if (h > map.mountainLvl)
+                return map.GetTileByName("mountain");
             else
-                return FindCorrectBaseTile();
+            {
+                if (h < map.GetTileByName("ocean").minHeight)
+                    return map.GetTileByName("ocean");
+                else if (hexData.height < map.GetTileByName("coast").minHeight)
+                    return map.GetTileByName("coast");
+                else if (hexData.height < map.GetTileByName("grassland").minHeight)
+                    return map.GetTileByName("grassland");
+                else if (hexData.height < map.GetTileByName("hill").minHeight)
+                    return map.GetTileByName("hill");
+                else
+                    return FindCorrectBaseTile();
+            }
+
+
+
         }
     }
 }

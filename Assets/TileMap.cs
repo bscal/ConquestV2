@@ -14,12 +14,17 @@ namespace Conquest
     {
         public static TileMap Singleton { get; private set; }
 
-        public static readonly Tile NULL_TILE = new Tile() {
+        public static Tile DEFAULT_TILE;
 
-        };
+        public const int TILE_HEIGHT_NULL = -1;
 
         [NonSerialized]
         private Dictionary<string, int> m_nameToID;
+
+        public int seaLvl = 100;
+        public int oceanLvl = 55;
+        public int mountainLvl = 215;
+        public int mountainPeaklvl = 235;
 
         public Tile[] tiles;
 
@@ -49,6 +54,7 @@ namespace Conquest
 
         public void OnAfterDeserialize()
         {
+            DEFAULT_TILE = tiles[0];
             m_nameToID = new Dictionary<string, int>();
             for (int i = 0; i < tiles.Length; i++)
             {

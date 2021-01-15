@@ -44,7 +44,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 2800000, guid: 9039778b3b792e840ba674983698ba19, type: 3}
-    totalSpriteSurfaceArea: 5632
+    totalSpriteSurfaceArea: 7680
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
@@ -64,12 +64,20 @@ SpriteAtlas:
   - {fileID: -6904636527289313367, guid: 9039778b3b792e840ba674983698ba19, type: 3}
   - {fileID: 4229364488609172911, guid: 9039778b3b792e840ba674983698ba19, type: 3}
   - {fileID: -4817926996509711932, guid: 9039778b3b792e840ba674983698ba19, type: 3}
+  - {fileID: -1727898576210977910, guid: 9039778b3b792e840ba674983698ba19, type: 3}
   - {fileID: -1510721901046455138, guid: 9039778b3b792e840ba674983698ba19, type: 3}
+  - {fileID: 8610726567796546735, guid: 9039778b3b792e840ba674983698ba19, type: 3}
   - {fileID: -4386968851152074775, guid: 9039778b3b792e840ba674983698ba19, type: 3}
+  - {fileID: -2017589578864395279, guid: 9039778b3b792e840ba674983698ba19, type: 3}
   - {fileID: 1228773476067265067, guid: 9039778b3b792e840ba674983698ba19, type: 3}
+  - {fileID: -6986634318421574478, guid: 9039778b3b792e840ba674983698ba19, type: 3}
   - {fileID: -9167192140201225428, guid: 9039778b3b792e840ba674983698ba19, type: 3}
+  - {fileID: -8232528187153893139, guid: 9039778b3b792e840ba674983698ba19, type: 3}
   - {fileID: -1374599444519741421, guid: 9039778b3b792e840ba674983698ba19, type: 3}
+  - {fileID: 1150422388765653489, guid: 9039778b3b792e840ba674983698ba19, type: 3}
   - {fileID: -2944986147828954873, guid: 9039778b3b792e840ba674983698ba19, type: 3}
+  - {fileID: 257354459922426277, guid: 9039778b3b792e840ba674983698ba19, type: 3}
+  - {fileID: 8884121374045906476, guid: 9039778b3b792e840ba674983698ba19, type: 3}
   - {fileID: 6090975987771635275, guid: 9039778b3b792e840ba674983698ba19, type: 3}
   - {fileID: -7423474631770164195, guid: 9039778b3b792e840ba674983698ba19, type: 3}
   m_PackedSpriteNamesToIndex:
@@ -87,12 +95,20 @@ SpriteAtlas:
   - 2MODDED_drjamgo_hex_16x16 1_18
   - 2MODDED_drjamgo_hex_16x16 1_13
   - 2MODDED_drjamgo_hex_16x16 1_12
+  - 2MODDED_drjamgo_hex_16x16 1_28
   - 2MODDED_drjamgo_hex_16x16 1_11
+  - 2MODDED_drjamgo_hex_16x16 1_29
   - 2MODDED_drjamgo_hex_16x16 1_10
+  - 2MODDED_drjamgo_hex_16x16 1_26
   - 2MODDED_drjamgo_hex_16x16 1_17
+  - 2MODDED_drjamgo_hex_16x16 1_27
   - 2MODDED_drjamgo_hex_16x16 1_16
+  - 2MODDED_drjamgo_hex_16x16 1_24
   - 2MODDED_drjamgo_hex_16x16 1_15
+  - 2MODDED_drjamgo_hex_16x16 1_25
   - 2MODDED_drjamgo_hex_16x16 1_14
+  - 2MODDED_drjamgo_hex_16x16 1_22
+  - 2MODDED_drjamgo_hex_16x16 1_23
   - 2MODDED_drjamgo_hex_16x16 1_20
   - 2MODDED_drjamgo_hex_16x16 1_21
   m_RenderDataMap: {}

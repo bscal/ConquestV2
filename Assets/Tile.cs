@@ -12,8 +12,14 @@ namespace Conquest
     public class Tile
     {
         public string name;
+
         public Sprite sprite;
+        public Sprite coldSprite;
+        public Sprite hotSprite;
+
         public bool isSpriteInFront = false;
+
+        public float minHeight;
 
         [NonSerialized]
         public int id;
