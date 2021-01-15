@@ -12,32 +12,64 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97644cb5d40bb814581ac0dcc74c7a85, type: 3}
   m_Name: TileMap
   m_EditorClassIdentifier: 
+  seaLvl: 100
+  oceanLvl: 55
+  mountainLvl: 215
+  mountainPeaklvl: 235
   tiles:
   - name: grassland
     sprite: {fileID: -8095341020241152702, guid: 9039778b3b792e840ba674983698ba19,
       type: 3}
+    coldSprite: {fileID: 0}
+    hotSprite: {fileID: 0}
     isSpriteInFront: 0
+    minHeight: 100
   - name: plain
     sprite: {fileID: 2872020216679152886, guid: 9039778b3b792e840ba674983698ba19,
       type: 3}
+    coldSprite: {fileID: 0}
+    hotSprite: {fileID: 0}
     isSpriteInFront: 0
+    minHeight: 100
   - name: coast
     sprite: {fileID: -7336061460917453017, guid: 9039778b3b792e840ba674983698ba19,
       type: 3}
+    coldSprite: {fileID: 0}
+    hotSprite: {fileID: 0}
     isSpriteInFront: 0
+    minHeight: 55
   - name: desert
-    sprite: {fileID: -6373738685444571793, guid: 9039778b3b792e840ba674983698ba19,
-      type: 3}
-    isSpriteInFront: 0
-  - name: ocean
     sprite: {fileID: -1094970902351842777, guid: 9039778b3b792e840ba674983698ba19,
       type: 3}
+    coldSprite: {fileID: 0}
+    hotSprite: {fileID: 0}
     isSpriteInFront: 0
+    minHeight: 100
+  - name: ocean
+    sprite: {fileID: -4386968851152074775, guid: 9039778b3b792e840ba674983698ba19,
+      type: 3}
+    coldSprite: {fileID: 0}
+    hotSprite: {fileID: 0}
+    isSpriteInFront: 0
+    minHeight: -1
   - name: hill
     sprite: {fileID: 4769010376589184234, guid: 9039778b3b792e840ba674983698ba19,
       type: 3}
+    coldSprite: {fileID: 0}
+    hotSprite: {fileID: 0}
     isSpriteInFront: 1
+    minHeight: 175
   - name: mountain
-    sprite: {fileID: 6088669444376403752, guid: 9039778b3b792e840ba674983698ba19,
+    sprite: {fileID: -1374599444519741421, guid: 9039778b3b792e840ba674983698ba19,
       type: 3}
+    coldSprite: {fileID: 0}
+    hotSprite: {fileID: 0}
     isSpriteInFront: 1
+    minHeight: 215
+  - name: mountain_peak
+    sprite: {fileID: 6090975987771635275, guid: 9039778b3b792e840ba674983698ba19,
+      type: 3}
+    coldSprite: {fileID: 0}
+    hotSprite: {fileID: 0}
+    isSpriteInFront: 1
+    minHeight: 235
