@@ -68,6 +68,30 @@ TextureImporter:
   - first:
       213: -7423474631770164195
     second: 2MODDED_drjamgo_hex_16x16 1_21
+  - first:
+      213: 257354459922426277
+    second: 2MODDED_drjamgo_hex_16x16 1_22
+  - first:
+      213: 8884121374045906476
+    second: 2MODDED_drjamgo_hex_16x16 1_23
+  - first:
+      213: -8232528187153893139
+    second: 2MODDED_drjamgo_hex_16x16 1_24
+  - first:
+      213: 1150422388765653489
+    second: 2MODDED_drjamgo_hex_16x16 1_25
+  - first:
+      213: -2017589578864395279
+    second: 2MODDED_drjamgo_hex_16x16 1_26
+  - first:
+      213: -6986634318421574478
+    second: 2MODDED_drjamgo_hex_16x16 1_27
+  - first:
+      213: -1727898576210977910
+    second: 2MODDED_drjamgo_hex_16x16 1_28
+  - first:
+      213: 8610726567796546735
+    second: 2MODDED_drjamgo_hex_16x16 1_29
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -121,6 +145,8 @@ TextureImporter:
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
@@ -132,7 +158,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -144,7 +170,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -305,8 +331,8 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_7
       rect:
         serializedVersion: 2
-        x: 0
-        y: 128
+        x: 112
+        y: 144
         width: 16
         height: 16
       alignment: 0
@@ -326,7 +352,7 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_8
       rect:
         serializedVersion: 2
-        x: 16
+        x: 0
         y: 128
         width: 16
         height: 16
@@ -347,7 +373,7 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_9
       rect:
         serializedVersion: 2
-        x: 32
+        x: 16
         y: 128
         width: 16
         height: 16
@@ -368,7 +394,7 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_10
       rect:
         serializedVersion: 2
-        x: 48
+        x: 32
         y: 128
         width: 16
         height: 16
@@ -389,8 +415,8 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_11
       rect:
         serializedVersion: 2
-        x: 0
-        y: 112
+        x: 48
+        y: 128
         width: 16
         height: 16
       alignment: 0
@@ -410,8 +436,8 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_12
       rect:
         serializedVersion: 2
-        x: 16
-        y: 112
+        x: 64
+        y: 128
         width: 16
         height: 16
       alignment: 0
@@ -431,8 +457,8 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_13
       rect:
         serializedVersion: 2
-        x: 32
-        y: 112
+        x: 80
+        y: 128
         width: 16
         height: 16
       alignment: 0
@@ -452,8 +478,8 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_14
       rect:
         serializedVersion: 2
-        x: 48
-        y: 112
+        x: 96
+        y: 128
         width: 16
         height: 16
       alignment: 0
@@ -473,8 +499,8 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_15
       rect:
         serializedVersion: 2
-        x: 0
-        y: 96
+        x: 112
+        y: 128
         width: 16
         height: 16
       alignment: 0
@@ -494,8 +520,8 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_16
       rect:
         serializedVersion: 2
-        x: 16
-        y: 96
+        x: 0
+        y: 112
         width: 16
         height: 16
       alignment: 0
@@ -515,8 +541,8 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_17
       rect:
         serializedVersion: 2
-        x: 32
-        y: 96
+        x: 16
+        y: 112
         width: 16
         height: 16
       alignment: 0
@@ -536,8 +562,8 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_18
       rect:
         serializedVersion: 2
-        x: 48
-        y: 96
+        x: 32
+        y: 112
         width: 16
         height: 16
       alignment: 0
@@ -557,8 +583,8 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_19
       rect:
         serializedVersion: 2
-        x: 0
-        y: 80
+        x: 48
+        y: 112
         width: 16
         height: 16
       alignment: 0
@@ -578,8 +604,8 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_20
       rect:
         serializedVersion: 2
-        x: 16
-        y: 80
+        x: 96
+        y: 112
         width: 16
         height: 16
       alignment: 0
@@ -599,8 +625,8 @@ TextureImporter:
       name: 2MODDED_drjamgo_hex_16x16 1_21
       rect:
         serializedVersion: 2
-        x: 32
-        y: 80
+        x: 112
+        y: 112
         width: 16
         height: 16
       alignment: 0
@@ -612,6 +638,174 @@ TextureImporter:
       bones: []
       spriteID: d14373657258af890800000000000000
       internalID: -7423474631770164195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 2MODDED_drjamgo_hex_16x16 1_22
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 96
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a9e90d848e429300800000000000000
+      internalID: 257354459922426277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 2MODDED_drjamgo_hex_16x16 1_23
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 96
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c262671d15dba4b70800000000000000
+      internalID: 8884121374045906476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 2MODDED_drjamgo_hex_16x16 1_24
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 96
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de83d494b3f20cd80800000000000000
+      internalID: -8232528187153893139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 2MODDED_drjamgo_hex_16x16 1_25
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 96
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f97800411f17ff00800000000000000
+      internalID: 1150422388765653489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 2MODDED_drjamgo_hex_16x16 1_26
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 96
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1fbf149b7f41004e0800000000000000
+      internalID: -2017589578864395279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 2MODDED_drjamgo_hex_16x16 1_27
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 80
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2bcbdeaaa1d7a0f90800000000000000
+      internalID: -6986634318421574478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 2MODDED_drjamgo_hex_16x16 1_28
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 80
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8b9a0556654508e0800000000000000
+      internalID: -1727898576210977910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 2MODDED_drjamgo_hex_16x16 1_29
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 80
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fac188b11327f7770800000000000000
+      internalID: 8610726567796546735
       vertices: []
       indices: 
       edges: []
