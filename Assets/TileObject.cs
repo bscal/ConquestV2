@@ -115,14 +115,14 @@ namespace Conquest
                 return map.GetTileByName("mountain");
             else
             {
-                if (h < map.GetTileByName("ocean").minHeight)
-                    return map.GetTileByName("ocean");
-                else if (hexData.height < map.GetTileByName("coast").minHeight)
-                    return map.GetTileByName("coast");
-                else if (hexData.height < map.GetTileByName("grassland").minHeight)
-                    return map.GetTileByName("grassland");
-                else if (hexData.height < map.GetTileByName("hill").minHeight)
+                if (h > map.GetTileByName("hill").minHeight)
                     return map.GetTileByName("hill");
+                else if (hexData.height > map.GetTileByName("grassland").minHeight)
+                    return map.GetTileByName("grassland");
+                else if (hexData.height > map.GetTileByName("coast").minHeight)
+                    return map.GetTileByName("coast");
+                else if (hexData.height > map.GetTileByName("ocean").minHeight)
+                    return map.GetTileByName("ocean");
                 else
                     return FindCorrectBaseTile();
             }

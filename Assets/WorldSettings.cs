@@ -29,6 +29,7 @@ namespace Conquest
         public int pixelH;
 
         [Header("Generation")]
+        public int numberOfIterations;
         public int plates;
         public int worldType;
         public int worldAge;
