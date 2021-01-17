@@ -4,28 +4,23 @@ namespace Conquest
 {
     public class HexData : ICloneable
     {
-        public int plateId = 0;
-        public int age = 0;
-        public float height = 0;
-        public float temp = 0;
-        public float wetness = 0;
+        public int plateId;
+        public int oldPlateId;
+        public int age;
+        public float height;
+        public float temp;
+        public float wetness;
 
-        public bool isPlateEdge = false;
-        public bool collision = false;
-        public bool empty = false;
-        public bool moved = false;
-        public bool filled = false;
-        public bool moveCenter = false;
-        public bool movedInto;
-        public bool formingMoutain = false;
-        public bool isOcean = false;
-        public bool isCoast = false;
-        public bool isHotSpot = false;
+        public bool empty;
+        public bool moved;
+        public bool formingMoutain;
+        public bool isOcean;
+        public bool isCoast;
+        public bool isHotSpot;
+
+        // Useful for debugging
         public bool lastEmpty;
         public bool lastMoved;
-
-        public int oldPlateId;
-        public Hex movedToHex;
 
         public HexData() { }
 
@@ -48,43 +43,19 @@ namespace Conquest
         public void CopyValues(HexData other)
         {
             plateId         = other.plateId;
+            oldPlateId      = other.oldPlateId;
             age             = other.age;
             height          = other.height;
             temp            = other.temp;
             wetness         = other.wetness;
-            isPlateEdge     = other.isPlateEdge;
-            collision       = other.collision;
             empty           = other.empty;
-            moveCenter      = other.moveCenter;
             moved           = other.moved;
-            filled = other.filled;
-            movedInto = other.movedInto;
-            lastEmpty = other.lastEmpty;
-            lastMoved = other.lastMoved;
             formingMoutain  = other.formingMoutain;
             isOcean         = other.isOcean;
             isCoast         = other.isCoast;
             isHotSpot       = other.isHotSpot;
-            oldPlateId      = other.oldPlateId;
-            movedToHex      = other.movedToHex;
-        }
-
-        /// <summary>
-        /// Used in updating some of a hexes values.
-        /// </summary>
-        /// <param name="other"></param>
-        public void UpdateValues(HexData other)
-        {
-            height          = other.height;
-            plateId         = other.plateId;
-            formingMoutain  = other.formingMoutain;
-            isOcean         = other.isOcean;
-            isCoast         = other.isCoast;
-            oldPlateId      = other.oldPlateId;
-            filled = other.filled;
-            empty = other.empty;
-            moveCenter = other.moveCenter;
-            moved = other.moved;
+            lastEmpty       = other.lastEmpty;
+            lastMoved       = other.lastMoved;
         }
     }
 }

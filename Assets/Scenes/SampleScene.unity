@@ -528,7 +528,7 @@ MonoBehaviour:
   wrapWorld: 1
   width: 64
   height: 48
-  numberOfIterations: 0
+  numberOfIterations: 500
   plates: 5
   worldType: 0
   worldAge: 0

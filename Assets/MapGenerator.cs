@@ -39,8 +39,8 @@ namespace Conquest
         [SerializeField]
         private TileMap tileMap;
 
-        public const float MIN_SPD = 155.0f;
-        public const float MAX_SPD = 255.0f;
+        public const float MIN_SPD = 55.0f;
+        public const float MAX_SPD = 155.0f;
 
         public const float SOFT_MAX_HEIGHT = 255f;
         public const float MIN_HEIGHT = 0;
@@ -50,11 +50,18 @@ namespace Conquest
         public const float MTN_LVL = 225;
         public const float X_MTN_LVL = 255;
 
+        public const int SURROUND_SIZE = 4;
+
         private GenState m_state;
+
+        // World Gen Variables
+        private float m_timer = 0f;
+        private int m_iters = 0;
 
         private uint m_seed;
         private Unity.Mathematics.Random m_rand;
-        private float m_plateSpdDecayModifier = 2f;   // Increase for larger plates, Decrease for smaller plates
+
+        private float MAP_SIZE_MODIFER = 1.0f;
 
         public World CreateWorld()
         {
@@ -88,10 +95,9 @@ namespace Conquest
                         m_world.tileData.Add(mapKey, tObj);
                         HexData hData = tObj.hexData;
 
-                        int n = UnityEngine.Random.Range(0, 2);
                         float d = Noise.CalcPixel2D(q, r, .1f);
 
-                        if (d < 100)
+                        if (d < 55)
                             hData.isOcean = true;
 
                         tObj.hex = hex;
@@ -133,7 +139,7 @@ namespace Conquest
 
                 Plate p = new Plate(hex, UnityEngine.Random.ColorHSV()) {
                     elevation = Random.Range(0f, 255f),
-                    movementSpeed = m_rand.NextFloat(MIN_SPD, MAX_SPD) * m_plateSpdDecayModifier,
+                    movementSpeed = m_rand.NextFloat(MIN_SPD, MAX_SPD),
                     direction = (HexDirection)Random.Range(0, HexConstants.DIRECTIONS - 1),
                     obj = Instantiate(dot, new Vector3((float)pt.x, (float)pt.y, -1), Quaternion.identity)
                 };
@@ -186,35 +192,21 @@ namespace Conquest
                 {
                     Hex hex = new Hex(q, r, -q - r);
                     var mapKey = hex.GetKey();
-
-                    foreach (Hex h in hex.Ring(1))
-                    {
-                        if (!m_world.tileData.ContainsKey(h.GetKey())) continue;
-                        if (m_world.tileData[h.GetKey()].hexData.plateId != m_world.tileData[mapKey].hexData.plateId)
-                        {
-                            m_world.tileData[mapKey].hexData.isPlateEdge = true;
-                            break;
-                        }
-                    }
                 }
             }
         }
 
-        float avgHeight;
-        public const int numOfIters = 500;
-        float timer = 0f;
-        int iters = 0;
         void Update()
         {
             if (paused) return;
-            iterations = iters;
+            iterations = m_iters;
             if (m_state == GenState.DONE) return;
             if (m_state != GenState.ITERATING) m_state = GenState.ITERATING;
-            timer += Time.deltaTime;
-            if (timer < 0.05f) return;
-            timer = 0;
-            iters++;
-            if (iters > numOfIters)
+            m_timer += Time.deltaTime;
+            if (m_timer < 0.05f) return;
+            m_timer = 0;
+            m_iters++;
+            if (m_iters > WorldSettings.Singleton.numberOfIterations)
             {
                 m_state = GenState.DONE;
                 print("Done simulation!");
@@ -223,26 +215,20 @@ namespace Conquest
             }
             
 
-            if (iters != 0 && iters % 5 == 0)
+            if (m_iters != 0 && m_iters % 5 == 0)
             {
                 for (int i = m_world.plates.Count - 1; i > -1 ; i--)
                 {
                     Plate p = m_world.plates[i];
                     p.direction = (HexDirection)Random.Range(0, HexConstants.MAX_DIR);
                     p.TrySplit();
-                    p.stopped = false;
                     p.movementSpeed = 100f;
                 }
-                //OnDirectionChange();
-                //Debug.LogWarning("changing directions");
             }
 
-            //CalcCollisions();
 
             Dictionary<Hex, HexData> tempData = new Dictionary<Hex, HexData>();
             Dictionary<int, float> tempPlates = new Dictionary<int, float>();
-            float tempAvgHelp = 0;
-            //Dictionary<int, float> tempPlates = new Dictionary<int, bool>();
             for (int r = 0; r <= m_height; r++) // height
             {
                 int r_offset = Mathf.FloorToInt(r / 2);
@@ -448,7 +434,7 @@ namespace Conquest
                 HexData hData = pair.Value.hexData;
 
                 if (tempHeights.ContainsKey(key))
-                    hData.UpdateValues(tempHeights[key]);
+                    hData.CopyValues(tempHeights[key]);
 
                 if (hData.isCoast)
                 {
@@ -485,9 +471,6 @@ namespace Conquest
             return GetClosestPlate(hex, ids);
         }
 
-        // TODO move
-        const int SURROUND_SIZE = 4;
-
         public int GetClosestPlate(Hex hex, Dictionary<int, int> platesIds)
         {
             int closestId = -1;
@@ -520,12 +503,6 @@ namespace Conquest
             }
 
             return -1;
-        }
-
-
-        private float Normalize(float value, float min, float max)
-        {
-            return (value - min) / (max - min);
         }
     }
 }

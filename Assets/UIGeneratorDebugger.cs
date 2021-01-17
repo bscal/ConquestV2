@@ -27,7 +27,7 @@ public class UIGeneratorDebugger : MonoBehaviour
 
     void Update()
     {
-        counterText.text = $"{GameManager.Singleton.generator.iterations}/{MapGenerator.numOfIters}";
+        counterText.text = $"{GameManager.Singleton.generator.iterations}/{WorldSettings.Singleton.numberOfIterations}";
 
         if (Input.GetMouseButtonDown((int)MouseButton.RightMouse))
         {
