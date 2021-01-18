@@ -39,8 +39,9 @@ namespace Conquest
         public float mountainFactor;
         public float heatFactor;
 
-        public float poleTemp;
-        public float equatorTemp;
+        public float poleTemp = -30;
+        public float equatorTemp = 20;
+        public float iceAgeChance = .025f;
 
         private void Start()
         {

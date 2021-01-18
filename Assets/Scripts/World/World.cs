@@ -19,6 +19,13 @@ namespace Conquest
         public readonly List<Plate> plates;
         public int plateCounter;
 
+        public int cells = 4;
+        public float worldTemp = 13.73f;
+
+        public int Equator { get { return size.y / 2; } }
+        public int NorthPole { get { return size.y; } }
+        public int SouthPole { get { return 0; } }
+
         public World(int w, int h)
         {
             layout = new Layout(Layout.pointy, new Point(8, 8), new Point(0, 0));

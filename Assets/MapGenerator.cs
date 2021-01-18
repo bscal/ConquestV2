@@ -104,6 +104,7 @@ namespace Conquest
 
                         hData.age = Random.Range(0, 50);
                         hData.height = d;
+                        hData.temp = Mathf.Abs(m_world.Equator - r) / m_world.Equator;
 
                         Tile tile = tObj.FindCorrectTile();
                         tObj.SetTile(tile);
@@ -178,21 +179,6 @@ namespace Conquest
                 pair.Value.hexData.plateId = m_world.GetPlates()[closestId].id;
                 pair.Value.hexData.oldPlateId = m_world.GetPlates()[closestId].id;
                 m_world.GetPlates()[closestId].AddHex(pair.Key);
-            }
-
-            /*  
-            *  ------------------------------------------------------
-            *      Checking if hexes are on edge of plate
-            *  ------------------------------------------------------
-            */
-            for (int r = 0; r <= m_height; r++) // height
-            {
-                int r_offset = Mathf.FloorToInt(r / 2);
-                for (int q = -r_offset; q <= m_width - r_offset; q++) // width with offset
-                {
-                    Hex hex = new Hex(q, r, -q - r);
-                    var mapKey = hex.GetKey();
-                }
             }
         }
 
