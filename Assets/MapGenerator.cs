@@ -141,13 +141,11 @@ namespace Conquest
                 int y = m_rand.NextInt(0, m_pixelH);
 
                 Hex hex = m_layout.PixelToHex(new Point(x, y)).HexRound();
-                Point pt = m_layout.HexToPixel(hex);
 
                 Plate p = new Plate(hex, UnityEngine.Random.ColorHSV()) {
                     elevation = Random.Range(0f, 255f),
                     movementSpeed = m_rand.NextFloat(MIN_SPD, MAX_SPD),
                     direction = (HexDirection)Random.Range(0, HexConstants.DIRECTIONS - 1),
-                    obj = Instantiate(dot, new Vector3((float)pt.x, (float)pt.y, -1), Quaternion.identity)
                 };
                 m_world.AddPlate(p);
             }
