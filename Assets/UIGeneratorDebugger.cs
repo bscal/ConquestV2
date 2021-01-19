@@ -42,7 +42,7 @@ public class UIGeneratorDebugger : MonoBehaviour
             var hData = obj.hexData;
             var pl = GameManager.Singleton.World.GetPlateByID(hData.plateId);
             hexInfoText.text = $"Hex={hex.q}/{hex.r}/{hex.s} | {coord.col}/{coord.row}";
-            tileObjText.text = $"h={Math.Round(hData.height, 2)}|tmp={hData.temp}|tid={obj.TileInfo()}|a={hData.age}";
+            tileObjText.text = $"h={Math.Round(hData.height, 2)}|tmp={Math.Round(hData.temp, 1)}|tid={obj.TileInfo()}|a={hData.age}";
             movementText.text = $"mv={hData.lastMoved}|" +
                 $"em={hData.lastEmpty}|" +
                 $"dir={pl.direction}|" +

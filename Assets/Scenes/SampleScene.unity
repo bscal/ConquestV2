@@ -535,8 +535,9 @@ MonoBehaviour:
   waterFactor: 0
   mountainFactor: 0
   heatFactor: 0
-  poleTemp: 0
-  equatorTemp: 0
+  poleTemp: -30
+  equatorTemp: 20
+  iceAgeChance: 0
 --- !u!114 &813866739
 MonoBehaviour:
   m_ObjectHideFlags: 0

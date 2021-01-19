@@ -15,8 +15,28 @@ namespace Conquest
     public class TileObject : MonoBehaviour
     {
 
+        // Temperature of tile. #s loosly based in degrees celsius
+        public const float VERY_HOT = 18;
+        public const float HOT = 10;
+        public const float BASE_TEMP = 0f;
+        public const float COLD = -10f;
+        public const float VERY_COLD = -20f;
+
+        // Overall wetness of a tile. Mostly precipitation on the tile and not bodies of water
+        public const float VERY_DRY = 96;
+        public const float DRY = 32;
+        public const float BASE_WETNESS = 0f;
+        public const float WET = -32f;
+        public const float VERY_WET = -96f;
+
         public Hex hex;
         public HexData hexData;
+
+        public bool IsVeryHot { get { return hexData.temp < VERY_HOT; } }
+        public bool IsHot { get { return hexData.temp > HOT; } }
+        public bool IsCold { get { return hexData.temp < COLD; } } 
+        public bool IsVeryCold { get { return hexData.temp < VERY_COLD; } }
+        
 
         public SpriteRenderer render;
         public SpriteRenderer topRender;
@@ -66,13 +86,14 @@ namespace Conquest
             if (tile == null)
                 topRender.sprite = null;
             else
-                topRender.sprite = tile.sprite;
+                topRender.sprite = FindSpriteForClimate(tile);
         }
 
         public void SetBotTile(Tile tile)
         {
             m_tile = tile;
-            render.sprite = tile.sprite;
+
+            render.sprite = FindSpriteForClimate(tile);
         }
 
         public void SetFilter(HexFilter filter)
@@ -102,12 +123,8 @@ namespace Conquest
 
         public Tile FindCorrectTile()
         {
-            // new TODO Figure a way to do temp and wetness... Possibly
-            // loop through all tiles and compare or compare in the return statement?
-            
             TileMap map = TileMap.Singleton;
             float h = hexData.height;
-
 
             if (h > map.mountainPeaklvl)
                 return map.GetTileByName("mountain_peak");
@@ -116,7 +133,7 @@ namespace Conquest
             else
             {
                 if (h > map.GetTileByName("hill").minHeight)
-                    return map.GetTileByName("hill");
+                    return (map.GetTileByName("hill"));
                 else if (hexData.height > map.GetTileByName("grassland").minHeight)
                     return map.GetTileByName("grassland");
                 else if (hexData.height > map.GetTileByName("coast").minHeight)
@@ -126,14 +143,18 @@ namespace Conquest
                 else
                     return FindCorrectBaseTile();
             }
-
-
-
         }
 
-        public Tile FindMountain(Tilemap map, Tile tile)
+        private Sprite FindSpriteForClimate(Tile tile)
         {
-            return null;
+            if (IsCold && tile.coldSprite != null)
+                return tile.coldSprite;
+            else if (IsHot && tile.hotSprite != null)
+                return tile.hotSprite;
+            else if (IsVeryCold && tile.veryColdSprite != null)
+                return tile.veryColdSprite;
+            else
+                return tile.sprite;
         }
     }
 }

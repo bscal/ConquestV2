@@ -104,8 +104,11 @@ namespace Conquest
 
                         hData.age = Random.Range(0, 50);
                         hData.height = d;
-                        hData.temp = Mathf.Abs(m_world.Equator - r) / m_world.Equator;
-
+                        float distFromEquator = (float)m_world.Equator
+                            - Mathf.Abs((float)m_world.Equator - (float)r);
+                        hData.temp = WorldSettings.Singleton.poleTemp
+                            + (WorldSettings.Singleton.equatorTemp - WorldSettings.Singleton.poleTemp)
+                            * (distFromEquator / m_world.Equator);
                         Tile tile = tObj.FindCorrectTile();
                         tObj.SetTile(tile);
                     }

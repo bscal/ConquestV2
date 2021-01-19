@@ -20,8 +20,11 @@ MonoBehaviour:
   - name: grassland
     sprite: {fileID: -8095341020241152702, guid: 9039778b3b792e840ba674983698ba19,
       type: 3}
-    coldSprite: {fileID: 0}
-    hotSprite: {fileID: 0}
+    coldSprite: {fileID: -7478216499661273460, guid: 9039778b3b792e840ba674983698ba19,
+      type: 3}
+    hotSprite: {fileID: -1094970902351842777, guid: 9039778b3b792e840ba674983698ba19,
+      type: 3}
+    veryColdSprite: {fileID: 0}
     isSpriteInFront: 0
     minHeight: 100
   - name: plain
@@ -29,6 +32,7 @@ MonoBehaviour:
       type: 3}
     coldSprite: {fileID: 0}
     hotSprite: {fileID: 0}
+    veryColdSprite: {fileID: 0}
     isSpriteInFront: 0
     minHeight: 100
   - name: coast
@@ -36,6 +40,8 @@ MonoBehaviour:
       type: 3}
     coldSprite: {fileID: 0}
     hotSprite: {fileID: 0}
+    veryColdSprite: {fileID: -4817926996509711932, guid: 9039778b3b792e840ba674983698ba19,
+      type: 3}
     isSpriteInFront: 0
     minHeight: 55
   - name: desert
@@ -43,20 +49,27 @@ MonoBehaviour:
       type: 3}
     coldSprite: {fileID: 0}
     hotSprite: {fileID: 0}
+    veryColdSprite: {fileID: 0}
     isSpriteInFront: 0
     minHeight: 100
   - name: ocean
     sprite: {fileID: -4386968851152074775, guid: 9039778b3b792e840ba674983698ba19,
       type: 3}
-    coldSprite: {fileID: 0}
+    coldSprite: {fileID: -4817926996509711932, guid: 9039778b3b792e840ba674983698ba19,
+      type: 3}
     hotSprite: {fileID: 0}
+    veryColdSprite: {fileID: -4817926996509711932, guid: 9039778b3b792e840ba674983698ba19,
+      type: 3}
     isSpriteInFront: 0
     minHeight: -1
   - name: hill
     sprite: {fileID: 4769010376589184234, guid: 9039778b3b792e840ba674983698ba19,
       type: 3}
-    coldSprite: {fileID: 0}
-    hotSprite: {fileID: 0}
+    coldSprite: {fileID: -2944986147828954873, guid: 9039778b3b792e840ba674983698ba19,
+      type: 3}
+    hotSprite: {fileID: 1313769253048068643, guid: 9039778b3b792e840ba674983698ba19,
+      type: 3}
+    veryColdSprite: {fileID: 0}
     isSpriteInFront: 1
     minHeight: 175
   - name: mountain
@@ -64,6 +77,7 @@ MonoBehaviour:
       type: 3}
     coldSprite: {fileID: 0}
     hotSprite: {fileID: 0}
+    veryColdSprite: {fileID: 0}
     isSpriteInFront: 1
     minHeight: 215
   - name: mountain_peak
@@ -71,5 +85,6 @@ MonoBehaviour:
       type: 3}
     coldSprite: {fileID: 0}
     hotSprite: {fileID: 0}
+    veryColdSprite: {fileID: 0}
     isSpriteInFront: 1
     minHeight: 235

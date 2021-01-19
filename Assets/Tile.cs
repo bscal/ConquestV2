@@ -16,6 +16,7 @@ namespace Conquest
         public Sprite sprite;
         public Sprite coldSprite;
         public Sprite hotSprite;
+        public Sprite veryColdSprite;
 
         public bool isSpriteInFront = false;
 
