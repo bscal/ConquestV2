@@ -104,11 +104,13 @@ namespace Conquest
 
                         hData.age = Random.Range(0, 50);
                         hData.height = d;
+
                         float distFromEquator = (float)m_world.Equator
                             - Mathf.Abs((float)m_world.Equator - (float)r);
-                        hData.temp = WorldSettings.Singleton.poleTemp
+                        float tempFromDist = WorldSettings.Singleton.poleTemp
                             + (WorldSettings.Singleton.equatorTemp - WorldSettings.Singleton.poleTemp)
                             * (distFromEquator / m_world.Equator);
+                        hData.temp = tempFromDist + Random.Range(0, m_world.size.y * .25f + 1);
                         Tile tile = tObj.FindCorrectTile();
                         tObj.SetTile(tile);
                     }
@@ -213,6 +215,7 @@ namespace Conquest
                     p.TrySplit();
                     p.movementSpeed = 100f;
                 }
+                m_world.worldTempChange = Random.Range(-1f, 1f);
             }
 
 
@@ -227,13 +230,16 @@ namespace Conquest
 
                     if (!m_world.ContainsHex(hex)) continue;
 
-                    bool hexInBounds = m_world.TryGetHexData(hex, out TileObject obj);
+                    m_world.TryGetHexData(hex, out TileObject obj);
                     HexData hData = obj.hexData;
 
                     Plate hPlate = m_world.GetPlateByID(hData.plateId);
                     if (!tempData.ContainsKey(hex))
                         tempData.Add(hex, new HexData(hData));
                     HexData tempHexData = tempData[hex];
+
+                    if (m_iters != 0 && m_iters % 5 == 0)
+                        tempHexData.temp += m_world.worldTempChange;
 
                     Hex dirHex = hex.Neighbor((int)hPlate.direction);
                     bool dirInBounds = m_world.TryGetHexData(dirHex, out TileObject dirObj);
@@ -262,7 +268,6 @@ namespace Conquest
                     bool platesCollide = Mathf.Abs(hPlate.direction - dirPlate.direction) == 3;
 
                     bool heightGTE = hData.height >= dirData.height;
-                    bool LTESealevel = hData.height <= SEA_LVL;
 
                     tempHexData.age++;
 

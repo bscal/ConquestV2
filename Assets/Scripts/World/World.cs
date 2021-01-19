@@ -21,6 +21,7 @@ namespace Conquest
 
         public int cells = 4;
         public float worldTemp = 13.73f;
+        public float worldTempChange = 0.0f;
 
         public int Equator { get { return size.y / 2; } }
         public int NorthPole { get { return size.y; } }
