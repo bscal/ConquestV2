@@ -9,7 +9,8 @@ namespace Conquest
     public enum HexFilter
     {
         NONE,
-        PLATE
+        PLATE,
+        TEMP
     }
 
     public class TileObject : MonoBehaviour
@@ -108,6 +109,16 @@ namespace Conquest
             {
                 render.color = GameManager.Singleton.World.GetPlateByID(hexData.plateId).color;
                 topRender.color = GameManager.Singleton.World.GetPlateByID(hexData.plateId).color;
+            }
+            else if (filter == HexFilter.TEMP)
+            {
+                float tempScale = (hexData.temp - VERY_COLD) / (VERY_HOT - VERY_COLD);
+                Color hot = new Color(1, 0, 0, 1);
+                Color cold = new Color(0, 0, 1, 1);
+                Color c = Color.Lerp(cold, hot, tempScale);
+
+                render.color = c;
+                topRender.color = c;
             }
         }
 
