@@ -213,7 +213,7 @@ namespace Conquest
                     p.TrySplit();
                     p.movementSpeed = 100f;
                 }
-                m_world.worldTempChange = Random.Range(-1f, 1f);
+                m_world.worldTemp.tempChange = Random.Range(-1f, 1f);
             }
 
 
@@ -237,7 +237,7 @@ namespace Conquest
                     HexData tempHexData = tempData[hex];
 
                     if (m_iters != 0 && m_iters % 5 == 0)
-                        tempHexData.temp += m_world.worldTempChange;
+                        tempHexData.temp += m_world.worldTemp.FinalTempChange;
 
                     Hex dirHex = hex.Neighbor((int)hPlate.direction);
                     bool dirInBounds = m_world.TryGetHexData(dirHex, out TileObject dirObj);

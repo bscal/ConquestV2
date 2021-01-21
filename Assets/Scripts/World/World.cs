@@ -16,12 +16,13 @@ namespace Conquest
         public readonly Vector2Int size;
         public readonly Dictionary<Hex, TileObject> tileData;
 
+        public WorldSettingsTest settings;
+
         public readonly List<Plate> plates;
         public int plateCounter;
 
         public int cells = 4;
-        public float worldTemp = 13.73f;
-        public float worldTempChange = 0.0f;
+        public WorldTemp worldTemp;
 
         public int Equator { get { return size.y / 2; } }
         public int NorthPole { get { return size.y; } }
@@ -33,6 +34,7 @@ namespace Conquest
             size = new Vector2Int(w, h);
             tileData = new Dictionary<Hex, TileObject>();
             plates = new List<Plate>(WorldSettings.Singleton.plates + 1);
+            worldTemp = new WorldTemp(WorldTemp.EARTH_TEMP);
         }
 
         public bool ContainsHex(Hex hex)
