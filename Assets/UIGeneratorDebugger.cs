@@ -8,7 +8,6 @@ using UnityEngine.UIElements;
 
 public class UIGeneratorDebugger : MonoBehaviour
 {
-
     public Text counterText;
     public UnityEngine.UI.Button pauseButton;
     public Text hexInfoText;
@@ -27,15 +26,15 @@ public class UIGeneratorDebugger : MonoBehaviour
 
     void Update()
     {
-        counterText.text = $"{GameManager.Singleton.generator.iterations}/{WorldSettings.Singleton.numberOfIterations}";
+        counterText.text = $"{GameManager.Singleton.generator.iterations}/{GameManager.Singleton.WorldSettings.numberOfIterations}";
 
         if (Input.GetMouseButtonDown((int)MouseButton.RightMouse))
         {
             var p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Hex hex = GameManager.Singleton.World.layout.PixelToHex(new Point(p.x, p.y)).HexRound();
-            OffsetCoord coord = OffsetCoord.RoffsetFromCube(WorldSettings.Singleton.offset, hex);
+            OffsetCoord coord = OffsetCoord.RoffsetFromCube(WorldSettings.OFFFSET_COORD, hex);
             Hex wrap = HexUtils.WrapOffset(hex, GameManager.Singleton.World.size.x);
-            OffsetCoord wcoord = OffsetCoord.RoffsetFromCube(WorldSettings.Singleton.offset, wrap);
+            OffsetCoord wcoord = OffsetCoord.RoffsetFromCube(WorldSettings.OFFFSET_COORD, wrap);
             print(string.Format("WrappedHex: {0}, {1} | WrappedCoords: {0}, {1}", hex.q, hex.r, coord.col, coord.row));
 
             var obj = GameManager.Singleton.World.tileData[hex];
@@ -75,7 +74,7 @@ public class UIGeneratorDebugger : MonoBehaviour
         for (int i = 0; i < w.plates.Count; i++)
         {
             Rect labelRect = new Rect(2, 32 * i, viewport.width, 32);
-            float perc = (float)w.plates[i].hexes.Count / (float)WorldSettings.Singleton.numOfHexes;
+            float perc = (float)w.plates[i].hexes.Count / (float)GameManager.Singleton.WorldSettings.numberOfIterations;
             realPlateCount += w.plates[i].hexes.Count;
             String txt = string.Format("{0} = {1} ({2}), {3}", w.plates[i].id, w.plates[i].hexes.Count.ToString(), perc.ToString("0.00"), w.plates[i].movementSpeed);
             GUI.Label(labelRect, txt);
@@ -83,7 +82,7 @@ public class UIGeneratorDebugger : MonoBehaviour
 
         GUI.EndScrollView();
         Rect total = new Rect(2, Screen.height - 32, viewport.width, 32);
-        String totalTxt = string.Format("#of: {0} | Total: {1} | Real: {2}", w.plates.Count, WorldSettings.Singleton.numOfHexes, realPlateCount);
+        String totalTxt = string.Format("#of: {0} | Total: {1} | Real: {2}", w.plates.Count, GameManager.Singleton.WorldSettings.numberOfIterations, realPlateCount);
         GUI.Label(total, totalTxt);
 
     }

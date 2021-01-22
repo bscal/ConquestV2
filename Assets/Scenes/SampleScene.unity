@@ -1116,6 +1116,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 4317224222930441826, guid: a20208484b5061645b14296486d437d3, type: 3}
   dot: {fileID: 9140088084167084064, guid: 353dee8747d05094ba47405d2a47743f, type: 3}
+  settingsScriptableObject: {fileID: 11400000, guid: 5ab2186c1c16bc14fb6c1cd5626ce7eb,
+    type: 2}
   paused: 1
   iterations: 0
   tileMap: {fileID: 11400000, guid: 3b027e8f6b3b5cd47a0335cb849a1c1b, type: 2}

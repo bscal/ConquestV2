@@ -13,7 +13,8 @@ public class GameManager : MonoBehaviour
     [Header("Generator")]
     public MapGenerator generator;
 
-    public World World { get; private set; }
+    public World World => generator.GetWorld();
+    public WorldSettings WorldSettings => generator.GetWorld().settings;
 
     public HexFilter currentFilter = HexFilter.NONE;
 
@@ -22,7 +23,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         Singleton = this;
-        World = generator.CreateWorld();
+        generator.CreateWorld();
         m_UIGenDebug = GameObject.Find("GeneratorUI").GetComponent<UIGeneratorDebugger>();
     }
 

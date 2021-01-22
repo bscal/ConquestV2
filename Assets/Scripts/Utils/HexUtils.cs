@@ -7,16 +7,16 @@ namespace Conquest {
     public static class HexUtils
     {
 
-        public static bool ArrayContainsPlate(in Dictionary<Hex, TileObject> hexdata, Hex[] hexes, int plateId, bool wrap)
+        public static bool ArrayContainsPlate(in Dictionary<Hex, TileObject> hexdata, Hex[] hexes, int plateId, bool wrap, int width)
         {
             foreach (Hex h in hexes)
             {
                 var key = h.GetKey();
                 if (!hexdata.ContainsKey(key))
                 {
-                    if (wrap && !HexUtils.HexOutOfBounds(GameManager.Singleton.World.size, h))
+                    if (wrap && !HexUtils.HexOutOfBounds(GameManager.Singleton.World.size, h, wrap))
                     {
-                        key = HexUtils.WrapOffset(h, WorldSettings.Singleton.width).GetKey();
+                        key = HexUtils.WrapOffset(h, width).GetKey();
                         if (hexdata.ContainsKey(key) && hexdata[key].hexData.plateId == plateId)
                             return true;
                     }
@@ -56,7 +56,7 @@ namespace Conquest {
         public static Hex WrapHexIfNull(Hex h, int gridWidth, in Dictionary<Hex, TileObject> data)
         {
             bool contains = data.ContainsKey(h.GetKey());
-            if (!WorldSettings.Singleton.wrapWorld && !contains)
+            if (!contains)
             {
                 return null;
             }
@@ -67,11 +67,11 @@ namespace Conquest {
             return h;
         }
 
-        public static bool HexOutOfBounds(Vector2Int size, Hex hex)
+        public static bool HexOutOfBounds(Vector2Int size, Hex hex, bool wrap)
         {
-            OffsetCoord coord = OffsetCoord.RoffsetFromCube(WorldSettings.Singleton.offset, hex);
+            OffsetCoord coord = OffsetCoord.RoffsetFromCube(WorldSettings.OFFFSET_COORD, hex);
             if (coord.row < 0 || coord.row > size.y) return true;
-            if (!WorldSettings.Singleton.wrapWorld) return coord.col < 0 || coord.col > size.x;
+            if (!wrap) return coord.col < 0 || coord.col > size.x;
             return false;
         }
 

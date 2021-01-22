@@ -26,11 +26,10 @@ namespace Conquest
         public GameObject prefab;
         public GameObject dot;
 
+        [Header("World Gen Settings")]
+        public WorldSettings settingsScriptableObject;
+
         private World m_world;
-        private int m_width;
-        private int m_height;
-        private int m_pixelW;
-        private int m_pixelH;
         private Layout m_layout;
 
         public bool paused = true;
@@ -55,6 +54,7 @@ namespace Conquest
         private GenState m_state;
 
         // World Gen Variables
+        private int m_width, m_height;
         private float m_timer = 0f;
         private int m_iters = 0;
 
@@ -65,12 +65,10 @@ namespace Conquest
 
         public World CreateWorld()
         {
-            m_width = WorldSettings.Singleton.width;
-            m_height = WorldSettings.Singleton.height;
-            m_pixelW = WorldSettings.Singleton.pixelW;
-            m_pixelH = WorldSettings.Singleton.pixelH;
-            m_world = new World(m_width, m_height);
+            m_world = new World(settingsScriptableObject);
             m_layout = m_world.layout;
+            m_width = m_world.size.x;
+            m_height = m_world.size.y;
 
             m_seed = 123;
             SimplexNoise.Noise.Seed = 209323094;
@@ -107,8 +105,8 @@ namespace Conquest
 
                         float distFromEquator = (float)m_world.Equator
                             - Mathf.Abs((float)m_world.Equator - (float)r);
-                        float tempFromDist = WorldSettings.Singleton.poleTemp
-                            + (WorldSettings.Singleton.equatorTemp - WorldSettings.Singleton.poleTemp)
+                        float tempFromDist = m_world.settings.poleTemp
+                            + (m_world.settings.equatorTemp - m_world.settings.poleTemp)
                             * (distFromEquator / m_world.Equator);
                         hData.temp = tempFromDist + Random.Range(0, m_world.size.y * .25f + 1);
                         Tile tile = tObj.FindCorrectTile();
@@ -128,21 +126,21 @@ namespace Conquest
             var lr = line.AddComponent<LineRenderer>();
             lr.positionCount = 5;
             lr.SetPosition(0, new Vector3(0, 0, -1));
-            lr.SetPosition(1, new Vector3(m_pixelW, 0, -1));
-            lr.SetPosition(2, new Vector3(m_pixelW, m_pixelH, -1));
-            lr.SetPosition(3, new Vector3(0, m_pixelH, -1));
+            lr.SetPosition(1, new Vector3(m_world.pixelW, 0, -1));
+            lr.SetPosition(2, new Vector3(m_world.pixelW, m_world.pixelH, -1));
+            lr.SetPosition(3, new Vector3(0, m_world.pixelH, -1));
             lr.SetPosition(4, new Vector3(0, 0, -1));
             lr.startWidth = 2;
             lr.endWidth = 2;
 
-            for (int i = 0; i < WorldSettings.Singleton.plates; i++)
+            for (int i = 0; i < m_world.settings.plates; i++)
             {
-                int x = m_rand.NextInt(0, m_pixelW);
-                int y = m_rand.NextInt(0, m_pixelH);
+                int x = m_rand.NextInt(0, m_world.pixelW);
+                int y = m_rand.NextInt(0, m_world.pixelH);
 
                 Hex hex = m_layout.PixelToHex(new Point(x, y)).HexRound();
 
-                Plate p = new Plate(hex, UnityEngine.Random.ColorHSV()) {
+                Plate p = new Plate(this, hex, UnityEngine.Random.ColorHSV()) {
                     elevation = Random.Range(0f, 255f),
                     movementSpeed = m_rand.NextFloat(MIN_SPD, MAX_SPD),
                     direction = (HexDirection)Random.Range(0, HexConstants.DIRECTIONS - 1),
@@ -159,7 +157,7 @@ namespace Conquest
             {
                 int closestId = 0;
                 int closest = int.MaxValue;
-                for (int i = 0; i < WorldSettings.Singleton.plates; i++)
+                for (int i = 0; i < m_world.settings.plates; i++)
                 {
                     int dist = pair.Key.Distance(m_world.plates[i].center);
 
@@ -169,7 +167,7 @@ namespace Conquest
                         closestId = i;
                     }
                 }
-                for (int i = 0; i < WorldSettings.Singleton.plates; i++)
+                for (int i = 0; i < m_world.settings.plates; i++)
                 {
                     int dist = pair.Key.Distance(HexUtils.WrapOffset(m_world.plates[i].center, m_world.size.x));
 
@@ -195,7 +193,7 @@ namespace Conquest
             if (m_timer < 0.05f) return;
             m_timer = 0;
             m_iters++;
-            if (m_iters > WorldSettings.Singleton.numberOfIterations)
+            if (m_iters > m_world.settings.numberOfIterations)
             {
                 m_state = GenState.DONE;
                 print("Done simulation!");
@@ -495,6 +493,11 @@ namespace Conquest
             }
 
             return -1;
+        }
+
+        public World GetWorld()
+        {
+            return m_world;
         }
     }
 }

@@ -8,19 +8,18 @@ namespace Conquest
 {
     public class World
     {
-        private static readonly Plate NO_PLATE = new Plate(new Hex(0, 0, 0), Color.white) {
-            direction = HexDirection.NONE
-        };
+        public WorldSettings settings;
 
         public readonly Layout layout;
         public readonly Vector2Int size;
         public readonly Dictionary<Hex, TileObject> tileData;
-
-        public WorldSettingsTest settings;
-
         public readonly List<Plate> plates;
-        public int plateCounter;
 
+        public int numOfHexes;
+        public int pixelW;
+        public int pixelH;
+
+        public int plateCounter;
         public int cells = 4;
         public WorldTemp worldTemp;
 
@@ -28,12 +27,17 @@ namespace Conquest
         public int NorthPole { get { return size.y; } }
         public int SouthPole { get { return 0; } }
 
-        public World(int w, int h)
+        public World(WorldSettings settings)
         {
+            this.settings = settings;
+            numOfHexes = settings.width * settings.height;
+            pixelW = (int)(settings.width * (Mathf.Sqrt(3) * 8));
+            pixelH = (int)(settings.height * (16.0f * .75f));
+
             layout = new Layout(Layout.pointy, new Point(8, 8), new Point(0, 0));
-            size = new Vector2Int(w, h);
+            size = new Vector2Int(settings.width, settings.height);
             tileData = new Dictionary<Hex, TileObject>();
-            plates = new List<Plate>(WorldSettings.Singleton.plates + 1);
+            plates = new List<Plate>(settings.plates + 1);
             worldTemp = new WorldTemp(WorldTemp.EARTH_TEMP);
         }
 
@@ -44,12 +48,12 @@ namespace Conquest
 
         public bool TryGetHexData(Hex hex, out TileObject obj)
         {
-            return GetHexData(hex, WorldSettings.Singleton.wrapWorld, out obj);
+            return GetHexData(hex, settings.wrapWorld, out obj);
         }
 
         public bool GetHexData(Hex hex, bool wrapIfNull, out TileObject obj)
         {
-            if (wrapIfNull && !tileData.ContainsKey(hex) && !HexUtils.HexOutOfBounds(size, hex))
+            if (wrapIfNull && !tileData.ContainsKey(hex) && !HexUtils.HexOutOfBounds(size, hex, wrapIfNull))
                 hex = HexUtils.WrapOffset(hex, size.x);
 
             return tileData.TryGetValue(hex, out obj);

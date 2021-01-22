@@ -21,18 +21,15 @@ namespace Conquest
         public HexDirection direction;
         public float movementSpeed;
 
-        public Plate(Color color)
+        private readonly MapGenerator gen;
+
+        public Plate(MapGenerator gen, Color color) : this(gen, null, color)
         {
-            this.color = color;
-            this.hexes = new List<Hex>();
-            this.age = 0;
-            this.elevation = 0f;
-            this.direction = HexDirection.NONE;
-            this.movementSpeed = 1.0f;
         }
 
-        public Plate(Hex center, Color color)
+        public Plate(MapGenerator gen, Hex center, Color color)
         {
+            this.gen = gen;
             this.center = center;
             this.color = color;
             this.hexes = new List<Hex>();
@@ -65,7 +62,7 @@ namespace Conquest
                 return false;
             }
 
-            float percentageOfWorld = (float)hexes.Count/(float)WorldSettings.Singleton.numOfHexes;
+            float percentageOfWorld = (float)hexes.Count/(float)gen.GetWorld().numOfHexes;
 
             if (percentageOfWorld > MAX_SPLIT_PERCENTAGE)
             {
@@ -95,7 +92,7 @@ namespace Conquest
 
             if (type == SplitType.NORMAL)
             {
-                Plate newPlate = new Plate(UnityEngine.Random.ColorHSV());
+                Plate newPlate = new Plate(gen, UnityEngine.Random.ColorHSV());
                 newPlate.direction = (HexDirection)UnityEngine.Random.Range(0, HexConstants.MAX_DIR);
                 int id = GameManager.Singleton.World.AddPlate(newPlate);
                 Debug.Log("CREATING PLATE");
