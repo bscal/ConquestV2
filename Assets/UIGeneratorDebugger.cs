@@ -74,7 +74,7 @@ public class UIGeneratorDebugger : MonoBehaviour
         for (int i = 0; i < w.plates.Count; i++)
         {
             Rect labelRect = new Rect(2, 32 * i, viewport.width, 32);
-            float perc = (float)w.plates[i].hexes.Count / (float)GameManager.Singleton.WorldSettings.numberOfIterations;
+            float perc = (float)w.plates[i].hexes.Count / (float)GameManager.Singleton.World.numOfHexes;
             realPlateCount += w.plates[i].hexes.Count;
             String txt = string.Format("{0} = {1} ({2}), {3}", w.plates[i].id, w.plates[i].hexes.Count.ToString(), perc.ToString("0.00"), w.plates[i].movementSpeed);
             GUI.Label(labelRect, txt);
@@ -82,7 +82,7 @@ public class UIGeneratorDebugger : MonoBehaviour
 
         GUI.EndScrollView();
         Rect total = new Rect(2, Screen.height - 32, viewport.width, 32);
-        String totalTxt = string.Format("#of: {0} | Total: {1} | Real: {2}", w.plates.Count, GameManager.Singleton.WorldSettings.numberOfIterations, realPlateCount);
+        String totalTxt = string.Format("#of: {0} | Total: {1} | Real: {2}", w.plates.Count, GameManager.Singleton.World.numOfHexes, realPlateCount);
         GUI.Label(total, totalTxt);
 
     }
