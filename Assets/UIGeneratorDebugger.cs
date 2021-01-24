@@ -82,7 +82,7 @@ public class UIGeneratorDebugger : MonoBehaviour
 
         GUI.EndScrollView();
         Rect total = new Rect(2, Screen.height - 32, viewport.width, 32);
-        String totalTxt = string.Format("#of: {0} | Total: {1} | Real: {2}", w.plates.Count, GameManager.Singleton.World.numOfHexes, realPlateCount);
+        String totalTxt = string.Format("#of: {0} | Total: {1} | Real: {2}", w.plates.Count, GameManager.Singleton.World.tileData.Count, realPlateCount);
         GUI.Label(total, totalTxt);
 
     }

@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Singleton { get; private set; }
 
+    public GameState GameState { get; private set; }
+
     [Header("Generator")]
     public MapGenerator generator;
 
@@ -23,6 +25,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         Singleton = this;
+        GameState = new GameState();
         generator.CreateWorld();
         m_UIGenDebug = GameObject.Find("GeneratorUI").GetComponent<UIGeneratorDebugger>();
     }
@@ -53,6 +56,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
+       
     }
 
     public void ChangeFilter()
@@ -61,6 +65,16 @@ public class GameManager : MonoBehaviour
         if (id == Enum.GetNames(typeof(HexFilter)).Length - 1) id = 0;
         else id++;
         currentFilter = (HexFilter)id;
+    }
+
+    public IEnumerable CalculateUpdateCoroutine()
+    {
+        const float WAIT = 1 / 20;
+        while (true)
+        {
+            World?.UpdateValues();
+            yield return new WaitForSeconds(WAIT);
+        }
     }
 
 }
