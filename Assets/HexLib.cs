@@ -45,10 +45,12 @@ public class Hex
         this.r = r;
         this.s = s;
         if (q + r + s != 0) throw new ArgumentException("q + r + s must be 0");
+        m_hash = Hash();
     }
     public readonly int q;
     public readonly int r;
     public readonly int s;
+    private readonly int m_hash;
 
     public Hex Add(Hex b)
     {
@@ -195,6 +197,11 @@ public class Hex
         return (HexDirection)d;
     }
 
+    public override string ToString()
+    {
+        return q + ", " + r + ", " + s;
+    }
+
     public override bool Equals(object obj)
     {
         return obj is Hex hex &&
@@ -204,6 +211,11 @@ public class Hex
     }
 
     public override int GetHashCode()
+    {
+        return m_hash;
+    }
+
+    private int Hash()
     {
         int hashCode = -332974341;
         hashCode = hashCode * -1521134295 + q.GetHashCode();
