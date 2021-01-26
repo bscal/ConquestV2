@@ -7,6 +7,7 @@ using System.Runtime.ExceptionServices;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.Rendering;
+using System.IO;
 
 namespace Conquest
 {
@@ -76,14 +77,19 @@ namespace Conquest
 
             m_state = GenState.PRE_GEN;
             StartCoroutine(GenerateRoutine());
-
+            if (File.Exists("test.txt"))
+                File.Delete("test.txt");
+            StreamWriter writer = File.AppendText("test.txt");
+            
             for (int r = 0; r <= m_height; r++) // height
             {
+                writer.WriteLine();
                 int r_offset = Mathf.FloorToInt(r / 2);
                 for (int q = -r_offset; q <= m_width - r_offset; q++) // width with offset
                 {
                     Hex hex = new Hex(q, r, -q - r);
                     var mapKey = hex.GetKey();
+                    writer.Write(mapKey.ToString() + "|");
                     Point pixel = m_layout.HexToPixel(hex);
 
                     if (!m_world.tileData.ContainsKey(mapKey))
@@ -114,7 +120,7 @@ namespace Conquest
                     }
                 }
             }
-
+            writer.Close();
             m_state = GenState.GENERATE;
             Generate();
             return m_world;
@@ -210,6 +216,8 @@ namespace Conquest
                     p.direction = (HexDirection)Random.Range(0, HexConstants.MAX_DIR);
                     p.TrySplit();
                     p.movementSpeed = 100f;
+
+
                 }
                 m_world.worldTemp.tempChange = Random.Range(-1f, 1f);
             }
@@ -353,13 +361,15 @@ namespace Conquest
 
         private void ApplyTiles(Dictionary<Hex, HexData> tempData)
         {
+            foreach (var plate in m_world.plates)
+            {
+                plate.hexes.Clear();
+            }
             foreach (var pair in m_world.tileData)
             {
-                if (!tempData.ContainsKey(pair.Key))
-                    continue;
-                pair.Value.hexData.CopyValues(tempData[pair.Key]);
+                if (tempData.ContainsKey(pair.Key))
+                    pair.Value.hexData.CopyValues(tempData[pair.Key]);
 
-                //m_world.GetPlateByID(pair.Value.hexData.oldPlateId).RemoveHex(pair.Key);
                 var ring = pair.Value.hex.Ring(1);
                 if (pair.Value.hexData.empty)
                 {
@@ -372,21 +382,17 @@ namespace Conquest
                     int closestId = GetClosestRingPlate(pair.Value.hex, ring);
                     if (closestId < 0)
                         closestId = pair.Value.hexData.plateId;
+                    pair.Value.hexData.oldPlateId = pair.Value.hexData.plateId;
                     pair.Value.hexData.plateId = closestId;
                 }
                 int id = IsSurrounded(pair.Key, ring);
-                if (id > 0)
+                if (id > -1)
                 {
                     pair.Value.hexData.oldPlateId = pair.Value.hexData.plateId;
                     pair.Value.hexData.plateId = id;
                 }
 
-                if (pair.Value.hexData.oldPlateId != pair.Value.hexData.plateId)
-                {
-                    m_world.GetPlateByID(pair.Value.hexData.oldPlateId).RemoveHex(pair.Key);
-                    m_world.GetPlateByID(pair.Value.hexData.plateId).AddHex(pair.Key);
-                }
-
+                m_world.plates[pair.Value.hexData.plateId].AddHex(pair.Key);
 
                 if (pair.Value.hexData.height < 60)
                     pair.Value.hexData.isOcean = true;

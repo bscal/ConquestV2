@@ -41,6 +41,17 @@ namespace Conquest
             worldTemp = new WorldTemp(WorldTemp.EARTH_TEMP);
         }
 
+        public void UpdateValues()
+        {
+            float avgWorldTemp;
+            foreach (var pair in tileData)
+            {
+
+            }
+
+            //worldTemp.AvgTemp = avgWorldTemp;
+        }
+
         public bool ContainsHex(Hex hex)
         {
             return tileData.ContainsKey(hex.GetKey());
