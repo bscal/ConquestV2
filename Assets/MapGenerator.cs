@@ -23,6 +23,8 @@ namespace Conquest
     public class MapGenerator : MonoBehaviour
     {
 
+        public event System.Action<int, World> IterationEvent;
+
         [Header("Prefabs")]
         public GameObject prefab;
         public GameObject dot;
@@ -47,6 +49,7 @@ namespace Conquest
         public const float SEA_LVL = 100;
         public const float PLAIN_LVL = SOFT_MAX_HEIGHT / 2;
         public const float HILL_LVL = 175;
+
         public const float MTN_LVL = 225;
         public const float X_MTN_LVL = 255;
 
@@ -207,6 +210,7 @@ namespace Conquest
                 Smooth();
             }
 
+            IterationEvent?.Invoke(m_iters, m_world);
 
             // Update to World
             if (m_world.worldTemp.changeType != WorldTempChangeType.ICE_AGE)
@@ -215,12 +219,12 @@ namespace Conquest
                 {
                     m_world.worldTemp.changeType = WorldTempChangeType.ICE_AGE;
                     m_world.worldTemp.changeTempMultiplier = -.10f;
-                    m_world.worldTemp.tempToChangeTime = 5;
-                    m_world.worldTemp.tempToChangeValue = -50f / m_world.worldTemp.tempToChangeTime;
+                    m_world.worldTemp.tempToChangeDuration = 5;
+                    m_world.worldTemp.tempToChangeValue = -50f / m_world.worldTemp.tempToChangeDuration;
                     print("entering iceage");
                 }
             }
-            else if (m_world.worldTemp.tempToChangeTime < 1)
+            else if (m_world.worldTemp.tempToChangeDuration < 1)
             {
                 m_world.worldTemp.changeType = WorldTempChangeType.NONE;
                 m_world.worldTemp.changeTempMultiplier = 1f;
@@ -262,8 +266,11 @@ namespace Conquest
                     HexData tempHexData = tempData[hex];
 
                     if (m_iters != 0 && m_iters % 5 == 0)
-                        tempHexData.temp += m_world.worldTemp.FinalTempChange + tempHexData.temp + m_world.worldTemp.tempToChangeValue;
-
+                    {
+                        tempHexData.temp += m_world.worldTemp.FinalTempChange + m_world.worldTemp.tempToChangeValue;
+                        m_world.worldTemp.tempToChangeDuration--;
+                    }
+                        
                     Hex dirHex = hex.Neighbor((int)hPlate.direction);
                     bool dirInBounds = m_world.TryGetHexData(dirHex, out TileObject dirObj);
 
@@ -520,9 +527,8 @@ namespace Conquest
             return -1;
         }
 
-        public World GetWorld()
-        {
-            return m_world;
-        }
+        public World GetWorld() => m_world;
+
+        public int GetCurrentIteration() => m_iters;
     }
 }
