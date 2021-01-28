@@ -206,9 +206,28 @@ namespace Conquest
                 StopCoroutine(GenerateRoutine());
                 Smooth();
             }
-            
 
-            if (m_iters != 0 && m_iters % 5 == 0)
+
+            // Update to World
+            if (m_world.worldTemp.changeType != WorldTempChangeType.ICE_AGE)
+            {
+                if (Random.value > 1.01f - m_world.settings.iceAgeChance)
+                {
+                    m_world.worldTemp.changeType = WorldTempChangeType.ICE_AGE;
+                    m_world.worldTemp.changeTempMultiplier = -.10f;
+                    m_world.worldTemp.tempToChangeTime = 5;
+                    m_world.worldTemp.tempToChangeValue = -50f / m_world.worldTemp.tempToChangeTime;
+                    print("entering iceage");
+                }
+            }
+            else if (m_world.worldTemp.tempToChangeTime < 1)
+            {
+                m_world.worldTemp.changeType = WorldTempChangeType.NONE;
+                m_world.worldTemp.changeTempMultiplier = 1f;
+            }
+
+            // Update to plates every 5 iterations.
+                if (m_iters != 0 && m_iters % 5 == 0)
             {
                 for (int i = m_world.plates.Count - 1; i > -1 ; i--)
                 {
@@ -222,7 +241,7 @@ namespace Conquest
                 m_world.worldTemp.tempChange = Random.Range(-1f, 1f);
             }
 
-
+            // Hex loop
             Dictionary<Hex, HexData> tempData = new Dictionary<Hex, HexData>();
             Dictionary<int, float> tempPlates = new Dictionary<int, float>();
             for (int r = 0; r <= m_height; r++) // height
@@ -243,7 +262,7 @@ namespace Conquest
                     HexData tempHexData = tempData[hex];
 
                     if (m_iters != 0 && m_iters % 5 == 0)
-                        tempHexData.temp += m_world.worldTemp.FinalTempChange;
+                        tempHexData.temp += m_world.worldTemp.FinalTempChange + tempHexData.temp + m_world.worldTemp.tempToChangeValue;
 
                     Hex dirHex = hex.Neighbor((int)hPlate.direction);
                     bool dirInBounds = m_world.TryGetHexData(dirHex, out TileObject dirObj);

@@ -13,6 +13,9 @@ public class WorldTemp
     public float tempChange = 0.0f;
     public float changeTempMultiplier = 1.0f;
 
+    public float tempToChangeValue;
+    public float tempToChangeTime;
+
     public float FinalTempChange => tempChange * changeTempMultiplier;
 
     public WorldTemp(float normalTemp)
