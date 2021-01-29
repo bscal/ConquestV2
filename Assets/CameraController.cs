@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 
@@ -17,34 +18,42 @@ public class CameraController : MonoBehaviour
 
     float zoom;
 
+    private Controls m_controls;
+
+    private void Start()
+    {
+        m_controls = new Controls();
+        m_controls.Enable();
+    }
+
     void Update()
     {
 
-        if (Input.GetKey(KeyCode.W))
+        if (Keyboard.current.wKey.isPressed)
         {
             cam.transform.position += cam.transform.up * Time.deltaTime * moveSpeed;
         }
 
-        if (Input.GetKey(KeyCode.S))
+        if (Keyboard.current.sKey.isPressed)
         {
             cam.transform.position -= cam.transform.up * Time.deltaTime * moveSpeed;
         }
 
-        if (Input.GetKey(KeyCode.A))
+        if (Keyboard.current.aKey.isPressed)
         {
             cam.transform.position -= cam.transform.right * Time.deltaTime * moveSpeed;
         }
 
-        if (Input.GetKey(KeyCode.D))
+        if (Keyboard.current.dKey.isPressed)
         {
             cam.transform.position += cam.transform.right * Time.deltaTime * moveSpeed;
         }
 
-        if (Input.mouseScrollDelta.y > 0)
+        if (m_controls.UI.ScrollWheel.ReadValue<Vector2>().y > 0)
         {
             zoom -= moveSpeed * Time.deltaTime * scrollSpeed;
         }
-        if (Input.mouseScrollDelta.y < 0)
+        else if (m_controls.UI.ScrollWheel.ReadValue<Vector2>().y < 0)
         {
             zoom += moveSpeed * Time.deltaTime * scrollSpeed;
         }

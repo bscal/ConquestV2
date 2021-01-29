@@ -25,4 +25,4 @@ MonoBehaviour:
   heatFactor: 0
   poleTemp: -30
   equatorTemp: 20
-  iceAgeChance: 0.025
+  iceAgeChance: 0.5

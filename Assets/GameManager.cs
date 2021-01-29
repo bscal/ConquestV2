@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
 
@@ -22,20 +23,25 @@ public class GameManager : MonoBehaviour
 
     private UIGeneratorDebugger m_UIGenDebug;
 
+    private Controls m_controls;
+
     void Start()
     {
         Singleton = this;
         GameState = new GameState();
         generator.CreateWorld();
         m_UIGenDebug = GameObject.Find("GeneratorUI").GetComponent<UIGeneratorDebugger>();
+        m_controls = new Controls();
+        m_controls.Enable();
     }
 
     void Update()
     {
 
-        if (Input.GetMouseButtonDown((int)MouseButton.LeftMouse))
+        if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            var p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            var p = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y));
             Hex hex = World.layout.PixelToHex(new Point(p.x, p.y)).HexRound();
             if (!World.ContainsHex(hex)) return;
             foreach (Hex h in hex.Ring(2))
@@ -47,7 +53,7 @@ public class GameManager : MonoBehaviour
         }
 
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Keyboard.current.kKey.wasPressedThisFrame)
         {
             GameManager.Singleton.ChangeFilter();
             foreach (var obj in World.tileData.Values)

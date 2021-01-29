@@ -38,7 +38,7 @@ namespace Conquest
             size = new Vector2Int(settings.width, settings.height);
             tileData = new Dictionary<Hex, TileObject>();
             plates = new List<Plate>(settings.plates + 1);
-            worldTemp = new WorldTemp(WorldTemp.EARTH_TEMP);
+            worldTemp = new WorldTemp(WorldTemp.EARTH_TEMP, GameManager.Singleton.generator);
         }
 
         public void UpdateValues()

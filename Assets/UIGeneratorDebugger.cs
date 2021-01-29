@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
@@ -28,9 +29,10 @@ public class UIGeneratorDebugger : MonoBehaviour
     {
         counterText.text = $"{GameManager.Singleton.generator.iterations}/{GameManager.Singleton.WorldSettings.numberOfIterations}";
 
-        if (Input.GetMouseButtonDown((int)MouseButton.RightMouse))
+        if (Mouse.current.rightButton.wasPressedThisFrame)
         {
-            var p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            var p = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y));
             Hex hex = GameManager.Singleton.World.layout.PixelToHex(new Point(p.x, p.y)).HexRound();
             OffsetCoord coord = OffsetCoord.RoffsetFromCube(WorldSettings.OFFFSET_COORD, hex);
             Hex wrap = HexUtils.WrapOffset(hex, GameManager.Singleton.World.size.x);
