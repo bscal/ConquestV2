@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Conquest;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ public class DebugController : MonoBehaviour
 
     private string m_input;
     private string m_current;
-    private int m_index = -1;
+    private int m_index = 0;
     private Vector2 m_scroll;
     private Vector2 m_hintScroll;
     private Queue<ConsoleText> m_buffer = new Queue<ConsoleText>(BUFFER_SIZE);
@@ -89,7 +90,7 @@ public class DebugController : MonoBehaviour
                 m_input = m_current;
         };
 
-        m_controls.UI.Tab.performed += ctx => {
+        m_controls.Keyboard.Tab.performed += ctx => {
             if (m_hints == null || m_hints.Count < 1) return;
             m_input = m_hints[m_index].Split(new char[] { ' ' })[0];
         };
@@ -106,7 +107,7 @@ public class DebugController : MonoBehaviour
 
         m_textInfoStyle.fontSize = 14;
         m_textInfoStyle.font = m_font;
-        m_textInfoStyle.normal.textColor = new Color(99 / 255, 171 / 255, 201 / 255);
+        m_textInfoStyle.normal.textColor = new Color(99f / 255f, 171f / 255f, 201f / 255f);
 
         m_textWarnStyle.fontSize = 14;
         m_textWarnStyle.font = m_font;
@@ -118,7 +119,7 @@ public class DebugController : MonoBehaviour
 
         m_textActStyle.fontSize = 14;
         m_textActStyle.font = m_font;
-        m_textActStyle.normal.textColor = new Color(182/255, 201/255, 99/255);  
+        m_textActStyle.normal.textColor = new Color(182f/255f, 201f/255f, 99f/255f);  
 
         m_hintStyle.fontSize = 14;
         m_hintStyle.font = m_font;
@@ -128,17 +129,16 @@ public class DebugController : MonoBehaviour
         m_hintSelectStyle.font = m_font;
         m_hintSelectStyle.normal.textColor = new Color(200 / 255, 200 / 255, 200 / 255);
 
-        PrintConsole("Testing This 1!", LogType.ACTION);
-        PrintConsole("Test That 2.", LogType.WARNING);
-        PrintConsole("Test These 3?", LogType.ERROR);
-        PrintConsoleTable("", 64, new string[] { "test", "this", "table", "LONG_WORD_STRING" },
-            new object[] { 1, true, 50.50, "this"}, LogType.WARNING);
+        var ICEAGE = new DebugCommand("iceage", "start an iceage", "iceage", args => {
+            GameManager.Singleton.World.worldTemp.StartIceAge(3, 10, 3);
+        });
+        m_commandList.Add(ICEAGE);
 
-        var TEST_CMD = new DebugCommand("test", "testing", "test - testing", args => Debug.Log("testing command"));
-        m_commandList.Add(TEST_CMD);
-
-        var TESTDEBUG_CMD = new DebugArgsCommand("test_this", "testing", "test_this <value>", args => Debug.Log("test " + args[0]), 1);
-        m_commandList.Add(TESTDEBUG_CMD);
+        var WORLD_INFO = new DebugCommand("world_info", "Prints info on world", "world_info", args => {
+            World world = GameManager.Singleton.World;
+            PrintConsoleTable("World Info", 48, new string[] { "Temp Type" }, new object[] { world.worldTemp.changeType});
+        });
+        m_commandList.Add(WORLD_INFO);
     }
 
     private void OnGUI()
@@ -195,7 +195,6 @@ public class DebugController : MonoBehaviour
 
     private void HandleInput()
     {
-        PrintConsole(m_input, LogType.NONE);
         for (int i = 0; i < m_commandList.Count; i++)
         {
             DebugCommandBase cmd = m_commandList[i];
@@ -222,8 +221,10 @@ public class DebugController : MonoBehaviour
                 {
                     ((DebugArgsCommand)cmd).Invoke(cmdName, args) ;
                 }
+                return;
             }
         }
+        PrintConsole(m_input, LogType.NONE);
     }
 
     private List<string> MatchStringToCommand(string str)

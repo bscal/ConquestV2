@@ -1,4 +1,5 @@
 using Conquest;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,7 +11,7 @@ public class WorldTemp
     public float NormalTemp { get; set; }
     public float AvgTemp { get; set; }
 
-    public float FinalTempChange => tempChange * changeTempMultiplier;
+    public float FinalTempChange => (tempChange + tempToChangeValue) * changeTempMultiplier;
     public bool IsEventHappening => changeType != WorldTempChangeType.NONE;
 
     public WorldTempChangeType changeType = WorldTempChangeType.NONE;
@@ -31,9 +32,10 @@ public class WorldTemp
         gen.IterationEvent += OnIteration;
     }
 
-    public void StartTemperatureEvent(float duration, float totalValue, float cooldown)
+    public void StartTemperatureEvent(WorldTempChangeType type, float duration, float totalValue, float cooldown)
     {
-        tempToChangeValue = totalValue / duration;
+        changeType = type;
+        tempToChangeValue = -totalValue / duration;
         tempToChangeDuration = duration;
         evtCdDuration = m_gen.GetCurrentIteration() + cooldown;
         evtOnCd = true;
@@ -51,6 +53,11 @@ public class WorldTemp
             evtOnCd = false;
     }
 
+    internal void StartIceAge(float duration, float totalValue, float cooldown)
+    {
+        if (!evtOnCd)
+            StartTemperatureEvent(WorldTempChangeType.ICE_AGE, duration, totalValue, cooldown);
+    }
 }
 
 public enum WorldTempChangeType

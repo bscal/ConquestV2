@@ -786,6 +786,14 @@ public class @Controls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Tab"",
+                    ""type"": ""Button"",
+                    ""id"": ""b08c19ee-f580-4873-86c5-4f1311300ae0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -808,6 +816,17 @@ public class @Controls : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Return"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d9fd0e30-d2c0-491d-ab4f-9019a2d18e23"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tab"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -851,6 +870,7 @@ public class @Controls : IInputActionCollection, IDisposable
         m_Keyboard = asset.FindActionMap("Keyboard", throwIfNotFound: true);
         m_Keyboard_Console = m_Keyboard.FindAction("Console", throwIfNotFound: true);
         m_Keyboard_Return = m_Keyboard.FindAction("Return", throwIfNotFound: true);
+        m_Keyboard_Tab = m_Keyboard.FindAction("Tab", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1023,12 +1043,14 @@ public class @Controls : IInputActionCollection, IDisposable
     private IKeyboardActions m_KeyboardActionsCallbackInterface;
     private readonly InputAction m_Keyboard_Console;
     private readonly InputAction m_Keyboard_Return;
+    private readonly InputAction m_Keyboard_Tab;
     public struct KeyboardActions
     {
         private @Controls m_Wrapper;
         public KeyboardActions(@Controls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Console => m_Wrapper.m_Keyboard_Console;
         public InputAction @Return => m_Wrapper.m_Keyboard_Return;
+        public InputAction @Tab => m_Wrapper.m_Keyboard_Tab;
         public InputActionMap Get() { return m_Wrapper.m_Keyboard; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1044,6 +1066,9 @@ public class @Controls : IInputActionCollection, IDisposable
                 @Return.started -= m_Wrapper.m_KeyboardActionsCallbackInterface.OnReturn;
                 @Return.performed -= m_Wrapper.m_KeyboardActionsCallbackInterface.OnReturn;
                 @Return.canceled -= m_Wrapper.m_KeyboardActionsCallbackInterface.OnReturn;
+                @Tab.started -= m_Wrapper.m_KeyboardActionsCallbackInterface.OnTab;
+                @Tab.performed -= m_Wrapper.m_KeyboardActionsCallbackInterface.OnTab;
+                @Tab.canceled -= m_Wrapper.m_KeyboardActionsCallbackInterface.OnTab;
             }
             m_Wrapper.m_KeyboardActionsCallbackInterface = instance;
             if (instance != null)
@@ -1054,6 +1079,9 @@ public class @Controls : IInputActionCollection, IDisposable
                 @Return.started += instance.OnReturn;
                 @Return.performed += instance.OnReturn;
                 @Return.canceled += instance.OnReturn;
+                @Tab.started += instance.OnTab;
+                @Tab.performed += instance.OnTab;
+                @Tab.canceled += instance.OnTab;
             }
         }
     }
@@ -1086,5 +1114,6 @@ public class @Controls : IInputActionCollection, IDisposable
     {
         void OnConsole(InputAction.CallbackContext context);
         void OnReturn(InputAction.CallbackContext context);
+        void OnTab(InputAction.CallbackContext context);
     }
 }

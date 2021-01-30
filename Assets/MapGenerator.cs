@@ -217,17 +217,8 @@ namespace Conquest
             {
                 if (Random.value > 1.01f - m_world.settings.iceAgeChance)
                 {
-                    m_world.worldTemp.changeType = WorldTempChangeType.ICE_AGE;
-                    m_world.worldTemp.changeTempMultiplier = -.10f;
-                    m_world.worldTemp.tempToChangeDuration = 5;
-                    m_world.worldTemp.tempToChangeValue = -50f / m_world.worldTemp.tempToChangeDuration;
-                    print("entering iceage");
+                    m_world.worldTemp.StartIceAge(5, 20, 10);
                 }
-            }
-            else if (m_world.worldTemp.tempToChangeDuration < 1)
-            {
-                m_world.worldTemp.changeType = WorldTempChangeType.NONE;
-                m_world.worldTemp.changeTempMultiplier = 1f;
             }
 
             // Update to plates every 5 iterations.
@@ -239,10 +230,9 @@ namespace Conquest
                     p.direction = (HexDirection)Random.Range(0, HexConstants.MAX_DIR);
                     p.TrySplit();
                     p.movementSpeed = 100f;
-
-
                 }
                 m_world.worldTemp.tempChange = Random.Range(-1f, 1f);
+                m_world.worldTemp.tempToChangeDuration--;
             }
 
             // Hex loop
@@ -267,8 +257,7 @@ namespace Conquest
 
                     if (m_iters != 0 && m_iters % 5 == 0)
                     {
-                        tempHexData.temp += m_world.worldTemp.FinalTempChange + m_world.worldTemp.tempToChangeValue;
-                        m_world.worldTemp.tempToChangeDuration--;
+                        tempHexData.temp += m_world.worldTemp.FinalTempChange;
                     }
                         
                     Hex dirHex = hex.Neighbor((int)hPlate.direction);
