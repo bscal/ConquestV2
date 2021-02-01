@@ -36,7 +36,7 @@ namespace Conquest
         private Layout m_layout;
 
         public bool paused = true;
-        public int iterations = 0;
+        public bool step = false;
 
         [SerializeField]
         private TileMap tileMap;
@@ -195,13 +195,11 @@ namespace Conquest
         void Update()
         {
             if (paused) return;
-            iterations = m_iters;
             if (m_state == GenState.DONE) return;
             if (m_state != GenState.ITERATING) m_state = GenState.ITERATING;
             m_timer += Time.deltaTime;
             if (m_timer < 0.05f) return;
             m_timer = 0;
-            m_iters++;
             if (m_iters > m_world.settings.numberOfIterations)
             {
                 m_state = GenState.DONE;
@@ -210,19 +208,17 @@ namespace Conquest
                 Smooth();
             }
 
-            IterationEvent?.Invoke(m_iters, m_world);
-
             // Update to World
             if (m_world.worldTemp.changeType != WorldTempChangeType.ICE_AGE)
             {
                 if (Random.value > 1.01f - m_world.settings.iceAgeChance)
                 {
-                    m_world.worldTemp.StartIceAge(5, 20, 10);
+                    m_world.worldTemp.StartIceAge(new TemperatureEvent(-10, 3, 10, 6), 9);
                 }
             }
 
             // Update to plates every 5 iterations.
-                if (m_iters != 0 && m_iters % 5 == 0)
+            if (m_iters != 0 && m_iters % m_world.settings.itersForUpdate == 0)
             {
                 for (int i = m_world.plates.Count - 1; i > -1 ; i--)
                 {
@@ -232,7 +228,6 @@ namespace Conquest
                     p.movementSpeed = 100f;
                 }
                 m_world.worldTemp.tempChange = Random.Range(-1f, 1f);
-                m_world.worldTemp.tempToChangeDuration--;
             }
 
             // Hex loop
@@ -255,11 +250,8 @@ namespace Conquest
                         tempData.Add(hex, new HexData(hData));
                     HexData tempHexData = tempData[hex];
 
-                    if (m_iters != 0 && m_iters % 5 == 0)
-                    {
-                        tempHexData.temp += m_world.worldTemp.FinalTempChange;
-                    }
-                        
+                    tempHexData.temp += m_world.worldTemp.FinalTempChange;
+
                     Hex dirHex = hex.Neighbor((int)hPlate.direction);
                     bool dirInBounds = m_world.TryGetHexData(dirHex, out TileObject dirObj);
 
@@ -360,6 +352,15 @@ namespace Conquest
             }
 
             ApplyTiles(tempData);
+
+            IterationEvent?.Invoke(m_iters, m_world);
+
+            if (step)
+            {
+                paused = true;
+                step = false;
+            }
+            m_iters++;
         }
 
         private IEnumerator GenerateRoutine()

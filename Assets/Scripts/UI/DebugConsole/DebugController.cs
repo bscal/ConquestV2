@@ -130,7 +130,7 @@ public class DebugController : MonoBehaviour
         m_hintSelectStyle.normal.textColor = new Color(200 / 255, 200 / 255, 200 / 255);
 
         var ICEAGE = new DebugCommand("iceage", "start an iceage", "iceage", args => {
-            GameManager.Singleton.World.worldTemp.StartIceAge(3, 10, 3);
+            GameManager.Singleton.World.worldTemp.StartIceAge(new TemperatureEvent(-10, 3, 10, 6), 9);
         });
         m_commandList.Add(ICEAGE);
 

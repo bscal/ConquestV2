@@ -17,6 +17,7 @@ MonoBehaviour:
   width: 64
   height: 48
   numberOfIterations: 500
+  itersForUpdate: 5
   plates: 5
   worldType: 0
   worldAge: 0
@@ -25,4 +26,4 @@ MonoBehaviour:
   heatFactor: 0
   poleTemp: -30
   equatorTemp: 20
-  iceAgeChance: 0.5
+  iceAgeChance: 0

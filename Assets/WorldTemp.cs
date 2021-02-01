@@ -11,52 +11,63 @@ public class WorldTemp
     public float NormalTemp { get; set; }
     public float AvgTemp { get; set; }
 
-    public float FinalTempChange => (tempChange + tempToChangeValue) * changeTempMultiplier;
+    public float FinalTempChange => (tempChange + tempEvent.Value) * changeTempMultiplier;
     public bool IsEventHappening => changeType != WorldTempChangeType.NONE;
 
     public WorldTempChangeType changeType = WorldTempChangeType.NONE;
     public float tempChange;
     public float changeTempMultiplier = 1.0f;
 
-    public float tempToChangeValue;
-    public float tempToChangeDuration;
-    private float evtCdDuration;
-    private bool evtOnCd;
+    public TemperatureEvent tempEvent;
+    public int cdDuration;
+    public bool onCd;
 
     private readonly MapGenerator m_gen;
 
     public WorldTemp(float normalTemp, MapGenerator gen)
     {
         NormalTemp = normalTemp;
+        tempEvent = new TemperatureEvent();
         m_gen = gen;
         gen.IterationEvent += OnIteration;
     }
 
-    public void StartTemperatureEvent(WorldTempChangeType type, float duration, float totalValue, float cooldown)
+    public void StartTemperatureEvent(WorldTempChangeType type, TemperatureEvent evt, int cooldown)
     {
         changeType = type;
-        tempToChangeValue = -totalValue / duration;
-        tempToChangeDuration = duration;
-        evtCdDuration = m_gen.GetCurrentIteration() + cooldown;
-        evtOnCd = true;
+        tempEvent = evt;
+
+        if (cooldown > 0)
+        {
+            cdDuration = cooldown;
+            onCd = true;
+        }
+
+        Debug.Log("starting");
     }
 
     public void StopEvent()
     {
-        evtOnCd = false;
         changeType = WorldTempChangeType.NONE;
+        Debug.Log("ending");
     }
 
     private void OnIteration(int iter, World world)
     {
-        if (evtOnCd && evtCdDuration >= iter)
-            evtOnCd = false;
+        if (iter % 1 == 0)
+        {
+            if (!tempEvent.hasEnded && tempEvent.UpdateDuration())
+                StopEvent();
+
+            if (onCd && cdDuration-- < 1)
+                onCd = false;
+        }
     }
 
-    internal void StartIceAge(float duration, float totalValue, float cooldown)
+    internal void StartIceAge(TemperatureEvent evt, int cooldown)
     {
-        if (!evtOnCd)
-            StartTemperatureEvent(WorldTempChangeType.ICE_AGE, duration, totalValue, cooldown);
+        if (!onCd)
+            StartTemperatureEvent(WorldTempChangeType.ICE_AGE, evt, cooldown);
     }
 }
 

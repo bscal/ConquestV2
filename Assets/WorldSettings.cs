@@ -18,6 +18,7 @@ public class WorldSettings : ScriptableObject
 
     [Header("Generation")]
     public int numberOfIterations;
+    public int itersForUpdate = 5;
     public int plates;
     public int worldType;
     public int worldAge;

@@ -11,6 +11,7 @@ public class UIGeneratorDebugger : MonoBehaviour
 {
     public Text counterText;
     public UnityEngine.UI.Button pauseButton;
+    public UnityEngine.UI.Button stepButton;
     public Text hexInfoText;
     public Text tileObjText;
     public Text movementText;
@@ -23,11 +24,12 @@ public class UIGeneratorDebugger : MonoBehaviour
     private void Start()
     {
         pauseButton.onClick.AddListener(OnPauseClicked);
+        stepButton.onClick.AddListener(OnStepClicked);
     }
 
     void Update()
     {
-        counterText.text = $"{GameManager.Singleton.generator.iterations}/{GameManager.Singleton.WorldSettings.numberOfIterations}";
+        counterText.text = $"{GameManager.Singleton.generator.GetCurrentIteration()}/{GameManager.Singleton.WorldSettings.numberOfIterations}";
 
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
@@ -92,5 +94,11 @@ public class UIGeneratorDebugger : MonoBehaviour
     private void OnPauseClicked()
     {
         GameManager.Singleton.generator.paused = !GameManager.Singleton.generator.paused;
+    }
+
+    private void OnStepClicked()
+    {
+        GameManager.Singleton.generator.paused = false;
+        GameManager.Singleton.generator.step = true;
     }
 }
