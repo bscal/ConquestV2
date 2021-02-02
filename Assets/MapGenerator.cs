@@ -211,7 +211,7 @@ namespace Conquest
             // Update to World
             if (m_world.worldTemp.changeType != WorldTempChangeType.ICE_AGE)
             {
-                if (Random.value > 1.01f - m_world.settings.iceAgeChance)
+                if (Random.value > 1f - m_world.settings.iceAgeChance)
                 {
                     m_world.worldTemp.StartIceAge(new TemperatureEvent(-10, 3, 10, 6), 9);
                 }
@@ -227,7 +227,7 @@ namespace Conquest
                     p.TrySplit();
                     p.movementSpeed = 100f;
                 }
-                m_world.worldTemp.tempChange = Random.Range(-1f, 1f);
+                m_world.worldTemp.tempChange = Random.Range(-.3f, .3f);
             }
 
             // Hex loop
@@ -441,22 +441,15 @@ namespace Conquest
 
             foreach (var pair in m_world.tileData)
             {
-                var key = pair.Key;
-                TileObject obj = pair.Value;
                 HexData hData = pair.Value.hexData;
 
-                if (tempHeights.ContainsKey(key))
-                    hData.CopyValues(tempHeights[key]);
+                if (tempHeights.ContainsKey(pair.Key))
+                    hData.CopyValues(tempHeights[pair.Key]);
 
                 if (hData.isCoast)
-                {
-                    float randVal = m_rand.NextFloat();
-                    if (randVal < 0.5f)
-                    {
-                        hData.height = 90f;
-                        obj.SetTile(tileMap.GetTileByName("grassland"));
-                    }
-                }
+                    hData.height = (m_rand.NextFloat() < 0.5f) ? 95f : 105f;
+
+                hData.empty = false;
             }
             ApplyTiles(tempHeights);
         }

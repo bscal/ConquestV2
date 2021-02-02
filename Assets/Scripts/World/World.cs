@@ -43,13 +43,12 @@ namespace Conquest
 
         public void UpdateValues()
         {
-            float avgWorldTemp;
+            float avgWorldTemp = 0;
             foreach (var pair in tileData)
             {
-
+                avgWorldTemp = pair.Value.hexData.temp;
             }
-
-            //worldTemp.AvgTemp = avgWorldTemp;
+            worldTemp.AvgTemp = avgWorldTemp / tileData.Count;
         }
 
         public bool ContainsHex(Hex hex)
