@@ -167,5 +167,24 @@ namespace Conquest
             else
                 return tile.sprite;
         }
+
+        /**
+         *  HexData Functions
+         */
+
+        protected bool Range(float val, float v1, float v2)
+        {
+            return val > v1 && val < v2;
+        }
+
+        public bool HeightRange(float v1, float v2)
+        {
+            return Range(hexData.height, v1, v2);
+        }
+
+        public bool TempRange(float v1, float v2)
+        {
+            return Range(hexData.temp, v1, v2);
+        }
     }
 }

@@ -330,11 +330,11 @@ namespace Conquest
                         if (hData.height > HILL_LVL && hData.age > 100)
                             mod -= 2f;
                         if (hData.height > HILL_LVL + 55)
-                            mod -= 2f;
+                            mod -= 3f;
                         if (dirData.height > HILL_LVL + 55 && hData.height < dirData.height - 25 && !dirData.isCoast && !dirData.isOcean)
                             mod += 3f;
                         if (hData.height < dirData.height - 35 && !dirData.isCoast && !dirData.isOcean)
-                            mod += 3f;
+                            mod += 2f;
 
                         tempDirData.height = hData.height + mod;
 
@@ -446,7 +446,7 @@ namespace Conquest
                 if (tempHeights.ContainsKey(pair.Key))
                     hData.CopyValues(tempHeights[pair.Key]);
 
-                if (hData.isCoast)
+                if (hData.isCoast && pair.Value.HeightRange(90, 110))
                     hData.height = (m_rand.NextFloat() < 0.5f) ? 95f : 105f;
 
                 hData.empty = false;

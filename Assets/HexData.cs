@@ -57,5 +57,6 @@ namespace Conquest
             lastEmpty       = other.lastEmpty;
             lastMoved       = other.lastMoved;
         }
+
     }
 }
