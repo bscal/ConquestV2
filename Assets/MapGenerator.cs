@@ -118,6 +118,8 @@ namespace Conquest
                             + (m_world.settings.equatorTemp - m_world.settings.poleTemp)
                             * (distFromEquator / m_world.Equator);
                         hData.temp = tempFromDist + Random.Range(0, m_world.size.y * .25f + 1);
+
+                        hData.wetness = Random.Range(0f, 255f);
                         Tile tile = tObj.FindCorrectTile();
                         tObj.SetTile(tile);
                     }
