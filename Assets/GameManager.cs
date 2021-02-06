@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public HexFilter currentFilter = HexFilter.NONE;
 
     private UIGeneratorDebugger m_UIGenDebug;
+    private DebugCommands m_cmds;
 
     private Controls m_controls;
 
@@ -33,6 +34,7 @@ public class GameManager : MonoBehaviour
         m_UIGenDebug = GameObject.Find("GeneratorUI").GetComponent<UIGeneratorDebugger>();
         m_controls = new Controls();
         m_controls.Enable();
+        m_cmds = new DebugCommands();
     }
 
     void Update()

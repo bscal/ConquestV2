@@ -37,6 +37,7 @@ public struct Point
 
 public class Hex
 {
+    public static readonly Hex NULL_HEX = new Hex(-1, -1, 2);
     public static readonly Hex ZERO = new Hex(0, 0, 0);
 
     public Hex(int q, int r, int s)
@@ -89,6 +90,20 @@ public class Hex
         return Hex.directions[direction];
     }
 
+    static public Hex ParseHex(string q, string r)
+    {
+        int pQ = int.Parse(q);
+        int pR = int.Parse(r);
+        return new Hex(pQ, pR, -pQ - pR);
+    }
+
+    static public Hex ParseHex(string coords)
+    {
+        string[] split = coords.Split(',');
+        if (split.Length < 2 || split.Length > 2) return NULL_HEX;
+        return ParseHex(split[0], split[1]);
+    }
+
 
     public Hex Neighbor(int direction)
     {
@@ -129,6 +144,16 @@ public class Hex
                 start = start.Neighbor(i);
             }
         }
+
+        return results;
+    }
+
+    public Hex[] Neightbors()
+    {
+        Hex[] results = new Hex[6];
+
+        for (int i = 0; i < 6; i++)
+            results[i] = Neighbor(i);
 
         return results;
     }

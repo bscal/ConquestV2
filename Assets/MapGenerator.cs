@@ -386,7 +386,7 @@ namespace Conquest
             foreach (var pair in m_world.tileData)
             {
                 if (tempData.ContainsKey(pair.Key))
-                    pair.Value.hexData.CopyValues(tempData[pair.Key]);
+                    pair.Value.hexData = tempData[pair.Key];
 
                 var ring = pair.Value.hex.Ring(1);
                 if (pair.Value.hexData.empty)
@@ -446,7 +446,7 @@ namespace Conquest
                 HexData hData = pair.Value.hexData;
 
                 if (tempHeights.ContainsKey(pair.Key))
-                    hData.CopyValues(tempHeights[pair.Key]);
+                    hData = tempHeights[pair.Key];
 
                 if (hData.isCoast && pair.Value.HeightRange(90, 110))
                     hData.height = (m_rand.NextFloat() < 0.5f) ? 95f : 105f;
