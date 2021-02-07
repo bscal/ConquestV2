@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class DebugController : MonoBehaviour
 {
@@ -25,7 +26,7 @@ public class DebugController : MonoBehaviour
     private Controls m_controls;
     private bool m_showConsole;
 
-    private string m_input;
+    private string m_input = "";
     private string m_current;
     private int m_index = 0;
     private Vector2 m_scroll;
@@ -95,11 +96,20 @@ public class DebugController : MonoBehaviour
             m_input = m_hints[m_index].Split(new char[] { ' ' })[0];
         };
 
-        Keyboard.current.onTextInput += text => {
+        Keyboard.current.onTextInput += c => {
+            if (c != '\b' && c != '\t' && c != '`')
+                m_input += c;
+
             if (m_index == 0)
                 m_current = m_input;
+
+            print(m_input);
         };
 
+        m_controls.UI.Backspace.performed += ctx => {
+            if (m_input.Length < 1) return;
+            m_input = m_input.Substring(0, m_input.Length - 1);
+        };
 
         m_textStyle.fontSize = 14;
         m_textStyle.font = m_font;
@@ -167,7 +177,9 @@ public class DebugController : MonoBehaviour
 
         GUI.Box(new Rect(0, y, Screen.width, LINE_SIZE * 2), "");
 
-        m_input = GUI.TextField(new Rect(VIEW_BORDER_SIZE, y + LINE_SIZE / 2, Screen.width - LINE_SIZE, LINE_SIZE), m_input, m_textStyle);
+        GUI.Label(new Rect(VIEW_BORDER_SIZE, y + 9, Screen.width - LINE_SIZE, LINE_SIZE + 8), m_input, m_textStyle);
+        m_textStyle.DrawCursor(new Rect(VIEW_BORDER_SIZE + m_textStyle.fontSize/2, y + 8, Screen.width - LINE_SIZE, LINE_SIZE), new GUIContent(m_input), 0, m_input.Length - 1);
+        //m_input = GUI.TextField(r, m_input, m_textStyle);
 
         y += LINE_SIZE + LINE_SIZE / 2;
         if (!string.IsNullOrEmpty(m_input))
@@ -408,6 +420,14 @@ public class DebugController : MonoBehaviour
             default:
                 return m_textInfoStyle;
         }
+    }
+
+    public void AddCommand(DebugCommand cmd)
+    {
+        if (m_commandList.Contains(cmd))
+            return;
+
+        m_commandList.Add(cmd);
     }
 
 }

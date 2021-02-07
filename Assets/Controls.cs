@@ -113,6 +113,14 @@ public class @Controls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Backspace"",
+                    ""type"": ""Button"",
+                    ""id"": ""38497c90-1ee5-4d97-ae8b-76b8b9328cf7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -764,6 +772,17 @@ public class @Controls : IInputActionCollection, IDisposable
                     ""action"": ""Arrows"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3e994328-8015-4fdf-a992-eb136d9bd7a8"",
+                    ""path"": ""<Keyboard>/backspace"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Backspace"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -866,6 +885,7 @@ public class @Controls : IInputActionCollection, IDisposable
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         m_UI_Tab = m_UI.FindAction("Tab", throwIfNotFound: true);
+        m_UI_Backspace = m_UI.FindAction("Backspace", throwIfNotFound: true);
         // Keyboard
         m_Keyboard = asset.FindActionMap("Keyboard", throwIfNotFound: true);
         m_Keyboard_Console = m_Keyboard.FindAction("Console", throwIfNotFound: true);
@@ -932,6 +952,7 @@ public class @Controls : IInputActionCollection, IDisposable
     private readonly InputAction m_UI_TrackedDevicePosition;
     private readonly InputAction m_UI_TrackedDeviceOrientation;
     private readonly InputAction m_UI_Tab;
+    private readonly InputAction m_UI_Backspace;
     public struct UIActions
     {
         private @Controls m_Wrapper;
@@ -948,6 +969,7 @@ public class @Controls : IInputActionCollection, IDisposable
         public InputAction @TrackedDevicePosition => m_Wrapper.m_UI_TrackedDevicePosition;
         public InputAction @TrackedDeviceOrientation => m_Wrapper.m_UI_TrackedDeviceOrientation;
         public InputAction @Tab => m_Wrapper.m_UI_Tab;
+        public InputAction @Backspace => m_Wrapper.m_UI_Backspace;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -993,6 +1015,9 @@ public class @Controls : IInputActionCollection, IDisposable
                 @Tab.started -= m_Wrapper.m_UIActionsCallbackInterface.OnTab;
                 @Tab.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnTab;
                 @Tab.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnTab;
+                @Backspace.started -= m_Wrapper.m_UIActionsCallbackInterface.OnBackspace;
+                @Backspace.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnBackspace;
+                @Backspace.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnBackspace;
             }
             m_Wrapper.m_UIActionsCallbackInterface = instance;
             if (instance != null)
@@ -1033,6 +1058,9 @@ public class @Controls : IInputActionCollection, IDisposable
                 @Tab.started += instance.OnTab;
                 @Tab.performed += instance.OnTab;
                 @Tab.canceled += instance.OnTab;
+                @Backspace.started += instance.OnBackspace;
+                @Backspace.performed += instance.OnBackspace;
+                @Backspace.canceled += instance.OnBackspace;
             }
         }
     }
@@ -1109,6 +1137,7 @@ public class @Controls : IInputActionCollection, IDisposable
         void OnTrackedDevicePosition(InputAction.CallbackContext context);
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
         void OnTab(InputAction.CallbackContext context);
+        void OnBackspace(InputAction.CallbackContext context);
     }
     public interface IKeyboardActions
     {
