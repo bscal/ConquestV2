@@ -16,19 +16,21 @@ MonoBehaviour:
   oceanLvl: 55
   mountainLvl: 215
   mountainPeaklvl: 235
+  m_blankSprite: {fileID: -3988290726674471756, guid: f3ef18d3698ceee48a19016fa82dd654,
+    type: 3}
   tiles:
   - name: grassland
-    sprite: {fileID: -8095341020241152702, guid: 9039778b3b792e840ba674983698ba19,
+    sprite: {fileID: -374796290018590942, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
-    coldSprite: {fileID: -7478216499661273460, guid: 9039778b3b792e840ba674983698ba19,
+    coldSprite: {fileID: -6112399221323630281, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
-    hotSprite: {fileID: -1094970902351842777, guid: 9039778b3b792e840ba674983698ba19,
+    hotSprite: {fileID: -4218347658839152434, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
     veryColdSprite: {fileID: 0}
     isSpriteInFront: 0
     minHeight: 100
   - name: plain
-    sprite: {fileID: 2872020216679152886, guid: 9039778b3b792e840ba674983698ba19,
+    sprite: {fileID: -453650012503169676, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
     coldSprite: {fileID: 0}
     hotSprite: {fileID: 0}
@@ -36,16 +38,17 @@ MonoBehaviour:
     isSpriteInFront: 0
     minHeight: 100
   - name: coast
-    sprite: {fileID: -7336061460917453017, guid: 9039778b3b792e840ba674983698ba19,
+    sprite: {fileID: -7245373555578790540, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
-    coldSprite: {fileID: 0}
+    coldSprite: {fileID: 3935721786006247507, guid: f3ef18d3698ceee48a19016fa82dd654,
+      type: 3}
     hotSprite: {fileID: 0}
-    veryColdSprite: {fileID: -4817926996509711932, guid: 9039778b3b792e840ba674983698ba19,
+    veryColdSprite: {fileID: 3935721786006247507, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
     isSpriteInFront: 0
     minHeight: 55
   - name: desert
-    sprite: {fileID: -1094970902351842777, guid: 9039778b3b792e840ba674983698ba19,
+    sprite: {fileID: -4218347658839152434, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
     coldSprite: {fileID: 0}
     hotSprite: {fileID: 0}
@@ -53,27 +56,27 @@ MonoBehaviour:
     isSpriteInFront: 0
     minHeight: 100
   - name: ocean
-    sprite: {fileID: -4386968851152074775, guid: 9039778b3b792e840ba674983698ba19,
+    sprite: {fileID: -7981602498007315836, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
-    coldSprite: {fileID: -4817926996509711932, guid: 9039778b3b792e840ba674983698ba19,
+    coldSprite: {fileID: -7981602498007315836, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
     hotSprite: {fileID: 0}
-    veryColdSprite: {fileID: -4817926996509711932, guid: 9039778b3b792e840ba674983698ba19,
+    veryColdSprite: {fileID: 3935721786006247507, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
     isSpriteInFront: 0
     minHeight: -1
   - name: hill
-    sprite: {fileID: 4769010376589184234, guid: 9039778b3b792e840ba674983698ba19,
+    sprite: {fileID: 6242791738066546405, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
-    coldSprite: {fileID: -2944986147828954873, guid: 9039778b3b792e840ba674983698ba19,
+    coldSprite: {fileID: 8415282529780392358, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
-    hotSprite: {fileID: 1313769253048068643, guid: 9039778b3b792e840ba674983698ba19,
+    hotSprite: {fileID: -9166372993820824969, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
     veryColdSprite: {fileID: 0}
     isSpriteInFront: 1
     minHeight: 175
   - name: mountain
-    sprite: {fileID: -1374599444519741421, guid: 9039778b3b792e840ba674983698ba19,
+    sprite: {fileID: 1926324365014003725, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
     coldSprite: {fileID: 0}
     hotSprite: {fileID: 0}
@@ -81,7 +84,7 @@ MonoBehaviour:
     isSpriteInFront: 1
     minHeight: 215
   - name: mountain_peak
-    sprite: {fileID: 6090975987771635275, guid: 9039778b3b792e840ba674983698ba19,
+    sprite: {fileID: -4130665475444262713, guid: f3ef18d3698ceee48a19016fa82dd654,
       type: 3}
     coldSprite: {fileID: 0}
     hotSprite: {fileID: 0}

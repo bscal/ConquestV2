@@ -26,6 +26,9 @@ namespace Conquest
         public int mountainLvl = 215;
         public int mountainPeaklvl = 235;
 
+        [SerializeField]
+        private Sprite m_blankSprite;
+
         public Tile[] tiles;
 
         public TileMap()
@@ -62,6 +65,8 @@ namespace Conquest
                 m_nameToID.Add(tiles[i].name.ToUpper(), i);
             }
         }
+
+        public Sprite GetBlankSprite() => m_blankSprite;
     }
 }
 

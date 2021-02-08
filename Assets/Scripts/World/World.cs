@@ -81,18 +81,6 @@ namespace Conquest
 
         public List<Plate> GetPlates() => plates;
 
-        public void SetPlate(Hex hex, int i)
-        {
-            if (!tileData.TryGetValue(hex, out TileObject hData)) return;
-            Plate old = GetPlateByID(hData.hexData.plateId);
-            if (old != null)
-                old.RemoveHex(hex);
-
-            hData.hexData.plateId = i;
-
-            GetPlateByID(i).AddHex(hex);
-        }
-
         public int AddPlate(Plate plate)
         {
             plates.Add(plate);

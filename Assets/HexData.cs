@@ -9,7 +9,7 @@ namespace Conquest
 
         public int age;
         public float speedModifier;
-        public bool isPassible;
+        public bool isPassible = true;
 
         // Variables that are Copied for Simulation
 
@@ -35,6 +35,12 @@ namespace Conquest
 
         public HexData(HexData other)
         {
+            CopyValues(other);
+        }
+
+        public void CopyValues(HexData other)
+        {
+            age = other.age;
             plateId = other.plateId;
             oldPlateId = other.oldPlateId;
             height = other.height;

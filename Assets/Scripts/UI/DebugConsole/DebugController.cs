@@ -97,13 +97,14 @@ public class DebugController : MonoBehaviour
         };
 
         Keyboard.current.onTextInput += c => {
+            if (!m_showConsole)
+                return;
+
             if (c != '\b' && c != '\t' && c != '`')
                 m_input += c;
 
             if (m_index == 0)
                 m_current = m_input;
-
-            print(m_input);
         };
 
         m_controls.UI.Backspace.performed += ctx => {

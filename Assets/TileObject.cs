@@ -42,8 +42,11 @@ namespace Conquest
         public SpriteRenderer render;
         public SpriteRenderer topRender;
 
+        private Sprite m_topSprite;
+
         private Tile m_tile;
         private Tile m_topTile;
+        private bool m_covered;
 
         private HexFilter m_filter;
 
@@ -59,6 +62,9 @@ namespace Conquest
                 render.color = GameManager.Singleton.World.GetPlateByID(hexData.plateId).color;
                 topRender.color = GameManager.Singleton.World.GetPlateByID(hexData.plateId).color;
             }
+
+            if (m_covered)
+                topRender.sprite = TileMap.Singleton.GetBlankSprite();
         }
 
         public Tile GetBotTile() => m_tile;
@@ -158,14 +164,13 @@ namespace Conquest
 
         private Sprite FindSpriteForClimate(Tile tile)
         {
+            if (IsVeryCold && tile.veryColdSprite != null)
+                return tile.veryColdSprite;
             if (IsCold && tile.coldSprite != null)
                 return tile.coldSprite;
-            else if (IsHot && tile.hotSprite != null)
+            if (IsHot && tile.hotSprite != null)
                 return tile.hotSprite;
-            else if (IsVeryCold && tile.veryColdSprite != null)
-                return tile.veryColdSprite;
-            else
-                return tile.sprite;
+            return tile.sprite;
         }
 
         /**
@@ -185,6 +190,23 @@ namespace Conquest
         public bool TempRange(float v1, float v2)
         {
             return Range(hexData.temp, v1, v2);
+        }
+
+        public void SetBlankFill(bool fill)
+        {
+            m_covered = fill;
+            m_topSprite = topRender.sprite;
+            if (fill == false)
+            {
+                topRender.sprite = m_topSprite;
+                topRender.color = Color.clear;
+            }
+            
+        }
+
+        public void SetColor(Color color)
+        {
+            topRender.color = color;
         }
     }
 }
