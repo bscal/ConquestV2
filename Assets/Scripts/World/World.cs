@@ -22,6 +22,7 @@ namespace Conquest
         public int plateCounter;
         public int cells = 4;
         public WorldTemp worldTemp;
+        public WindManager windManager;
 
         public int Equator { get { return size.y / 2; } }
         public int NorthPole { get { return size.y; } }
@@ -39,6 +40,7 @@ namespace Conquest
             tileData = new Dictionary<Hex, TileObject>();
             plates = new List<Plate>(settings.plates + 1);
             worldTemp = new WorldTemp(WorldTemp.EARTH_TEMP, GameManager.Singleton.generator);
+            windManager = new WindManager(WindManager.PROGRADE_SPIN, WindManager.CellLayout.EARTH, this);
         }
 
         public void UpdateValues()

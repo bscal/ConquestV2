@@ -52,7 +52,7 @@ public class UIGeneratorDebugger : MonoBehaviour
                 $"fm={hData.formingMoutain}|" +
                 $"hs={hData.isHotSpot}";
             plateDataText.text = $"plate={hData.plateId},spd={Math.Round(pl.movementSpeed, 1)},el={Math.Round(pl.elevation, 0)}";
-            plateData2Text.text = $"ocn={hData.isOcean},cst={hData.isCoast},";
+            plateData2Text.text = $"ocn={hData.isOcean},cst={hData.isCoast},cell={hData.cellid}";
         }
     }
 

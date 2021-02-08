@@ -125,6 +125,7 @@ namespace Conquest
                     }
                 }
             }
+            m_world.windManager.Init();
             writer.Close();
             m_state = GenState.GENERATE;
             Generate();

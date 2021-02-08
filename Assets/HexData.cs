@@ -7,12 +7,13 @@ namespace Conquest
 
         // Not Copied
 
-        public int age;
+        public int cellid;
         public float speedModifier;
         public bool isPassible = true;
 
         // Variables that are Copied for Simulation
 
+        public int age;
         public bool formingMoutain;
         public bool isOcean;
         public bool isCoast;

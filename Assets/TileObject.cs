@@ -10,7 +10,8 @@ namespace Conquest
     {
         NONE,
         PLATE,
-        TEMP
+        TEMP,
+        CELL
     }
 
     public class TileObject : MonoBehaviour
@@ -110,6 +111,7 @@ namespace Conquest
             {
                 render.color = Color.white;
                 topRender.color = Color.white;
+                SetBlankFill(false);
             }
             else if (filter == HexFilter.PLATE)
             {
@@ -125,6 +127,11 @@ namespace Conquest
 
                 render.color = c;
                 topRender.color = c;
+            }
+            else if (filter == HexFilter.CELL)
+            {
+                topRender.color = new Color(255f / ((hexData.cellid+1)*2) / 255f, 255f / (hexData.cellid + 1) / 255f, 0);
+                SetBlankFill(true);
             }
         }
 
@@ -195,11 +202,14 @@ namespace Conquest
         public void SetBlankFill(bool fill)
         {
             m_covered = fill;
-            m_topSprite = topRender.sprite;
-            if (fill == false)
+            if (fill == true)
             {
-                topRender.sprite = m_topSprite;
-                topRender.color = Color.clear;
+                m_topSprite = topRender.sprite;
+            }
+            else
+            {
+                render.sprite = m_topSprite;
+                topRender.color = Color.white;
             }
             
         }
