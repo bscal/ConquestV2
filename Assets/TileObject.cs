@@ -42,6 +42,7 @@ namespace Conquest
 
         public SpriteRenderer render;
         public SpriteRenderer topRender;
+        public SpriteRenderer overlayRenderer;
 
         private Sprite m_topSprite;
 
@@ -66,6 +67,8 @@ namespace Conquest
 
             if (m_covered)
                 topRender.sprite = TileMap.Singleton.GetBlankSprite();
+            else if (topRender.sprite != m_topSprite)
+                topRender.sprite = m_topSprite;
         }
 
         public Tile GetBotTile() => m_tile;
@@ -92,9 +95,9 @@ namespace Conquest
 
             // TODO have a Tile the represents a NULL tile. 
             if (tile == null)
-                topRender.sprite = null;
+                m_topSprite = null;
             else
-                topRender.sprite = FindSpriteForClimate(tile);
+                m_topSprite = FindSpriteForClimate(tile);
         }
 
         public void SetBotTile(Tile tile)
@@ -107,13 +110,16 @@ namespace Conquest
         public void SetFilter(HexFilter filter)
         {
             m_filter = filter;
-            if (filter == HexFilter.NONE)
-            {
-                render.color = Color.white;
-                topRender.color = Color.white;
-                SetBlankFill(false);
-            }
-            else if (filter == HexFilter.PLATE)
+
+            SetBlankFill(false);
+            overlayRenderer.sprite = null;
+            overlayRenderer.transform.localScale = new Vector3(1, 1);
+            overlayRenderer.transform.rotation = Quaternion.identity;
+            render.color = Color.white;
+            topRender.color = Color.white;
+            topRender.sprite = m_topSprite;
+
+            if (filter == HexFilter.PLATE)
             {
                 render.color = GameManager.Singleton.World.GetPlateByID(hexData.plateId).color;
                 topRender.color = GameManager.Singleton.World.GetPlateByID(hexData.plateId).color;
@@ -132,6 +138,15 @@ namespace Conquest
             {
                 topRender.color = new Color(255f / ((hexData.cellid+1)*2) / 255f, 255f / (hexData.cellid + 1) / 255f, 0);
                 SetBlankFill(true);
+
+                if (hexData.cellid == 0)
+                    overlayRenderer.sprite = SpriteManager.Singleton.neutral;
+                else
+                {
+                    overlayRenderer.sprite = SpriteManager.Singleton.arrow;
+                    overlayRenderer.transform.rotation = GameManager.Singleton.World.windManager.GetRotationFromWind(hexData.windDir);
+                }
+                overlayRenderer.transform.localScale = new Vector3(.25f, .25f);
             }
         }
 
@@ -202,16 +217,6 @@ namespace Conquest
         public void SetBlankFill(bool fill)
         {
             m_covered = fill;
-            if (fill == true)
-            {
-                m_topSprite = topRender.sprite;
-            }
-            else
-            {
-                render.sprite = m_topSprite;
-                topRender.color = Color.white;
-            }
-            
         }
 
         public void SetColor(Color color)

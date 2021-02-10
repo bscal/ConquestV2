@@ -130,6 +130,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   render: {fileID: 3017570562698590314}
   topRender: {fileID: 3444535052598496958}
+  overlayRenderer: {fileID: 3086372870851366043}
 --- !u!1 &8091514991699077962
 GameObject:
   m_ObjectHideFlags: 0
@@ -296,7 +297,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1013257005
   m_SortingLayer: -1
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
