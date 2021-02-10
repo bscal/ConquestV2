@@ -44,7 +44,8 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 2800000, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
-    totalSpriteSurfaceArea: 8704
+    - {fileID: 2800000, guid: 78a1a5bc81ad1de4ebcf3a9508d00597, type: 3}
+    totalSpriteSurfaceArea: 16896
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
@@ -84,6 +85,14 @@ SpriteAtlas:
   - {fileID: -7261494224769111819, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
   - {fileID: -9205556395380884834, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
   - {fileID: -7981602498007315836, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
+  - {fileID: 2654252626193006034, guid: 78a1a5bc81ad1de4ebcf3a9508d00597, type: 3}
+  - {fileID: -2117324494936922867, guid: 78a1a5bc81ad1de4ebcf3a9508d00597, type: 3}
+  - {fileID: -7451899553157769114, guid: 78a1a5bc81ad1de4ebcf3a9508d00597, type: 3}
+  - {fileID: -3218477223629127759, guid: 78a1a5bc81ad1de4ebcf3a9508d00597, type: 3}
+  - {fileID: 510602655599354890, guid: 78a1a5bc81ad1de4ebcf3a9508d00597, type: 3}
+  - {fileID: 5000888161278307093, guid: 78a1a5bc81ad1de4ebcf3a9508d00597, type: 3}
+  - {fileID: -2124419388473414474, guid: 78a1a5bc81ad1de4ebcf3a9508d00597, type: 3}
+  - {fileID: -4842316007580036502, guid: 78a1a5bc81ad1de4ebcf3a9508d00597, type: 3}
   m_PackedSpriteNamesToIndex:
   - 2MODDED_drjamgo_hex_16x16_29
   - 2MODDED_drjamgo_hex_16x16_28
@@ -119,6 +128,14 @@ SpriteAtlas:
   - 2MODDED_drjamgo_hex_16x16_6
   - 2MODDED_drjamgo_hex_16x16_9
   - 2MODDED_drjamgo_hex_16x16_8
+  - sprites_32x32_5
+  - sprites_32x32_4
+  - sprites_32x32_7
+  - sprites_32x32_6
+  - sprites_32x32_1
+  - sprites_32x32_0
+  - sprites_32x32_3
+  - sprites_32x32_2
   m_RenderDataMap: {}
   m_Tag: Sprites
   m_IsVariant: 0
