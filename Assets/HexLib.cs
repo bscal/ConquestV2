@@ -9,12 +9,12 @@ using UnityEngine;
 public enum HexDirection
 {
     NONE = -1,
-    E,
     SE,
-    SW,
-    W,
+    E,
+    NE,
     NW,
-    NE
+    W,
+    SW,
 }
 
 public static class HexConstants

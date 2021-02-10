@@ -10,6 +10,25 @@ public class WindManager
     public const int PROGRADE_SPIN = 1;
     public const int RETROGRADE_SPIN = 2;
 
+    public const int NO_WIND = 0;
+    public const int LEFT_WIND = 1;
+    public const int RIGHT_WIND = 2;
+
+    public static readonly Quaternion LEFT_ROTATION = Quaternion.Euler(new Vector3(0f, 0f, 45f));
+    public static readonly Quaternion RIGHT_ROTATION = Quaternion.Euler(new Vector3(0f, 0f, 225f));
+
+    public static readonly Dictionary<int, float> DIR_TO_ROT = new Dictionary<int, float>(9) {
+        { -1, 0f },     // NONE
+        { 0, 145f },    // SE
+        { 1, 180f },    // E
+        { 2, 225f },    // NE
+        { 3, 315f },    // NW
+        { 4, 0f },      // W
+        { 5, 45f },     // SW
+        { 6, 90f },     // S - The current hex sprite does not have a South/North side
+        { 7, 270f }     // N - The current hex sprite does not have a South/North side
+    };
+
     // Spin speed = # of cells;
     public const int EARTHS_CELL_COUNT = 3;
 
@@ -43,22 +62,39 @@ public class WindManager
                     pair.Value.hexData.cellid = i + 1;
                 if (pair.Key.r < equator && pair.Key.r >= h - equator - Mathf.CeilToInt(yS) - counter && pair.Key.r < equator - 0 - counter)
                     pair.Value.hexData.cellid = i + 1;
-
             }
             counter += Mathf.CeilToInt(yN);
         }
-    }
 
-    void Start()
-    {
+        foreach (var pair in m_world.tileData)
+        {
+            pair.Value.hexData.windDir = GetWindDirection(pair.Value.hexData.cellid + 1, pair.Key.r);
+        }
+
         
     }
 
-    void Update()
+    public int GetWindDirection(int cellid, int r)
     {
-        
+        if (m_rotation == PROGRADE_SPIN)
+            if (r > m_world.Equator)
+                return (cellid % 2 == 0) ? (int)HexDirection.NE : (int)HexDirection.SW;
+            else if (r < m_world.Equator)
+                return (cellid % 2 == 0) ? (int)HexDirection.SE : (int)HexDirection.NW;
+        else if (m_rotation == RETROGRADE_SPIN)
+            if (r > m_world.Equator)
+                return (cellid % 2 == 0) ? (int)HexDirection.SE : (int)HexDirection.NW;
+            else if (r < m_world.Equator)
+                return (cellid % 2 == 0) ? (int)HexDirection.NE : (int)HexDirection.SW;
+        return NO_WIND;
     }
 
+    public Quaternion GetRotationFromWind(int direction)
+    {
+        if (direction < 0 || direction > DIR_TO_ROT.Count)
+            return Quaternion.identity;
+        return Quaternion.Euler(new Vector3(0f, 0f, DIR_TO_ROT[direction]));
+    }
 
     public class CellLayout
     {
