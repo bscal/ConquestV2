@@ -9,6 +9,16 @@ using UnityEngine.UIElements;
 
 public class UIGeneratorDebugger : MonoBehaviour
 {
+    private const string PANEL_TITLE = "Selected Hex: ";
+
+    public GameObject hexPanel;
+    public GameObject hexDataPanel;
+    public GameObject hexDataLeftPanel;
+    public GameObject hexDataRightPanel;
+    public Text hexText;
+
+    public GameObject textPrefab;
+
     public Text counterText;
     public UnityEngine.UI.Button pauseButton;
     public UnityEngine.UI.Button stepButton;
@@ -20,6 +30,8 @@ public class UIGeneratorDebugger : MonoBehaviour
 
     private Hex m_watchedHex;
     private bool m_show;
+
+    private Dictionary<string, Text> m_hexUIValues = new Dictionary<string, Text>();
 
     private void Start()
     {
@@ -53,7 +65,57 @@ public class UIGeneratorDebugger : MonoBehaviour
                 $"hs={hData.isHotSpot}";
             plateDataText.text = $"plate={hData.plateId},spd={Math.Round(pl.movementSpeed, 1)},el={Math.Round(pl.elevation, 0)}";
             plateData2Text.text = $"ocn={hData.isOcean},cst={hData.isCoast},cell={hData.cellid}";
+
+            SetTitleStr(hex.ToString());
+            SetValueOrCreate("height", $"h={hData.height.ToString("0.##")}");
         }
+
+        if (Keyboard.current.hKey.wasPressedThisFrame)
+        {
+            ShowHexData(!hexPanel.activeSelf);
+        }
+
+    }
+
+    public void SetTitleStr(string value)
+    {
+        hexText.text = PANEL_TITLE + value;
+    }
+    
+    public string CreateValue(string key)
+    {
+        if (m_hexUIValues.ContainsKey(key))
+            return null;
+
+        Transform trans = (hexDataLeftPanel.transform.childCount < hexDataRightPanel.transform.childCount) 
+            ? hexDataLeftPanel.transform : hexDataRightPanel.transform;
+
+        GameObject newText = Instantiate(textPrefab, trans);
+        newText.name = key;
+        m_hexUIValues.Add(key, newText.GetComponent<Text>()); 
+
+        return key;
+    }
+
+    public void SetValue(string key, string value)
+    {
+        if (!m_hexUIValues.ContainsKey(key))
+            return;
+
+        m_hexUIValues[key].text = value;
+    }
+
+    public void SetValueOrCreate(string key, string value)
+    {
+        if (!m_hexUIValues.ContainsKey(key))
+            CreateValue(key);
+        
+        SetValue(key, value);
+    }
+
+    public void ShowHexData(bool enabled)
+    {
+        hexPanel.SetActive(enabled);
     }
 
 

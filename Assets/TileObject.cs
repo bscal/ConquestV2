@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
+using UnityEngine.UI;
+using TMPro;
 
 namespace Conquest
 {
@@ -149,6 +150,7 @@ namespace Conquest
                     overlayRenderer.transform.rotation = GameManager.Singleton.World.windManager.GetRotationFromWind(wind.direction);
                 }
                 overlayRenderer.transform.localScale = new Vector3(.25f, .25f);
+
             }
         }
 
