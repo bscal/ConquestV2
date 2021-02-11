@@ -33,6 +33,7 @@ namespace Conquest
 
         public Hex hex;
         public HexData hexData;
+        public Wind wind;
 
         public bool IsVeryHot { get { return hexData.temp < VERY_HOT; } }
         public bool IsHot { get { return hexData.temp > HOT; } }
@@ -55,6 +56,7 @@ namespace Conquest
         void Awake()
         {
             hexData = new HexData();
+            wind = new Wind();
         }
 
         private void Update()
@@ -144,7 +146,7 @@ namespace Conquest
                 else
                 {
                     overlayRenderer.sprite = SpriteManager.Singleton.arrow;
-                    overlayRenderer.transform.rotation = GameManager.Singleton.World.windManager.GetRotationFromWind(hexData.windDir);
+                    overlayRenderer.transform.rotation = GameManager.Singleton.World.windManager.GetRotationFromWind(wind.direction);
                 }
                 overlayRenderer.transform.localScale = new Vector3(.25f, .25f);
             }

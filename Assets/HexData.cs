@@ -8,8 +8,6 @@ namespace Conquest
         // Not Copied
 
         public int cellid;
-        public int windDir;
-        public float speedModifier;
         public bool isPassible = true;
 
         // Variables that are Copied for Simulation

@@ -68,10 +68,31 @@ public class WindManager
 
         foreach (var pair in m_world.tileData)
         {
-            pair.Value.hexData.windDir = GetWindDirection(pair.Value.hexData.cellid + 1, pair.Key.r);
+            pair.Value.wind.direction = GetWindDirection(pair.Value.hexData.cellid + 1, pair.Key.r);
         }
+    }
 
-        
+    public void SimulateWind(int iteration, SimulatedLoopHex loopedHex)
+    {
+        bool contains = m_world.TryGetHexData(loopedHex.hex.Neighbor(loopedHex.obj.wind.direction), out TileObject windDirObj);
+
+        if (!contains) return;
+
+        if (windDirObj.hexData.height >= TileMap.Singleton.mountainLvl)
+        {
+            windDirObj.wind.power = 0;
+            windDirObj.wind.waterContent -= .5f;
+        }
+        else if (loopedHex.obj.hexData.height <= TileMap.Singleton.seaLvl)
+        {
+            windDirObj.wind.power = 2;
+            windDirObj.wind.waterContent += 1;
+        }
+        else
+        {
+            windDirObj.wind.power = 1;
+            windDirObj.wind.waterContent -= .5f;
+        }
     }
 
     public int GetWindDirection(int cellid, int r)

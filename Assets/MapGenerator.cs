@@ -276,7 +276,18 @@ namespace Conquest
                         tempData.Add(dirHex, new HexData(dirData));
                     }
                     HexData tempDirData = tempData[dirHex];
-                    
+
+                    SimulatedLoopHex loopHex = new SimulatedLoopHex() {
+                        hex = hex,
+                        obj = obj,
+                        tempData = tempHexData,
+                        plate = hPlate,
+                        dirHex = dirHex,
+                        dirObj = dirObj,
+                        tempDirData = tempDirData
+                    };
+
+                    m_world.windManager.SimulateWind(m_iters, loopHex);
 
                     bool platesDiff = hPlate.id != dirPlate.id;
                     bool platesCollide = Mathf.Abs(hPlate.direction - dirPlate.direction) == 3;
@@ -516,5 +527,16 @@ namespace Conquest
         public World GetWorld() => m_world;
 
         public int GetCurrentIteration() => m_iters;
+    }
+
+    public struct SimulatedLoopHex
+    {
+        public Hex hex;
+        public TileObject obj;
+        public HexData tempData;
+        public Plate plate;
+        public Hex dirHex;
+        public TileObject dirObj;
+        public HexData tempDirData;
     }
 }
