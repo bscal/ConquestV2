@@ -22,6 +22,25 @@ public static class HexConstants
     public const int DIRECTIONS = 6;
     public const int MIN_DIR = 0;
     public const int MAX_DIR = 5;
+
+    public const int NO_DIRECTION = -1;
+    public const int NORTH = 6;
+    public const int SOUTH = 7;
+
+    public static bool IsHexTopOrBot(int corner)
+    {
+        return corner == 2 || corner == 5;
+    }
+
+    public static int Add(int a, int b)
+    {
+        return a + ((a + b > MAX_DIR) ? MIN_DIR : b);
+    }
+
+    public static int Subtract(int a, int b)
+    {
+        return a - ((a - b < MIN_DIR) ? MAX_DIR : b);
+    }
 }
 
 public struct Point
@@ -33,6 +52,13 @@ public struct Point
     }
     public readonly double x;
     public readonly double y;
+
+    public override bool Equals(object obj)
+    {
+        return obj is Point point &&
+               x == point.x &&
+               y == point.y;
+    }
 }
 
 public class Hex

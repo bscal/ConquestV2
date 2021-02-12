@@ -40,7 +40,7 @@ namespace Conquest
         public bool IsHot { get { return hexData.temp > HOT; } }
         public bool IsCold { get { return hexData.temp < COLD; } } 
         public bool IsVeryCold { get { return hexData.temp < VERY_COLD; } }
-        
+        public bool IsWater { get { return hexData.height <= TileMap.Singleton.seaLvl; } }
 
         public SpriteRenderer render;
         public SpriteRenderer topRender;
@@ -115,11 +115,10 @@ namespace Conquest
             m_filter = filter;
 
             SetBlankFill(false);
+            SetColor(Color.white);
             overlayRenderer.sprite = null;
             overlayRenderer.transform.localScale = new Vector3(1, 1);
             overlayRenderer.transform.rotation = Quaternion.identity;
-            render.color = Color.white;
-            topRender.color = Color.white;
             topRender.sprite = m_topSprite;
 
             if (filter == HexFilter.PLATE)
@@ -225,6 +224,7 @@ namespace Conquest
 
         public void SetColor(Color color)
         {
+            render.color = color;
             topRender.color = color;
         }
     }

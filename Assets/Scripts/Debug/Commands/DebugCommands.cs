@@ -35,6 +35,20 @@ public class DebugCommands
         });
         DebugController.Singleton.AddCommand(reset);
 
+
+        DebugCommand createRiver = new DebugArgsCommand("create_river", "creates a river at hex", "create_river <hex>", args => {
+            Hex arg = Hex.ParseHex(args[0]);
+
+            River r = new River(arg);
+            var list = r.GeneratePath(GameManager.Singleton.World);
+
+            foreach (TileObject obj in list)
+            {
+                obj.SetColor(Color.blue);
+            }
+
+        }, 1);
+        DebugController.Singleton.AddCommand(createRiver);
     }
 
 }

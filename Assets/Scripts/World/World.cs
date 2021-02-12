@@ -89,5 +89,20 @@ namespace Conquest
             plate.id = plateCounter++;
             return plate.id;
         }
+
+        public TileObject[] HexArrayToTileObjectArray(Hex[] hexes)
+        {
+            TileObject[] objs = new TileObject[hexes.Length];
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                Hex h = hexes[i];
+                bool contains = TryGetHexData(h, out TileObject obj);
+                if (contains)
+                    objs[i] = obj;
+                else
+                    objs[i] = null;
+            }
+            return objs;
+        }
     }
 }
