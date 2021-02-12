@@ -29,6 +29,7 @@ public class DebugController : MonoBehaviour
     private string m_input = "";
     private string m_current;
     private int m_index = 0;
+    private int m_cursorIndex = 0;
     private Vector2 m_scroll;
     private Vector2 m_hintScroll;
     private Queue<ConsoleText> m_buffer = new Queue<ConsoleText>(BUFFER_SIZE);
@@ -44,6 +45,7 @@ public class DebugController : MonoBehaviour
     private GUIStyle m_hintSelectStyle = new GUIStyle();
 
     private List<DebugCommandBase> m_commandList = new List<DebugCommandBase>();
+    private HashSet<char> m_keywordChars = new HashSet<char>();
 
     [SerializeField]
     private Font m_font;
@@ -54,6 +56,15 @@ public class DebugController : MonoBehaviour
         Singleton = this;
         m_controls = new Controls();
         m_controls.Enable();
+
+        m_keywordChars.Add('\b');
+        m_keywordChars.Add('\t');
+        m_keywordChars.Add('`');
+        m_keywordChars.Add((char)37);
+        m_keywordChars.Add((char)38);
+        m_keywordChars.Add((char)39);
+        m_keywordChars.Add((char)40);
+
         m_controls.Keyboard.Console.performed += ctx => {
             m_showConsole = !m_showConsole;
         };
@@ -73,16 +84,21 @@ public class DebugController : MonoBehaviour
             if (m_hints == null) return;
             var val = ctx.ReadValue<Vector2>();
 
-            if (val.y < .5)
+            if (val.y > 0f)
             {
                 if (m_index >= m_hints.Count) return;
                 m_index++;
             }
-            else if (val.y > -.5f)
+            else if (val.y < 0f)
             {
                 if (m_index <= -m_last.Count) return;
                 m_index--;
             }
+
+            if (val.x > 0f && m_cursorIndex < m_input.Length)
+                m_cursorIndex++;
+            else if (val.x < 0f && m_cursorIndex > -1)
+                m_cursorIndex--;
 
             int i = m_last.Count - Mathf.Abs(m_index);
             if (m_index < 0 && !string.IsNullOrEmpty(m_last[i]))
@@ -94,14 +110,23 @@ public class DebugController : MonoBehaviour
         m_controls.Keyboard.Tab.performed += ctx => {
             if (m_hints == null || m_hints.Count < 1) return;
             m_input = m_hints[m_index].Split(new char[] { ' ' })[0];
+            m_cursorIndex = m_input.Length;
         };
 
         Keyboard.current.onTextInput += c => {
             if (!m_showConsole)
                 return;
 
-            if (c != '\b' && c != '\t' && c != '`')
-                m_input += c;
+            m_cursorIndex = Mathf.Max(0, Mathf.Min(m_cursorIndex, m_input.Length));
+
+            if (!m_keywordChars.Contains(c))
+            {
+                if (m_cursorIndex < m_input.Length)
+                    m_input = m_input.Insert(Mathf.Max(m_cursorIndex, 0), c.ToString());
+                else
+                    m_input += c;
+                m_cursorIndex++;
+            }
 
             if (m_index == 0)
                 m_current = m_input;
@@ -109,7 +134,7 @@ public class DebugController : MonoBehaviour
 
         m_controls.UI.Backspace.performed += ctx => {
             if (m_input.Length < 1) return;
-            m_input = m_input.Substring(0, m_input.Length - 1);
+            m_input = m_input.Substring(0, m_input.Length);
         };
 
         m_textStyle.fontSize = 14;
@@ -179,7 +204,7 @@ public class DebugController : MonoBehaviour
         GUI.Box(new Rect(0, y, Screen.width, LINE_SIZE * 2), "");
 
         GUI.Label(new Rect(VIEW_BORDER_SIZE, y + 9, Screen.width - LINE_SIZE, LINE_SIZE + 8), m_input, m_textStyle);
-        m_textStyle.DrawCursor(new Rect(VIEW_BORDER_SIZE + m_textStyle.fontSize/2, y + 8, Screen.width - LINE_SIZE, LINE_SIZE), new GUIContent(m_input), 0, m_input.Length - 1);
+        m_textStyle.DrawCursor(new Rect(VIEW_BORDER_SIZE, y + 8, Screen.width - LINE_SIZE, LINE_SIZE), new GUIContent(m_input), 0, Mathf.Min(m_input.Length, m_cursorIndex));
         //m_input = GUI.TextField(r, m_input, m_textStyle);
 
         y += LINE_SIZE + LINE_SIZE / 2;
