@@ -134,7 +134,7 @@ public class DebugController : MonoBehaviour
 
         m_controls.UI.Backspace.performed += ctx => {
             if (m_input.Length < 1) return;
-            m_input = m_input.Substring(0, m_input.Length);
+            m_input = m_input.Substring(0, m_input.Length - 1);
         };
 
         m_textStyle.fontSize = 14;
