@@ -42,9 +42,26 @@ public class DebugCommands
             River r = new River(arg);
             var list = r.GeneratePath(GameManager.Singleton.World);
 
-            foreach (TileObject obj in list)
+            LineRenderer river = GameManager.Singleton.GetDebugger().CreateLineRender();
+            river.enabled = true;
+            river.positionCount = list.riverPath.Count;
+            river.startWidth = 2;
+            river.endWidth = 2;
+
+
+            for (int i = 0; i < list.tiles.Count; i++)
             {
+                TileObject obj = list.tiles[i];
                 obj.SetColor(Color.blue);
+            }
+
+            World world = GameManager.Singleton.World;
+            int counter = 0;
+            foreach (RiverPath line in list.riverPath)
+            {
+                Point p = world.layout.HexCornerOffset(line.corner);
+                Point c = world.layout.HexToPixel(line.from.hex);
+                river.SetPosition(counter++, new Vector3((float)p.x + (float)c.x, (float)p.y + (float)c.y));
             }
 
         }, 1);

@@ -85,4 +85,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public UIGeneratorDebugger GetDebugger()
+    {
+        return m_UIGenDebug;
+    }
+
 }

@@ -7,8 +7,13 @@ public class River
 {
     public static readonly Point NULL_POINT = new Point(double.MinValue, double.MinValue);
 
+    public const int STRAIGHT = 0;
+    public const int LEFT = 1;
+    public const int RIGHT = 2;
+
     public Hex start;
     public Hex end;
+    public int side;
 
     public List<Line> path;
 
@@ -19,6 +24,7 @@ public class River
     {
         this.start = start;
         this.path = new List<Line>();
+        this.side = LEFT;
     }
 
     private int FindLowestPoint(TileObject[] hexes, World world)
@@ -50,42 +56,49 @@ public class River
         return corner;
     }
 
-    public List<TileObject> GeneratePath(World world)
+    public RiverContainer GeneratePath(World world)
     {
         List<TileObject> path = new List<TileObject>();
+        List<RiverPath> lines = new List<RiverPath>();
         Hex currentHex = start;
         Hex lastHex = null;
-        //int startCorner = FindLowestPoint(world.HexArrayToTileObjectArray(currentHex.Neightbors()), world);
-        //Hex sideHex = currentHex.Neighbor(Random.Range(0);
+        int corner = Random.Range(0, 5);
 
+        //path.Add(world.tileData[currentHex]);
         while (true)
         {
             TileObject[] tiles = world.HexArrayToTileObjectArray(currentHex.Neightbors());
-
-            TileObject lowest = FindLowestNeightbor(tiles, world.tileData[currentHex].hexData.height, currentHex, lastHex);
+            LowestPointContainer lowest = FindLowestNeightbor(tiles, world.tileData[currentHex].hexData.height, currentHex, lastHex);
             Debug.Log(currentHex);
-            if (lowest != null)
+            if (lowest.obj != null)
             {
-                path.Add(lowest);
+                List<RiverPath> nextPath = LineToNextHex(this, world.tileData[currentHex], lowest.obj, corner, lowest.direction);
+                lines.AddRange(nextPath);
+                path.Add(world.tileData[currentHex]);
                 lastHex = currentHex;
-                currentHex = lowest.hex;
-
-                if (lowest.IsWater)
+                currentHex = lowest.obj.hex;
+                corner = Hex.MirrorCorner(lowest.direction, lowest.direction);
+                if (lowest.obj.IsWater)
                     break;
             }
             else
                 break;
         }
 
-        return path;
+        return new RiverContainer() {
+            tiles = path,
+            riverPath = lines
+        };
     }
 
-    private TileObject FindLowestNeightbor(TileObject[] hexes, float currentHeight, Hex current, Hex lastHex)
+    private LowestPointContainer FindLowestNeightbor(TileObject[] hexes, float currentHeight, Hex current, Hex lastHex)
     {
         float lowestHeight = currentHeight;
         TileObject lowest = null;
-        foreach (TileObject next in hexes)
+        int direction = -1;
+        for (int i = 0; i < hexes.Length; i++)
         {
+            TileObject next = hexes[i];
             if (!next.hex.Equals(current) && next.hexData.height < lowestHeight)
             {
                 if (lastHex != null && next.hex.Equals(lastHex))
@@ -93,14 +106,69 @@ public class River
 
                 lowestHeight = next.hexData.height;
                 lowest = next;
+                direction = i;
             }
         }
-        return lowest;
+        return new LowestPointContainer() {
+            obj = lowest,
+            direction = direction,
+        };
     }
 
+    private List<RiverPath> LineToNextHex(River river, TileObject from, TileObject to, int startDir, int dir)
+    {
+        List<RiverPath> lines = new List<RiverPath>();
 
+        List<int> sides = ClosestCorner(startDir, dir, river.side);
 
+        foreach (int side in sides)
+        {
+            lines.Add(new RiverPath() {
+                from = from,
+                to = to,
+                direction = dir,
+                corner = side
+            });
+        }
+        return lines;
+    }
 
+    private List<int> ClosestCorner(int fromDirection, int direction, int side)
+    {
+        List<int> directions = new List<int>();
+        //directions.Add(fromDirection);
+
+        while (fromDirection != direction)
+        {
+            Debug.Log(fromDirection);
+            directions.Add(fromDirection);
+            fromDirection = (side == LEFT) ? HexConstants.Subtract(fromDirection, 1) : HexConstants.Add(fromDirection, 1);
+            
+        }
+
+        return directions;
+    }
+
+}
+
+public class RiverContainer
+{
+    public List<TileObject> tiles;
+    public List<RiverPath> riverPath;
+}
+
+public class RiverPath
+{
+    public TileObject from;
+    public TileObject to;
+    public int corner;
+    public int direction;
+}
+
+public class LowestPointContainer
+{
+    public TileObject obj;
+    public int direction;
 }
 
 public class HexPoint

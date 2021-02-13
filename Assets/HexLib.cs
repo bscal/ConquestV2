@@ -9,12 +9,12 @@ using UnityEngine;
 public enum HexDirection
 {
     NONE = -1,
-    SE,
     E,
-    NE,
-    NW,
-    W,
+    SE,
     SW,
+    W,
+    NW,
+    NE
 }
 
 public static class HexConstants
@@ -26,6 +26,9 @@ public static class HexConstants
     public const int NO_DIRECTION = -1;
     public const int NORTH = 6;
     public const int SOUTH = 7;
+
+    public static readonly int[] LEFT_CORNERS = new int[] { 3, 4, 5 };
+    public static readonly int[] RIGHT_CORNERS = new int[] { 0, 1, 2 };
 
     public static bool IsHexTopOrBot(int corner)
     {
@@ -39,7 +42,12 @@ public static class HexConstants
 
     public static int Subtract(int a, int b)
     {
-        return a - ((a - b < MIN_DIR) ? MAX_DIR : b);
+        return ((a - b < MIN_DIR) ? MAX_DIR : a - b);
+    }
+
+    public static int WrapDirection(int dir)
+    {
+        return (dir < MIN_DIR || dir > MAX_DIR) ? Mathf.Abs(dir % 6) : dir;
     }
 }
 
@@ -129,7 +137,6 @@ public class Hex
         if (split.Length < 2 || split.Length > 2) return NULL_HEX;
         return ParseHex(split[0], split[1]);
     }
-
 
     public Hex Neighbor(int direction)
     {
@@ -246,6 +253,12 @@ public class Hex
         d += 3;
         if (d > 5) d -= 6;
         return (HexDirection)d;
+    }
+
+    public static int MirrorCorner(int corner, int direction)
+    {
+        int mirrored = (direction < corner) ? corner - 2 : corner + 2;
+        return HexConstants.WrapDirection(mirrored);
     }
 
     public override string ToString()

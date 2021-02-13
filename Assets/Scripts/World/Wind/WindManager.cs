@@ -19,12 +19,12 @@ public class WindManager
 
     public static readonly Dictionary<int, float> DIR_TO_ROT = new Dictionary<int, float>(9) {
         { -1, 0f },     // NONE
-        { 0, 145f },    // SE
-        { 1, 180f },    // E
-        { 2, 225f },    // NE
-        { 3, 315f },    // NW
-        { 4, 0f },      // W
-        { 5, 45f },     // SW
+        { 0, 180f },    // E
+        { 1, 145f },    // SE
+        { 2, 45f },     // SW
+        { 3, 0f },      // W
+        { 4, 315f },    // NW
+        { 5, 225f },    // NE
         { 6, 90f },     // S - The current hex sprite does not have a South/North side
         { 7, 270f }     // N - The current hex sprite does not have a South/North side
     };
@@ -68,7 +68,7 @@ public class WindManager
 
         foreach (var pair in m_world.tileData)
         {
-            pair.Value.wind.direction = GetWindDirection(pair.Value.hexData.cellid + 1, pair.Key.r);
+            pair.Value.wind.direction = GetWindDirection(pair.Value.hexData.cellid, pair.Key.r);
         }
     }
 

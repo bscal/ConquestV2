@@ -118,6 +118,10 @@ public class UIGeneratorDebugger : MonoBehaviour
         hexPanel.SetActive(enabled);
     }
 
+    public LineRenderer CreateLineRender()
+    {
+        return gameObject.AddComponent<LineRenderer>();
+    }
 
     private Vector2 m_scroll;
     private const float HEIGHT = 282;
