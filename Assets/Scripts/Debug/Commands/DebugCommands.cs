@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DebugCommands
+public class DebugCommands : MonoBehaviour
 {
 
-    public DebugCommands()
+    private void Start()
     {
 
         DebugCommand testBreathFirstSearch = new DebugArgsCommand("testbfs", "Tests BreathFirstSearch pathfinder", "testbfs", args => {
@@ -39,30 +39,13 @@ public class DebugCommands
         DebugCommand createRiver = new DebugArgsCommand("create_river", "creates a river at hex", "create_river <hex>", args => {
             Hex arg = Hex.ParseHex(args[0]);
 
-            River r = new River(arg);
-            var list = r.GeneratePath(GameManager.Singleton.World);
+            GameObject riverPath = Resources.Load("Prefabs/River/River") as GameObject;
+            GameObject riverPart = Resources.Load("Prefabs/River/RiverPart") as GameObject;
 
-            LineRenderer river = GameManager.Singleton.GetDebugger().CreateLineRender();
-            river.enabled = true;
-            river.positionCount = list.riverPath.Count;
-            river.startWidth = 2;
-            river.endWidth = 2;
-
-
-            for (int i = 0; i < list.tiles.Count; i++)
-            {
-                TileObject obj = list.tiles[i];
-                obj.SetColor(Color.blue);
-            }
-
-            World world = GameManager.Singleton.World;
-            int counter = 0;
-            foreach (RiverPath line in list.riverPath)
-            {
-                Point p = world.layout.HexCornerOffset(line.corner);
-                Point c = world.layout.HexToPixel(line.from.hex);
-                river.SetPosition(counter++, new Vector3((float)p.x + (float)c.x, (float)p.y + (float)c.y));
-            }
+            GameObject newRiver = Instantiate(riverPath, this.transform);
+            RiverSprite river = newRiver.GetComponent<RiverSprite>();
+            river.Init(arg, riverPart);
+            river.GenerateRiverPath(GameManager.Singleton.World);
 
         }, 1);
         DebugController.Singleton.AddCommand(createRiver);
