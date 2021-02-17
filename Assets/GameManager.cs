@@ -12,34 +12,41 @@ public class GameManager : MonoBehaviour
     public static GameManager Singleton { get; private set; }
 
     public GameState GameState { get; private set; }
+    public MapGenerator Generator => m_generator;
+    public World World => m_generator.GetWorld();
+    public WorldSettings WorldSettings => m_generator.GetWorld().settings;
+    public SpriteManager SpriteManager => m_spriteManager;
 
     [Header("Generator")]
-    public MapGenerator generator;
-
-    public World World => generator.GetWorld();
-    public WorldSettings WorldSettings => generator.GetWorld().settings;
-
-    public HexFilter currentFilter = HexFilter.NONE;
-
-    private UIGeneratorDebugger m_UIGenDebug;
+    [SerializeField]
+    private MapGenerator m_generator;
+    [Header("Sprites")]
+    [SerializeField]
+    private SpriteManager m_spriteManager;
+    [Header("Debug")]
     [SerializeField]
     private DebugCommands m_cmds;
 
+    private UIGeneratorDebugger m_UIGenDebug;
     private Controls m_controls;
+    private HexFilter m_currentFilter = HexFilter.NONE;
 
-    void Start()
+    private void Awake()
     {
         Singleton = this;
         GameState = new GameState();
-        generator.CreateWorld();
         m_UIGenDebug = GameObject.Find("GeneratorUI").GetComponent<UIGeneratorDebugger>();
         m_controls = new Controls();
         m_controls.Enable();
     }
 
+    void Start()
+    {
+        m_generator.CreateWorld();
+    }
+
     void Update()
     {
-
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             Vector2 mousePos = Mouse.current.position.ReadValue();
@@ -60,7 +67,7 @@ public class GameManager : MonoBehaviour
             GameManager.Singleton.ChangeFilter();
             foreach (var obj in World.tileData.Values)
             {
-                obj.SetFilter(GameManager.Singleton.currentFilter);
+                obj.SetFilter(m_currentFilter);
             }
         }
 
@@ -69,10 +76,10 @@ public class GameManager : MonoBehaviour
 
     public void ChangeFilter()
     {
-        int id = (int)currentFilter;
+        int id = (int)m_currentFilter;
         if (id == Enum.GetNames(typeof(HexFilter)).Length - 1) id = 0;
         else id++;
-        currentFilter = (HexFilter)id;
+        m_currentFilter = (HexFilter)id;
     }
 
     public IEnumerable CalculateUpdateCoroutine()
@@ -90,4 +97,8 @@ public class GameManager : MonoBehaviour
         return m_UIGenDebug;
     }
 
+    public DebugCommands GetCommands()
+    {
+        return m_cmds;
+    }
 }

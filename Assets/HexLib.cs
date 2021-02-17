@@ -61,12 +61,7 @@ public struct Point
     public readonly double x;
     public readonly double y;
 
-    public override bool Equals(object obj)
-    {
-        return obj is Point point &&
-               x == point.x &&
-               y == point.y;
-    }
+
 }
 
 public class Hex

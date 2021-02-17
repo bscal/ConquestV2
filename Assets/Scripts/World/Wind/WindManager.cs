@@ -20,7 +20,7 @@ public class WindManager
     public static readonly Dictionary<int, float> DIR_TO_ROT = new Dictionary<int, float>(9) {
         { -1, 0f },     // NONE
         { 0, 180f },    // E
-        { 1, 145f },    // SE
+        { 1, 135f },    // SE
         { 2, 45f },     // SW
         { 3, 0f },      // W
         { 4, 315f },    // NW

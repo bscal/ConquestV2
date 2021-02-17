@@ -142,10 +142,10 @@ namespace Conquest
                 SetBlankFill(true);
 
                 if (hexData.cellid == 0)
-                    overlayRenderer.sprite = SpriteManager.Singleton.neutral;
+                    overlayRenderer.sprite = GameManager.Singleton.SpriteManager.neutral;
                 else
                 {
-                    overlayRenderer.sprite = SpriteManager.Singleton.arrow;
+                    overlayRenderer.sprite = GameManager.Singleton.SpriteManager.arrow;
                     overlayRenderer.transform.rotation = GameManager.Singleton.World.windManager.GetRotationFromWind(wind.direction);
                 }
                 overlayRenderer.transform.localScale = new Vector3(.25f, .25f);

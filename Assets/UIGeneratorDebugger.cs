@@ -41,7 +41,7 @@ public class UIGeneratorDebugger : MonoBehaviour
 
     void Update()
     {
-        counterText.text = $"{GameManager.Singleton.generator.GetCurrentIteration()}/{GameManager.Singleton.WorldSettings.numberOfIterations}";
+        counterText.text = $"{GameManager.Singleton.Generator.GetCurrentIteration()}/{GameManager.Singleton.WorldSettings.numberOfIterations}";
 
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
@@ -159,12 +159,12 @@ public class UIGeneratorDebugger : MonoBehaviour
 
     private void OnPauseClicked()
     {
-        GameManager.Singleton.generator.paused = !GameManager.Singleton.generator.paused;
+        GameManager.Singleton.Generator.paused = !GameManager.Singleton.Generator.paused;
     }
 
     private void OnStepClicked()
     {
-        GameManager.Singleton.generator.paused = false;
-        GameManager.Singleton.generator.step = true;
+        GameManager.Singleton.Generator.paused = false;
+        GameManager.Singleton.Generator.step = true;
     }
 }
