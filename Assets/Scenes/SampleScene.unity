@@ -1279,8 +1279,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d208f0d717078848af4cb1e18ed17da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generator: {fileID: 1881963725}
-  currentFilter: 0
+  m_generator: {fileID: 1881963725}
+  m_spriteManager: {fileID: 813866738}
   m_cmds: {fileID: 267534896}
 --- !u!4 &813866740
 Transform:
