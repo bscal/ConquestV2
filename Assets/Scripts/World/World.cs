@@ -32,10 +32,12 @@ namespace Conquest
         {
             this.settings = settings;
             numOfHexes = settings.width * settings.height;
-            pixelW = (int)(settings.width * (Mathf.Sqrt(3) * 8));
+            pixelW = (int)(settings.width * (Mathf.Sqrt(3) * 8.0f));
             pixelH = (int)(settings.height * (16.0f * .75f));
 
-            layout = new Layout(Layout.pointy, new Point(8, 8), new Point(0, 0));
+            // Layout size.x is set to 9.1. Why? Work around for hex widths to line up properly. 
+            // Couldnt not figure out the reason why
+            layout = new Layout(Layout.pointy, new Point(9.1, 8.0), new Point(0, 0));
             size = new Vector2Int(settings.width, settings.height);
             tileData = new Dictionary<Hex, TileObject>();
             plates = new List<Plate>(settings.plates + 1);

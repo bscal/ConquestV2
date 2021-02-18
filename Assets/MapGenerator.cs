@@ -80,19 +80,19 @@ namespace Conquest
 
             m_state = GenState.PRE_GEN;
             StartCoroutine(GenerateRoutine());
-            if (File.Exists("test.txt"))
-                File.Delete("test.txt");
-            StreamWriter writer = File.AppendText("test.txt");
+            //if (File.Exists("test.txt"))
+                //File.Delete("test.txt");
+            //StreamWriter writer = File.AppendText("test.txt");
             
             for (int r = 0; r <= m_height; r++) // height
             {
-                writer.WriteLine();
-                int r_offset = Mathf.FloorToInt(r / 2);
+                //writer.WriteLine();
+                int r_offset = Mathf.FloorToInt(r / 2f);
                 for (int q = -r_offset; q <= m_width - r_offset; q++) // width with offset
                 {
                     Hex hex = new Hex(q, r, -q - r);
                     var mapKey = hex.GetKey();
-                    writer.Write(mapKey.ToString() + "|");
+                    //writer.Write(mapKey.ToString() + "|");
                     Point pixel = m_layout.HexToPixel(hex);
 
                     if (!m_world.tileData.ContainsKey(mapKey))
@@ -126,7 +126,7 @@ namespace Conquest
                 }
             }
             m_world.windManager.Init();
-            writer.Close();
+            //writer.Close();
             m_state = GenState.GENERATE;
             Generate();
             return m_world;

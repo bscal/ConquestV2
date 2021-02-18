@@ -79,6 +79,7 @@ public class RiverSprite : MonoBehaviour
             // (resulting in the X axis facing the target)
             Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);
 
+
             GameObject part = Instantiate(m_riverPartPrefab, posStart, targetRotation, this.transform);
             SpriteRenderer renderer = part.GetComponent<SpriteRenderer>();
             m_parts.Add(renderer);
@@ -101,7 +102,7 @@ public class RiverSprite : MonoBehaviour
 
     private void HandleRiverEnd(GameObject part, SpriteRenderer renderer)
     {
-        part.transform.localScale = part.transform.localScale + new Vector3(.03f, 0, 0);
+       
 
         if (m_river.reachedWater)
         {

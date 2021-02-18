@@ -51,11 +51,11 @@ public class CameraController : MonoBehaviour
 
         if (m_controls.UI.ScrollWheel.ReadValue<Vector2>().y > 0)
         {
-            zoom -= moveSpeed * Time.deltaTime * scrollSpeed;
+            zoom -= scrollSpeed;
         }
         else if (m_controls.UI.ScrollWheel.ReadValue<Vector2>().y < 0)
         {
-            zoom += moveSpeed * Time.deltaTime * scrollSpeed;
+            zoom += scrollSpeed;
         }
         zoom = Mathf.Clamp(zoom, minZoom, maxZoom);
         cam.orthographicSize = zoom;
