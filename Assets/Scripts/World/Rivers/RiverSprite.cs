@@ -11,6 +11,7 @@ public class RiverSprite : MonoBehaviour
     private River m_river;
     private RiverContainer m_generation;
     private List<SpriteRenderer> m_parts = new List<SpriteRenderer>();
+    private List<TileObject> m_partsTileObjects = new List<TileObject>();
 
     public void Init(Hex start)
     {
@@ -52,10 +53,16 @@ public class RiverSprite : MonoBehaviour
 
             Line line = new Line(ptStart, ptEnd);
             paths.Add(line);
+
+            // Sets sides of TileObject that contain rivers
+            end.from.SetRiver(end.corner, true);
         }
 
         for (int i = 0; i < paths.Count; i++)
         {
+            // Increases river's width
+            m_river.riverWidth++;
+
             Line path = paths[i];
             //RiverPath riverPart = m_generation.riverPath[i];
 
@@ -73,12 +80,40 @@ public class RiverSprite : MonoBehaviour
             Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);
 
             GameObject part = Instantiate(m_riverPartPrefab, posStart, targetRotation, this.transform);
-            m_parts.Add(part.GetComponent<SpriteRenderer>());
+            SpriteRenderer renderer = part.GetComponent<SpriteRenderer>();
+            m_parts.Add(renderer);
 
-            if (i == paths.Count - 1) // Is end
-            {
-                part.transform.localScale = part.transform.localScale + new Vector3(.03f, 0, 0);
-            }
+            if (i == 0) // Is start
+                HandleRiverStart(part, renderer);
+
+            else if (i == paths.Count - 1) // Is end
+                HandleRiverEnd(part, renderer);
+
+            else
+                HandleRiverPath(part, renderer);
+
         }
+    }
+
+    private void HandleRiverStart(GameObject part, SpriteRenderer renderer)
+    {
+    }
+
+    private void HandleRiverEnd(GameObject part, SpriteRenderer renderer)
+    {
+        part.transform.localScale = part.transform.localScale + new Vector3(.03f, 0, 0);
+
+        if (m_river.reachedWater)
+        {
+        }
+        else
+        {
+        }
+
+
+    }
+
+    private void HandleRiverPath(GameObject part, SpriteRenderer renderer)
+    {
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Text;
 
 namespace Conquest
 {
@@ -51,6 +52,8 @@ namespace Conquest
         private Tile m_tile;
         private Tile m_topTile;
         private bool m_covered;
+
+        private bool[] rivers = new bool[6];
 
         private HexFilter m_filter;
 
@@ -227,5 +230,24 @@ namespace Conquest
             render.color = color;
             topRender.color = color;
         }
+
+        public void SetRiver(int direction, bool hasRiver)
+        {
+            rivers[direction] = hasRiver;
+        }
+
+        public string RiversToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < rivers.Length; i++)
+            {
+                if (!rivers[i])
+                    continue;
+                sb.Append(i);
+                sb.Append(", ");
+            }
+            return sb.ToString();
+        }
+
     }
 }

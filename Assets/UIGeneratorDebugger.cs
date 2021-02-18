@@ -67,7 +67,8 @@ public class UIGeneratorDebugger : MonoBehaviour
             plateData2Text.text = $"ocn={hData.isOcean},cst={hData.isCoast},cell={hData.cellid}";
 
             SetTitleStr(hex.ToString());
-            SetValueOrCreate("height", $"h={hData.height.ToString("0.##")}");
+            SetValueOrCreate("height", $"h={hData.height.ToString("0.#####")}");
+            SetValueOrCreate("rivers", $"river={obj.RiversToString()}");
         }
 
         if (Keyboard.current.hKey.wasPressedThisFrame)

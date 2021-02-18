@@ -34,7 +34,7 @@ public class River
         List<RiverPath> lines = new List<RiverPath>();
         Hex currentHex = start;
         Hex lastHex = null;
-        int corner = Random.Range(0, 5);
+        int startCorner = Random.Range(0, 5);
 
         while (true)
         {
@@ -43,12 +43,12 @@ public class River
 
             if (lowest.obj != null)
             {
-                List<RiverPath> nextPath = LineToNextHex(this, world.tileData[currentHex], lowest.obj, corner, lowest.direction);
+                List<RiverPath> nextPath = LineToNextHex(this, world.tileData[currentHex], lowest.obj, startCorner, lowest.direction);
                 lines.AddRange(nextPath);
                 path.Add(world.tileData[currentHex]);
                 lastHex = currentHex;
                 currentHex = lowest.obj.hex;
-                corner = Hex.MirrorCorner(lowest.direction, lowest.direction);
+                startCorner = Hex.MirrorCorner(lowest.direction, lowest.direction);
 
                 if (lowest.obj.IsWater)
                 {
@@ -90,11 +90,11 @@ public class River
         };
     }
 
-    private List<RiverPath> LineToNextHex(River river, TileObject from, TileObject to, int startDir, int dir)
+    private List<RiverPath> LineToNextHex(River river, TileObject from, TileObject to, int startCorner, int dir)
     {
         List<RiverPath> lines = new List<RiverPath>();
 
-        List<int> sides = ClosestCorner(startDir, dir, river.side);
+        List<int> sides = ClosestCorner(startCorner, dir, river.side);
 
         foreach (int side in sides)
         {
@@ -108,14 +108,14 @@ public class River
         return lines;
     }
 
-    private List<int> ClosestCorner(int fromDirection, int direction, int side)
+    private List<int> ClosestCorner(int startCorner, int direction, int side)
     {
         List<int> directions = new List<int>();
 
-        while (fromDirection != direction)
+        while (startCorner != direction)
         {
-            directions.Add(fromDirection);
-            fromDirection = (side == LEFT) ? HexConstants.Subtract(fromDirection, 1) : HexConstants.Add(fromDirection, 1);
+            directions.Add(startCorner);
+            startCorner = (side == LEFT) ? HexConstants.Subtract(startCorner, 1) : HexConstants.Add(startCorner, 1);
             
         }
 
