@@ -9,52 +9,49 @@ namespace Conquest
     /// ScriptableObject. An array of Tile objects. Use to get Tiles by index or name.
     /// TileMap contains an internal Dictionary pairing Tile names to index.
     /// </summary>
-    [CreateAssetMenu(fileName = "TileMap", menuName = "Conquest/TileMap", order = 0)]
-    public class TileMap : ScriptableObject, ISerializationCallbackReceiver
+    //[CreateAssetMenu(fileName = "TileMap", menuName = "Conquest/TileMap")]
+    public class TileMap : MonoBehaviour
     {
-        public static TileMap Singleton { get; private set; }
-
-        public static Tile DEFAULT_TILE;
-
-        public const int TILE_HEIGHT_NULL = -1;
-
-        [NonSerialized]
-        private Dictionary<string, int> m_nameToID;
-
-        public int seaLvl = 100;
-        public int oceanLvl = 55;
-        public int mountainLvl = 215;
-        public int mountainPeaklvl = 235;
-
         [SerializeField]
         private Sprite m_blankSprite;
+        [SerializeField]
+        private Tile m_defaultTile;
+        [SerializeField]
+        private Tile m_nullTile;
 
-        public Tile[] tiles;
+        [NonSerialized]
+        private Dictionary<string, Tile> m_tilesMap;
 
-        public TileMap()
+        private void Awake()
         {
-            Singleton = this;
+            m_tilesMap = new Dictionary<string, Tile>();
+            Tile[] tiles = Resources.LoadAll<Tile>("Tiles");
+
+            foreach (Tile tile in tiles)
+            {
+                RegisterTile(tile);
+            }
+
+            Debug.Log($"Registered {tiles.Length} tiles.");
         }
 
-        public Tile GetTile(int index)
+        public Sprite GetBlankSprite() => m_blankSprite;
+        public Tile GetNullTile() => m_nullTile;
+        public Tile GetDefaultTile() => m_defaultTile;
+
+        public void RegisterTile(Tile tile)
         {
-            return tiles[index];
+            m_tilesMap.Add(tile.name, tile);
         }
 
         public Tile GetTileByName(string name)
         {
-            if (m_nameToID.TryGetValue(name.ToUpper(), out int value))
-            {
-                return tiles[value];
-            }
+            if (m_tilesMap.TryGetValue(name, out Tile tile))
+                return tile;
             return null;
         }
 
-        public void OnBeforeSerialize()
-        {
-
-        }
-
+        /*
         public void OnAfterDeserialize()
         {
             DEFAULT_TILE = tiles[0];
@@ -64,9 +61,7 @@ namespace Conquest
                 tiles[i].id = i;
                 m_nameToID.Add(tiles[i].name.ToUpper(), i);
             }
-        }
-
-        public Sprite GetBlankSprite() => m_blankSprite;
+        }*/
     }
 }
 

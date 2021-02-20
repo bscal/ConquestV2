@@ -9,9 +9,10 @@ namespace Conquest
     /// Container for a 2D Tile (Hex) sprite and name
     /// </summary>
     [Serializable]
-    public class Tile
+    [CreateAssetMenu(fileName = "Tile", menuName = "Conquest/Tile")]
+    public class Tile : ScriptableObject
     {
-        public string name;
+        public string localName;
 
         public Sprite sprite;
         public Sprite coldSprite;
@@ -21,6 +22,7 @@ namespace Conquest
         public bool isSpriteInFront = false;
 
         public float minHeight;
+        public float maxHeight;
 
         [NonSerialized]
         public int id;

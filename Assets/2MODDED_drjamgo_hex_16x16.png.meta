@@ -104,6 +104,18 @@ TextureImporter:
   - first:
       213: -3988290726674471756
     second: 2MODDED_drjamgo_hex_16x16_33
+  - first:
+      213: 2249352440843599912
+    second: 2MODDED_drjamgo_hex_16x16_34
+  - first:
+      213: 4328517262436718931
+    second: 2MODDED_drjamgo_hex_16x16_35
+  - first:
+      213: 8338854134846548219
+    second: 2MODDED_drjamgo_hex_16x16_36
+  - first:
+      213: 9101827870437606051
+    second: 2MODDED_drjamgo_hex_16x16_37
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -902,6 +914,90 @@ TextureImporter:
       bones: []
       spriteID: 4b4659707beb6a8c0800000000000000
       internalID: -3988290726674471756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 2MODDED_drjamgo_hex_16x16_34
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 64
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 820042b902e473f10800000000000000
+      internalID: 2249352440843599912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 2MODDED_drjamgo_hex_16x16_35
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 64
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 359dfa7448bf11c30800000000000000
+      internalID: 4328517262436718931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 2MODDED_drjamgo_hex_16x16_36
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 64
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf8635d87af89b370800000000000000
+      internalID: 8338854134846548219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 2MODDED_drjamgo_hex_16x16_37
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 64
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a20f208930305e70800000000000000
+      internalID: 9101827870437606051
       vertices: []
       indices: 
       edges: []

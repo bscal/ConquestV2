@@ -45,7 +45,7 @@ SpriteAtlas:
     packables:
     - {fileID: 2800000, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
     - {fileID: 2800000, guid: 78a1a5bc81ad1de4ebcf3a9508d00597, type: 3}
-    totalSpriteSurfaceArea: 16896
+    totalSpriteSurfaceArea: 17920
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
@@ -68,9 +68,13 @@ SpriteAtlas:
   - {fileID: -2147955715078456122, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
   - {fileID: -7619689392532359451, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
   - {fileID: -2004951885496987928, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
+  - {fileID: 8338854134846548219, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
   - {fileID: 3058878391109609268, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
+  - {fileID: 9101827870437606051, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
   - {fileID: -4660431160908098635, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
+  - {fileID: 2249352440843599912, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
   - {fileID: 6234395887067716565, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
+  - {fileID: 4328517262436718931, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
   - {fileID: -7683695194734830242, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
   - {fileID: 2913446397871390719, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
   - {fileID: -374796290018590942, guid: f3ef18d3698ceee48a19016fa82dd654, type: 3}
@@ -111,9 +115,13 @@ SpriteAtlas:
   - 2MODDED_drjamgo_hex_16x16_14
   - 2MODDED_drjamgo_hex_16x16_15
   - 2MODDED_drjamgo_hex_16x16_16
+  - 2MODDED_drjamgo_hex_16x16_36
   - 2MODDED_drjamgo_hex_16x16_17
+  - 2MODDED_drjamgo_hex_16x16_37
   - 2MODDED_drjamgo_hex_16x16_18
+  - 2MODDED_drjamgo_hex_16x16_34
   - 2MODDED_drjamgo_hex_16x16_19
+  - 2MODDED_drjamgo_hex_16x16_35
   - 2MODDED_drjamgo_hex_16x16_1
   - 2MODDED_drjamgo_hex_16x16_32
   - 2MODDED_drjamgo_hex_16x16_0
