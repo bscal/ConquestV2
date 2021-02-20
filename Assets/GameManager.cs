@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public World World => m_generator.GetWorld();
     public WorldSettings WorldSettings => m_generator.GetWorld().settings;
     public SpriteManager SpriteManager => m_spriteManager;
+    public TileMap TileMap => m_tileMap;
 
     [Header("Generator")]
     [SerializeField]
@@ -23,6 +24,8 @@ public class GameManager : MonoBehaviour
     [Header("Sprites")]
     [SerializeField]
     private SpriteManager m_spriteManager;
+    [SerializeField]
+    private TileMap m_tileMap;
     [Header("Debug")]
     [SerializeField]
     private DebugCommands m_cmds;
@@ -57,7 +60,7 @@ public class GameManager : MonoBehaviour
             {
                 bool res = World.TryGetHexData(h, out TileObject data);
                 if (!res) continue;
-                data.render.sprite = TileMap.Singleton.GetTileByName("desert").sprite;
+                data.render.sprite = m_tileMap.GetTileByName("Desert").sprite;
             }
         }
 

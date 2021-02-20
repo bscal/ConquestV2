@@ -78,12 +78,12 @@ public class WindManager
 
         if (!contains) return;
 
-        if (windDirObj.hexData.height >= TileMap.Singleton.mountainLvl)
+        if (windDirObj.hexData.height >= m_world.settings.mountainLvl)
         {
             windDirObj.wind.power = 0;
             windDirObj.wind.waterContent -= .5f;
         }
-        else if (loopedHex.obj.hexData.height <= TileMap.Singleton.seaLvl)
+        else if (loopedHex.obj.hexData.height <= m_world.settings.seaLvl)
         {
             windDirObj.wind.power = 2;
             windDirObj.wind.waterContent += 1;

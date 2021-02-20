@@ -41,7 +41,7 @@ namespace Conquest
         public bool IsHot { get { return hexData.temp > HOT; } }
         public bool IsCold { get { return hexData.temp < COLD; } } 
         public bool IsVeryCold { get { return hexData.temp < VERY_COLD; } }
-        public bool IsWater { get { return hexData.height <= TileMap.Singleton.seaLvl; } }
+        public bool IsWater { get { return hexData.height <= m_world.settings.seaLvl; } }
 
         public SpriteRenderer render;
         public SpriteRenderer topRender;
@@ -55,10 +55,14 @@ namespace Conquest
 
         private bool[] rivers = new bool[6];
 
+        private TileMap m_tileMap;
+        private World m_world;
         private HexFilter m_filter;
 
         void Awake()
         {
+            m_tileMap = GameManager.Singleton.TileMap;
+            m_world = GameManager.Singleton.World;
             hexData = new HexData();
             wind = new Wind();
         }
@@ -72,7 +76,7 @@ namespace Conquest
             }
 
             if (m_covered)
-                topRender.sprite = TileMap.Singleton.GetBlankSprite();
+                topRender.sprite = m_tileMap.GetBlankSprite();
             else if (topRender.sprite != m_topSprite)
                 topRender.sprite = m_topSprite;
         }
@@ -163,28 +167,27 @@ namespace Conquest
 
         public Tile FindCorrectBaseTile()
         {
-            return TileMap.Singleton.GetTileByName("grassland");
+            return m_tileMap.GetTileByName("Grassland");
         }
 
         public Tile FindCorrectTile()
         {
-            TileMap map = TileMap.Singleton;
             float h = hexData.height;
 
-            if (h > map.mountainPeaklvl)
-                return map.GetTileByName("mountain_peak");
-            else if (h > map.mountainLvl)
-                return map.GetTileByName("mountain");
+            if (h > m_world.settings.mountainPeakLvl)
+                return m_tileMap.GetTileByName("Snowy_Mountains");
+            else if (h > m_world.settings.mountainLvl)
+                return m_tileMap.GetTileByName("Mountains");
             else
             {
-                if (h > map.GetTileByName("hill").minHeight)
-                    return (map.GetTileByName("hill"));
-                else if (hexData.height > map.GetTileByName("grassland").minHeight)
-                    return map.GetTileByName("grassland");
-                else if (hexData.height > map.GetTileByName("coast").minHeight)
-                    return map.GetTileByName("coast");
-                else if (hexData.height > map.GetTileByName("ocean").minHeight)
-                    return map.GetTileByName("ocean");
+                if (h > m_tileMap.GetTileByName("Hills").minHeight)
+                    return (m_tileMap.GetTileByName("Hills"));
+                else if (hexData.height > m_tileMap.GetTileByName("Grassland").minHeight)
+                    return m_tileMap.GetTileByName("Grassland");
+                else if (hexData.height > m_tileMap.GetTileByName("Coast").minHeight)
+                    return m_tileMap.GetTileByName("Coast");
+                else if (hexData.height > m_tileMap.GetTileByName("Ocean").minHeight)
+                    return m_tileMap.GetTileByName("Ocean");
                 else
                     return FindCorrectBaseTile();
             }

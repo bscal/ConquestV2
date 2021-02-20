@@ -38,9 +38,6 @@ namespace Conquest
         public bool paused = true;
         public bool step = false;
 
-        [SerializeField]
-        private TileMap tileMap;
-
         public const float MIN_SPD = 55.0f;
         public const float MAX_SPD = 155.0f;
 

@@ -31,4 +31,9 @@ public class WorldSettings : ScriptableObject
     public float poleTemp = -30;
     public float equatorTemp = 20;
     public float iceAgeChance = .025f;
+
+    public int seaLvl = 100;
+    public int oceanLvl = 55;
+    public int mountainLvl = 215;
+    public int mountainPeakLvl = 235;
 }
