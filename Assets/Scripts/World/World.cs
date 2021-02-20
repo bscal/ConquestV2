@@ -31,13 +31,13 @@ namespace Conquest
         public World(WorldSettings settings)
         {
             this.settings = settings;
-            numOfHexes = settings.width * settings.height;
-            pixelW = (int)(settings.width * (Mathf.Sqrt(3) * 8.0f));
-            pixelH = (int)(settings.height * (16.0f * .75f));
+            // Size.x = 9.1 because it will be improperly aligned otherwise
+            // This is because the Hex Sprites are not even hexagon on all sides and need to be stretched
+            layout = new Layout(Layout.pointy, new Point(9.235, 8.0), new Point(0, 0));
 
-            // Layout size.x is set to 9.1. Why? Work around for hex widths to line up properly. 
-            // Couldnt not figure out the reason why
-            layout = new Layout(Layout.pointy, new Point(9.1, 8.0), new Point(0, 0));
+            numOfHexes = settings.width * settings.height;
+            pixelW = (int)(settings.width * (Mathf.Sqrt(3) * layout.size.x));
+            pixelH = (int)(settings.height * (2 * layout.size.y) * 3/4);
             size = new Vector2Int(settings.width, settings.height);
             tileData = new Dictionary<Hex, TileObject>();
             plates = new List<Plate>(settings.plates + 1);
