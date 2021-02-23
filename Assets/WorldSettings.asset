@@ -27,3 +27,9 @@ MonoBehaviour:
   poleTemp: -30
   equatorTemp: 20
   iceAgeChance: 0
+  seaLvl: 100
+  oceanLvl: 55
+  mountainLvl: 215
+  mountainPeakLvl: 235
+  spinDirection: 1
+  spinSpeed: 1

@@ -23,7 +23,7 @@ public class WorldSettings : ScriptableObject
     public int worldType;
     public int worldAge;
 
-    [Header("Environmental")]
+    [Header("World Generation")]
     public float waterFactor;
     public float mountainFactor;
     public float heatFactor;
@@ -36,4 +36,22 @@ public class WorldSettings : ScriptableObject
     public int oceanLvl = 55;
     public int mountainLvl = 215;
     public int mountainPeakLvl = 235;
+
+    [Header("Planet Settings")]
+    public WorldSpinDirection spinDirection;
+    public WorldSpinSpeed spinSpeed;
+}
+
+public enum WorldSpinDirection
+{ 
+    NONE,
+    PROGRADE,
+    RETROGRADE
+}
+public enum WorldSpinSpeed
+{
+    SLOW,
+    NORMAL,
+    FAST,
+    VERY_FAST
 }
