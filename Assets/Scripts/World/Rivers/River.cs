@@ -39,13 +39,13 @@ public class River
         while (true)
         {
             TileObject[] tiles = world.HexArrayToTileObjectArray(currentHex.Neightbors());
-            LowestPointContainer lowest = FindLowestNeightbor(tiles, world.tileData[currentHex].hexData.height, currentHex, lastHex);
+            LowestPointContainer lowest = FindLowestNeightbor(tiles, world.TileData[currentHex].hexData.height, currentHex, lastHex);
 
             if (lowest.obj != null)
             {
-                List<RiverPath> nextPath = LineToNextHex(this, world.tileData[currentHex], lowest.obj, startCorner, lowest.direction);
+                List<RiverPath> nextPath = LineToNextHex(this, world.TileData[currentHex], lowest.obj, startCorner, lowest.direction);
                 lines.AddRange(nextPath);
-                path.Add(world.tileData[currentHex]);
+                path.Add(world.TileData[currentHex]);
                 lastHex = currentHex;
                 currentHex = lowest.obj.hex;
                 startCorner = Hex.MirrorCorner(lowest.direction, lowest.direction);

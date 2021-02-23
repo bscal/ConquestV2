@@ -20,9 +20,13 @@ public class CameraController : MonoBehaviour
 
     private Controls m_controls;
 
-    private void Start()
+    private void OnEnable()
     {
-        m_controls = new Controls();
+        // Unity input doesn't support reloads, so it may get wiped.
+        if (m_controls == null)
+        {
+            m_controls = new Controls();
+        }
         m_controls.Enable();
     }
 

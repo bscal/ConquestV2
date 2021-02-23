@@ -1,8 +1,10 @@
 using Conquest;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class WindManager
 {
 
@@ -35,6 +37,7 @@ public class WindManager
     private int m_rotation;
     private int m_cells;
     private CellLayout m_cellLayout;
+    [NonSerialized]
     private World m_world;
 
     public WindManager(int rotation, CellLayout layout, World world)
@@ -56,7 +59,7 @@ public class WindManager
             float yN = (h - equator) * (m_cellLayout.cellSize[1, i] - (m_cellLayout.cellSize[0, i])) / 90f;
             float yS = (equator - 0) * (m_cellLayout.cellSize[1, i] - (m_cellLayout.cellSize[0, i])) / 90f;
             Debug.Log(yN);
-            foreach (var pair in m_world.tileData)
+            foreach (var pair in m_world.TileData)
             {
                 if (pair.Key.r > equator && pair.Key.r <= h - equator + Mathf.CeilToInt(yN) + counter && pair.Key.r > h - equator + counter)
                     pair.Value.hexData.cellid = i + 1;
@@ -66,7 +69,7 @@ public class WindManager
             counter += Mathf.CeilToInt(yN);
         }
 
-        foreach (var pair in m_world.tileData)
+        foreach (var pair in m_world.TileData)
         {
             pair.Value.wind.direction = GetWindDirection(pair.Value.hexData.cellid, pair.Key.r);
         }
@@ -117,6 +120,7 @@ public class WindManager
         return Quaternion.Euler(new Vector3(0f, 0f, DIR_TO_ROT[direction]));
     }
 
+    [Serializable]
     public class CellLayout
     {
         public static readonly CellLayout SLOWEST = new CellLayout(

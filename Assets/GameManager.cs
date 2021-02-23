@@ -1,20 +1,25 @@
 ﻿using Conquest;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Tilemaps;
-using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Singleton { get; private set; }
+    private static GameManager m_singleton;
+    public static GameManager Singleton
+    {
+        get
+        {
+            if (m_singleton == null) m_singleton = FindObjectOfType<GameManager>();
+            return m_singleton;
+        }
+    }
 
     public GameState GameState { get; private set; }
     public MapGenerator Generator => m_generator;
     public World World => m_generator.GetWorld();
-    public WorldSettings WorldSettings => m_generator.GetWorld().settings;
+    public WorldSettings WorldSettings => m_generator.settingsScriptableObject;
     public SpriteManager SpriteManager => m_spriteManager;
     public TileMap TileMap => m_tileMap;
 
@@ -36,7 +41,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        Singleton = this;
+        m_singleton = this;
         GameState = new GameState();
         m_UIGenDebug = GameObject.Find("GeneratorUI").GetComponent<UIGeneratorDebugger>();
         m_controls = new Controls();
@@ -68,13 +73,13 @@ public class GameManager : MonoBehaviour
         if (Keyboard.current.kKey.wasPressedThisFrame)
         {
             GameManager.Singleton.ChangeFilter();
-            foreach (var obj in World.tileData.Values)
+            foreach (var obj in World.TileData.Values)
             {
                 obj.SetFilter(m_currentFilter);
             }
         }
 
-       
+
     }
 
     public void ChangeFilter()

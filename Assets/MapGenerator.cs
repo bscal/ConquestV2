@@ -92,11 +92,11 @@ namespace Conquest
                     //writer.Write(mapKey.ToString() + "|");
                     Point pixel = m_layout.HexToPixel(hex);
 
-                    if (!m_world.tileData.ContainsKey(mapKey))
+                    if (!m_world.TileData.ContainsKey(mapKey))
                     {
                         GameObject gameobject = Instantiate(prefab, new Vector3((float)pixel.x, (float)pixel.y, 0), Quaternion.identity);
                         TileObject tObj = gameobject.GetComponent<TileObject>();
-                        m_world.tileData.Add(mapKey, tObj);
+                        m_world.TileData.Add(mapKey, tObj);
                         HexData hData = tObj.hexData;
 
                         float d = Noise.CalcPixel2D(q, r, .1f);
@@ -162,7 +162,7 @@ namespace Conquest
              *      Setting hexes to plates
              *  ------------------------------------------------------
              */
-            foreach (var pair in m_world.tileData)
+            foreach (var pair in m_world.TileData)
             {
                 int closestId = 0;
                 int closest = int.MaxValue;
@@ -392,7 +392,7 @@ namespace Conquest
             {
                 plate.hexes.Clear();
             }
-            foreach (var pair in m_world.tileData)
+            foreach (var pair in m_world.TileData)
             {
                 if (tempData.ContainsKey(pair.Key))
                     pair.Value.hexData.CopyValues(tempData[pair.Key]);
@@ -448,9 +448,9 @@ namespace Conquest
 
         private void Smooth()
         {
-            Dictionary<Hex, HexData> tempHeights = new Dictionary<Hex, HexData>(m_world.tileData.Count);
+            Dictionary<Hex, HexData> tempHeights = new Dictionary<Hex, HexData>(m_world.TileData.Count);
 
-            foreach (var pair in m_world.tileData)
+            foreach (var pair in m_world.TileData)
             {
                 HexData hData = pair.Value.hexData;
 

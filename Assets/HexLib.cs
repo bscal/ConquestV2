@@ -51,6 +51,7 @@ public static class HexConstants
     }
 }
 
+[Serializable]
 public struct Point
 {
     public Point(double x, double y)
@@ -64,6 +65,7 @@ public struct Point
 
 }
 
+[Serializable]
 public class Hex
 {
     public static readonly Hex NULL_HEX = new Hex(-1, -1, 2);
@@ -452,6 +454,7 @@ struct DoubledCoord
 
 }
 
+[Serializable]
 public struct Orientation
 {
     public Orientation(double f0, double f1, double f2, double f3, double b0, double b1, double b2, double b3, double start_angle)
@@ -477,6 +480,7 @@ public struct Orientation
     public readonly double start_angle;
 }
 
+[Serializable]
 public struct Layout
 {
     public Layout(Orientation orientation, Point size, Point origin)

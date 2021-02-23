@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Conquest
 {
+    [Serializable]
     public class Plate
     {
 

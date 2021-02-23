@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Text;
+using System;
 
 namespace Conquest
 {
@@ -16,6 +17,7 @@ namespace Conquest
         CELL
     }
 
+    [Serializable]
     public class TileObject : MonoBehaviour
     {
 

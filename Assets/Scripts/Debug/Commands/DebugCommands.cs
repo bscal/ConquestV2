@@ -12,7 +12,7 @@ public class DebugCommands : MonoBehaviour
         DebugCommand testBreathFirstSearch = new DebugArgsCommand("testbfs", "Tests BreathFirstSearch pathfinder", "testbfs", args => {
             Debug.Log(Hex.ParseHex(args[0]) + " -> " + Hex.ParseHex(args[1]));
 
-            BreathFirstSearch search = new BreathFirstSearch(Hex.ParseHex(args[0]), Hex.ParseHex(args[1]), GameManager.Singleton.World.tileData);
+            BreathFirstSearch search = new BreathFirstSearch(Hex.ParseHex(args[0]), Hex.ParseHex(args[1]), GameManager.Singleton.World.TileData);
             search.Search();
 
             foreach (var pair in search.CameFrom)
@@ -26,7 +26,7 @@ public class DebugCommands : MonoBehaviour
 
         DebugCommand reset = new DebugCommand("reset", "reset all hexes", "reset", args => {
 
-            foreach (var pair in GameManager.Singleton.World.tileData)
+            foreach (var pair in GameManager.Singleton.World.TileData)
             {
                 pair.Value.SetBlankFill(false);
                 pair.Value.SetTile(pair.Value.FindCorrectTile());

@@ -39,6 +39,12 @@ public class UIGeneratorDebugger : MonoBehaviour
         stepButton.onClick.AddListener(OnStepClicked);
     }
 
+    private void OnDestroy()
+    {
+        pauseButton.onClick.RemoveListener(OnPauseClicked);
+        stepButton.onClick.RemoveListener(OnStepClicked);
+    }
+
     void Update()
     {
         counterText.text = $"{GameManager.Singleton.Generator.GetCurrentIteration()}/{GameManager.Singleton.WorldSettings.numberOfIterations}";
@@ -53,7 +59,7 @@ public class UIGeneratorDebugger : MonoBehaviour
             OffsetCoord wcoord = OffsetCoord.RoffsetFromCube(WorldSettings.OFFFSET_COORD, wrap);
             print(string.Format("WrappedHex: {0}, {1} | WrappedCoords: {0}, {1}", hex.q, hex.r, coord.col, coord.row));
 
-            var obj = GameManager.Singleton.World.tileData[hex];
+            var obj = GameManager.Singleton.World.TileData[hex];
             var hData = obj.hexData;
             var pl = GameManager.Singleton.World.GetPlateByID(hData.plateId);
             hexInfoText.text = $"Hex={hex.q}/{hex.r}/{hex.s} | {coord.col}/{coord.row}";
@@ -130,9 +136,7 @@ public class UIGeneratorDebugger : MonoBehaviour
     private void OnGUI()
     {
         //if (!m_show) return;
-
         float y = Screen.height - HEIGHT;
-
 
         GUI.Box(new Rect(0, y, WIDTH - 16, HEIGHT), "");
 
@@ -145,7 +149,7 @@ public class UIGeneratorDebugger : MonoBehaviour
         for (int i = 0; i < w.plates.Count; i++)
         {
             Rect labelRect = new Rect(2, 32 * i, viewport.width, 32);
-            float perc = (float)w.plates[i].hexes.Count / (float)GameManager.Singleton.World.numOfHexes;
+            float perc = (float)w.plates[i].hexes.Count / (float)w.numOfHexes;
             realPlateCount += w.plates[i].hexes.Count;
             String txt = string.Format("{0} = {1} ({2}), {3}", w.plates[i].id, w.plates[i].hexes.Count.ToString(), perc.ToString("0.00"), w.plates[i].movementSpeed);
             GUI.Label(labelRect, txt);
@@ -153,7 +157,7 @@ public class UIGeneratorDebugger : MonoBehaviour
 
         GUI.EndScrollView();
         Rect total = new Rect(2, Screen.height - 32, viewport.width, 32);
-        String totalTxt = string.Format("#of: {0} | Total: {1} | Real: {2}", w.plates.Count, GameManager.Singleton.World.tileData.Count, realPlateCount);
+        String totalTxt = string.Format("#of: {0} | Total: {1} | Real: {2}", w.plates.Count, GameManager.Singleton.World.TileData.Count, realPlateCount);
         GUI.Label(total, totalTxt);
 
     }
