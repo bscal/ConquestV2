@@ -1,13 +1,12 @@
 ﻿using Conquest;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
+using static UnityEngine.InputSystem.InputAction;
 
 public class DebugController : MonoBehaviour
 {
@@ -54,6 +53,8 @@ public class DebugController : MonoBehaviour
     void Awake()
     {
         Singleton = this;
+        DontDestroyOnLoad(this);
+
         m_controls = new Controls();
         m_controls.Enable();
 
@@ -65,77 +66,12 @@ public class DebugController : MonoBehaviour
         m_keywordChars.Add((char)39);
         m_keywordChars.Add((char)40);
 
-        m_controls.Keyboard.Console.performed += ctx => {
-            m_showConsole = !m_showConsole;
-        };
-
-        m_controls.Keyboard.Return.performed += ctx => {
-            if (string.IsNullOrEmpty(m_input)) return;
-            HandleInput();
-
-            m_last.Add(m_input);
-
-            m_index = 0;
-            m_input = "";
-            m_current = "";
-        };
-
-        m_controls.UI.Arrows.performed += ctx => {
-            if (m_hints == null) return;
-            var val = ctx.ReadValue<Vector2>();
-
-            if (val.y > 0f)
-            {
-                if (m_index >= m_hints.Count) return;
-                m_index++;
-            }
-            else if (val.y < 0f)
-            {
-                if (m_index <= -m_last.Count) return;
-                m_index--;
-            }
-
-            if (val.x > 0f && m_cursorIndex < m_input.Length)
-                m_cursorIndex++;
-            else if (val.x < 0f && m_cursorIndex > -1)
-                m_cursorIndex--;
-
-            int i = m_last.Count - Mathf.Abs(m_index);
-            if (m_index < 0 && !string.IsNullOrEmpty(m_last[i]))
-                m_input = m_last[i];
-            else if (m_index == 0)
-                m_input = m_current;
-        };
-
-        m_controls.Keyboard.Tab.performed += ctx => {
-            if (m_hints == null || m_hints.Count < 1) return;
-            m_input = m_hints[m_index].Split(new char[] { ' ' })[0];
-            m_cursorIndex = m_input.Length;
-        };
-
-        Keyboard.current.onTextInput += c => {
-            if (!m_showConsole)
-                return;
-
-            m_cursorIndex = Mathf.Max(0, Mathf.Min(m_cursorIndex, m_input.Length));
-
-            if (!m_keywordChars.Contains(c))
-            {
-                if (m_cursorIndex < m_input.Length)
-                    m_input = m_input.Insert(Mathf.Max(m_cursorIndex, 0), c.ToString());
-                else
-                    m_input += c;
-                m_cursorIndex++;
-            }
-
-            if (m_index == 0)
-                m_current = m_input;
-        };
-
-        m_controls.UI.Backspace.performed += ctx => {
-            if (m_input.Length < 1) return;
-            m_input = m_input.Substring(0, m_input.Length - 1);
-        };
+        m_controls.Keyboard.Console.performed += OnConsoleKey;
+        m_controls.Keyboard.Return.performed += OnReturn;
+        m_controls.UI.Arrows.performed += OnArrowKey;
+        m_controls.Keyboard.Tab.performed += OnTab;
+        m_controls.UI.Backspace.performed += OnBackspace;
+        Keyboard.current.onTextInput += OnTextInput;
 
         m_textStyle.fontSize = 14;
         m_textStyle.font = m_font;
@@ -155,7 +91,7 @@ public class DebugController : MonoBehaviour
 
         m_textActStyle.fontSize = 14;
         m_textActStyle.font = m_font;
-        m_textActStyle.normal.textColor = new Color(182f/255f, 201f/255f, 99f/255f);  
+        m_textActStyle.normal.textColor = new Color(182f / 255f, 201f / 255f, 99f / 255f);
 
         m_hintStyle.fontSize = 14;
         m_hintStyle.font = m_font;
@@ -172,7 +108,7 @@ public class DebugController : MonoBehaviour
 
         var WORLD_INFO = new DebugCommand("world_info", "Prints info on world", "world_info", args => {
             World world = GameManager.Singleton.World;
-            PrintConsoleTable("World Info", 48, new string[] { "Temp Type" }, new object[] { world.worldTemp.changeType});
+            PrintConsoleTable("World Info", 48, new string[] { "Temp Type" }, new object[] { world.worldTemp.changeType });
         });
         m_commandList.Add(WORLD_INFO);
     }
@@ -257,7 +193,7 @@ public class DebugController : MonoBehaviour
                 }
                 else if (cmd.GetType() == typeof(DebugArgsCommand))
                 {
-                    ((DebugArgsCommand)cmd).Invoke(cmdName, args) ;
+                    ((DebugArgsCommand)cmd).Invoke(cmdName, args);
                 }
                 return;
             }
@@ -269,7 +205,7 @@ public class DebugController : MonoBehaviour
     {
         List<string> res = new List<string>();
         string pattern = string.Format("^(?i:{0})", Regex.Escape(str));
-        
+
         for (int i = 0; i < m_commandList.Count; i++)
         {
             var m = Regex.Match(m_commandList[i].Name, pattern);
@@ -456,6 +392,84 @@ public class DebugController : MonoBehaviour
         m_commandList.Add(cmd);
     }
 
+    private void OnConsoleKey(CallbackContext ctx)
+    {
+        m_showConsole = !m_showConsole;
+    }
+
+    private void OnReturn(CallbackContext ctx)
+    {
+        if (string.IsNullOrEmpty(m_input)) return;
+        HandleInput();
+
+        m_last.Add(m_input);
+
+        m_index = 0;
+        m_input = "";
+        m_current = "";
+    }
+
+    private void OnArrowKey(CallbackContext ctx)
+    {
+        if (m_hints == null) return;
+        var val = ctx.ReadValue<Vector2>();
+
+        if (val.y > 0f)
+        {
+            if (m_index >= m_hints.Count) return;
+            m_index++;
+        }
+        else if (val.y < 0f)
+        {
+            if (m_index <= -m_last.Count) return;
+            m_index--;
+        }
+
+        if (val.x > 0f && m_cursorIndex < m_input.Length)
+            m_cursorIndex++;
+        else if (val.x < 0f && m_cursorIndex > -1)
+            m_cursorIndex--;
+
+        int i = m_last.Count - Mathf.Abs(m_index);
+        if (m_index < 0 && !string.IsNullOrEmpty(m_last[i]))
+            m_input = m_last[i];
+        else if (m_index == 0)
+            m_input = m_current;
+    }
+
+    private void OnTab(CallbackContext ctx)
+    {
+        if (m_hints == null || m_hints.Count < 1) return;
+        m_input = m_hints[m_index].Split(new char[] { ' ' })[0];
+        m_cursorIndex = m_input.Length;
+    }
+
+    private void OnBackspace(CallbackContext ctx)
+    {
+        if (m_input.Length < 1) return;
+        m_input = m_input.Substring(0, m_input.Length - 1);
+    }
+
+    private void OnTextInput(char c)
+    {
+        if (!m_showConsole)
+            return;
+
+        m_cursorIndex = Mathf.Max(0, Mathf.Min(m_cursorIndex, m_input.Length));
+
+        if (!m_keywordChars.Contains(c))
+        {
+            if (m_cursorIndex < m_input.Length)
+                m_input = m_input.Insert(Mathf.Max(m_cursorIndex, 0), c.ToString());
+            else
+                m_input += c;
+            m_cursorIndex++;
+        }
+
+        if (m_index == 0)
+            m_current = m_input;
+    }
+
 }
 
 public enum LogType
@@ -477,9 +491,4 @@ struct ConsoleText
         this.text = text;
         this.type = type;
     }
-}
-
-interface IPrintable
-{
-    void Print();
 }
